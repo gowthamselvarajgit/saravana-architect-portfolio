@@ -1,0 +1,1507 @@
+Folder PATH listing for volume STORAGE
+Volume serial number is AA16-9F98
+D:.
+|   PROJECT_STRUCTURE.txt
+|   skills-lock.json
+|   
++---.agents
+|   |   mcp_config.json
+|   |   
+|   \---skills
+|       +---3d-modeling
+|       |       metadata.json
+|       |       SKILL.md
+|       |       
+|       +---banner-design
+|       |   |   SKILL.md
+|       |   |   
+|       |   \---references
+|       |           banner-sizes-and-styles.md
+|       |           
+|       +---blender-3d-modeling
+|       |       SKILL.md
+|       |       
+|       +---brand
+|       |   |   SKILL.md
+|       |   |   
+|       |   +---references
+|       |   |       approval-checklist.md
+|       |   |       asset-organization.md
+|       |   |       brand-guideline-template.md
+|       |   |       color-palette-management.md
+|       |   |       consistency-checklist.md
+|       |   |       logo-usage-rules.md
+|       |   |       messaging-framework.md
+|       |   |       typography-specifications.md
+|       |   |       update.md
+|       |   |       visual-identity.md
+|       |   |       voice-framework.md
+|       |   |       
+|       |   +---scripts
+|       |   |   |   extract-colors.cjs
+|       |   |   |   inject-brand-context.cjs
+|       |   |   |   sync-brand-to-tokens.cjs
+|       |   |   |   validate-asset.cjs
+|       |   |   |   
+|       |   |   \---tests
+|       |   |           test_sync_brand_to_tokens.py
+|       |   |           
+|       |   \---templates
+|       |           brand-guidelines-starter.md
+|       |           
+|       +---convex-create-component
+|       |   |   SKILL.md
+|       |   |   
+|       |   +---agents
+|       |   |       openai.yaml
+|       |   |       
+|       |   +---assets
+|       |   |       icon.svg
+|       |   |       
+|       |   \---references
+|       |           advanced-patterns.md
+|       |           hybrid-components.md
+|       |           local-components.md
+|       |           packaged-components.md
+|       |           
+|       +---design
+|       |   |   SKILL.md
+|       |   |   
+|       |   +---data
+|       |   |   +---cip
+|       |   |   |       deliverables.csv
+|       |   |   |       industries.csv
+|       |   |   |       mockup-contexts.csv
+|       |   |   |       styles.csv
+|       |   |   |       
+|       |   |   +---icon
+|       |   |   |       styles.csv
+|       |   |   |       
+|       |   |   \---logo
+|       |   |           colors.csv
+|       |   |           industries.csv
+|       |   |           styles.csv
+|       |   |           
+|       |   +---references
+|       |   |       banner-sizes-and-styles.md
+|       |   |       cip-deliverable-guide.md
+|       |   |       cip-design.md
+|       |   |       cip-prompt-engineering.md
+|       |   |       cip-style-guide.md
+|       |   |       design-routing.md
+|       |   |       icon-design.md
+|       |   |       logo-color-psychology.md
+|       |   |       logo-design.md
+|       |   |       logo-prompt-engineering.md
+|       |   |       logo-style-guide.md
+|       |   |       slides-copywriting-formulas.md
+|       |   |       slides-create.md
+|       |   |       slides-html-template.md
+|       |   |       slides-layout-patterns.md
+|       |   |       slides-strategies.md
+|       |   |       slides.md
+|       |   |       social-photos-design.md
+|       |   |       
+|       |   \---scripts
+|       |       +---cip
+|       |       |       core.py
+|       |       |       generate.py
+|       |       |       render-html.py
+|       |       |       search.py
+|       |       |       
+|       |       +---icon
+|       |       |       generate.py
+|       |       |       
+|       |       \---logo
+|       |           |   core.py
+|       |           |   generate.py
+|       |           |   search.py
+|       |           |   
+|       |           \---tests
+|       |                   test_generate.py
+|       |                   
+|       +---design-system
+|       |   |   SKILL.md
+|       |   |   
+|       |   +---data
+|       |   |       slide-backgrounds.csv
+|       |   |       slide-charts.csv
+|       |   |       slide-color-logic.csv
+|       |   |       slide-copy.csv
+|       |   |       slide-layout-logic.csv
+|       |   |       slide-layouts.csv
+|       |   |       slide-strategies.csv
+|       |   |       slide-typography.csv
+|       |   |       
+|       |   +---references
+|       |   |       component-specs.md
+|       |   |       component-tokens.md
+|       |   |       primitive-tokens.md
+|       |   |       semantic-tokens.md
+|       |   |       states-and-variants.md
+|       |   |       tailwind-integration.md
+|       |   |       token-architecture.md
+|       |   |       
+|       |   +---scripts
+|       |   |   |   embed-tokens.cjs
+|       |   |   |   fetch-background.py
+|       |   |   |   generate-slide.py
+|       |   |   |   generate-tokens.cjs
+|       |   |   |   html-token-validator.py
+|       |   |   |   search-slides.py
+|       |   |   |   slide-token-validator.py
+|       |   |   |   slide_search_core.py
+|       |   |   |   validate-tokens.cjs
+|       |   |   |   
+|       |   |   \---tests
+|       |   |           test_validate_tokens.py
+|       |   |           
+|       |   \---templates
+|       |           design-tokens-starter.json
+|       |           
+|       +---design-taste-frontend
+|       |       SKILL.md
+|       |       
+|       +---frontend-design
+|       |       LICENSE.txt
+|       |       SKILL.md
+|       |       
+|       +---gsap-core
+|       |       SKILL.md
+|       |       
+|       +---gsap-frameworks
+|       |       SKILL.md
+|       |       
+|       +---gsap-performance
+|       |       SKILL.md
+|       |       
+|       +---gsap-plugins
+|       |       SKILL.md
+|       |       
+|       +---gsap-react
+|       |       SKILL.md
+|       |       
+|       +---gsap-scrolltrigger
+|       |       SKILL.md
+|       |       
+|       +---gsap-timeline
+|       |       SKILL.md
+|       |       
+|       +---gsap-utils
+|       |       SKILL.md
+|       |       
+|       +---motion-framer
+|       |   |   SKILL.md
+|       |   |   
+|       |   +---assets
+|       |   |   +---examples
+|       |   |   |       README.md
+|       |   |   |       
+|       |   |   \---starter_motion
+|       |   |       |   index.html
+|       |   |       |   package.json
+|       |   |       |   README.md
+|       |   |       |   vite.config.js
+|       |   |       |   
+|       |   |       \---src
+|       |   |           |   App.css
+|       |   |           |   App.jsx
+|       |   |           |   main.jsx
+|       |   |           |   
+|       |   |           \---components
+|       |   |                   DraggableBox.jsx
+|       |   |                   HoverCard.jsx
+|       |   |                   StaggerList.jsx
+|       |   |                   
+|       |   +---references
+|       |   |       api_reference.md
+|       |   |       
+|       |   \---scripts
+|       |           animation_generator.py
+|       |           variant_builder.py
+|       |           
+|       +---r3f-best-practices
+|       |   |   SKILL.md
+|       |   |   
+|       |   \---rules
+|       |           drei-use-gltf.md
+|       |           frame-delta-time.md
+|       |           loading-suspense.md
+|       |           perf-never-set-state-in-useframe.md
+|       |           perf-r3f-perf.md
+|       |           perf-visibility-toggle.md
+|       |           perf-zustand-selectors.md
+|       |           _sections.md
+|       |           
+|       +---slides
+|       |   |   SKILL.md
+|       |   |   
+|       |   \---references
+|       |           copywriting-formulas.md
+|       |           create.md
+|       |           html-template.md
+|       |           layout-patterns.md
+|       |           slide-strategies.md
+|       |           
+|       +---three-best-practices
+|       |   |   SKILL.md
+|       |   |   
+|       |   \---rules
+|       |           animation-system.md
+|       |           asset-compression.md
+|       |           audio-spatial.md
+|       |           core-web-vitals.md
+|       |           debug-devtools.md
+|       |           draw-call-optimization.md
+|       |           error-handling-recovery.md
+|       |           geometry-instanced-mesh.md
+|       |           gltf-loading-optimization.md
+|       |           lighting-shadows-advanced.md
+|       |           memory-dispose-geometry.md
+|       |           migration-checklist.md
+|       |           mobile-optimization.md
+|       |           object-pooling.md
+|       |           physics-integration.md
+|       |           postprocessing-optimization.md
+|       |           raycasting-optimization.md
+|       |           render-delta-time.md
+|       |           setup-use-import-maps.md
+|       |           shader-mobile.md
+|       |           tsl-complete-reference.md
+|       |           tsl-compute-shaders.md
+|       |           tsl-material-slots.md
+|       |           tsl-post-processing.md
+|       |           tsl-why-use.md
+|       |           webgpu-renderer.md
+|       |           webxr-setup.md
+|       |           _sections.md
+|       |           
+|       +---threejs-shaders
+|       |       SKILL.md
+|       |       
+|       +---ui-styling
+|       |   |   LICENSE.txt
+|       |   |   SKILL.md
+|       |   |   
+|       |   +---canvas-fonts
+|       |   |       ArsenalSC-OFL.txt
+|       |   |       ArsenalSC-Regular.ttf
+|       |   |       BigShoulders-Bold.ttf
+|       |   |       BigShoulders-OFL.txt
+|       |   |       BigShoulders-Regular.ttf
+|       |   |       Boldonse-OFL.txt
+|       |   |       Boldonse-Regular.ttf
+|       |   |       BricolageGrotesque-Bold.ttf
+|       |   |       BricolageGrotesque-OFL.txt
+|       |   |       BricolageGrotesque-Regular.ttf
+|       |   |       CrimsonPro-Bold.ttf
+|       |   |       CrimsonPro-Italic.ttf
+|       |   |       CrimsonPro-OFL.txt
+|       |   |       CrimsonPro-Regular.ttf
+|       |   |       DMMono-OFL.txt
+|       |   |       DMMono-Regular.ttf
+|       |   |       EricaOne-OFL.txt
+|       |   |       EricaOne-Regular.ttf
+|       |   |       GeistMono-Bold.ttf
+|       |   |       GeistMono-OFL.txt
+|       |   |       GeistMono-Regular.ttf
+|       |   |       Gloock-OFL.txt
+|       |   |       Gloock-Regular.ttf
+|       |   |       IBMPlexMono-Bold.ttf
+|       |   |       IBMPlexMono-OFL.txt
+|       |   |       IBMPlexMono-Regular.ttf
+|       |   |       IBMPlexSerif-Bold.ttf
+|       |   |       IBMPlexSerif-BoldItalic.ttf
+|       |   |       IBMPlexSerif-Italic.ttf
+|       |   |       IBMPlexSerif-Regular.ttf
+|       |   |       InstrumentSans-Bold.ttf
+|       |   |       InstrumentSans-BoldItalic.ttf
+|       |   |       InstrumentSans-Italic.ttf
+|       |   |       InstrumentSans-OFL.txt
+|       |   |       InstrumentSans-Regular.ttf
+|       |   |       InstrumentSerif-Italic.ttf
+|       |   |       InstrumentSerif-Regular.ttf
+|       |   |       Italiana-OFL.txt
+|       |   |       Italiana-Regular.ttf
+|       |   |       JetBrainsMono-Bold.ttf
+|       |   |       JetBrainsMono-OFL.txt
+|       |   |       JetBrainsMono-Regular.ttf
+|       |   |       Jura-Light.ttf
+|       |   |       Jura-Medium.ttf
+|       |   |       Jura-OFL.txt
+|       |   |       LibreBaskerville-OFL.txt
+|       |   |       LibreBaskerville-Regular.ttf
+|       |   |       Lora-Bold.ttf
+|       |   |       Lora-BoldItalic.ttf
+|       |   |       Lora-Italic.ttf
+|       |   |       Lora-OFL.txt
+|       |   |       Lora-Regular.ttf
+|       |   |       NationalPark-Bold.ttf
+|       |   |       NationalPark-OFL.txt
+|       |   |       NationalPark-Regular.ttf
+|       |   |       NothingYouCouldDo-OFL.txt
+|       |   |       NothingYouCouldDo-Regular.ttf
+|       |   |       Outfit-Bold.ttf
+|       |   |       Outfit-OFL.txt
+|       |   |       Outfit-Regular.ttf
+|       |   |       PixelifySans-Medium.ttf
+|       |   |       PixelifySans-OFL.txt
+|       |   |       PoiretOne-OFL.txt
+|       |   |       PoiretOne-Regular.ttf
+|       |   |       RedHatMono-Bold.ttf
+|       |   |       RedHatMono-OFL.txt
+|       |   |       RedHatMono-Regular.ttf
+|       |   |       Silkscreen-OFL.txt
+|       |   |       Silkscreen-Regular.ttf
+|       |   |       SmoochSans-Medium.ttf
+|       |   |       SmoochSans-OFL.txt
+|       |   |       Tektur-Medium.ttf
+|       |   |       Tektur-OFL.txt
+|       |   |       Tektur-Regular.ttf
+|       |   |       WorkSans-Bold.ttf
+|       |   |       WorkSans-BoldItalic.ttf
+|       |   |       WorkSans-Italic.ttf
+|       |   |       WorkSans-OFL.txt
+|       |   |       WorkSans-Regular.ttf
+|       |   |       YoungSerif-OFL.txt
+|       |   |       YoungSerif-Regular.ttf
+|       |   |       
+|       |   +---references
+|       |   |       canvas-design-system.md
+|       |   |       shadcn-accessibility.md
+|       |   |       shadcn-components.md
+|       |   |       shadcn-theming.md
+|       |   |       tailwind-customization.md
+|       |   |       tailwind-responsive.md
+|       |   |       tailwind-utilities.md
+|       |   |       
+|       |   \---scripts
+|       |       |   .coverage
+|       |       |   requirements.txt
+|       |       |   shadcn_add.py
+|       |       |   tailwind_config_gen.py
+|       |       |   
+|       |       \---tests
+|       |               coverage-ui.json
+|       |               requirements.txt
+|       |               test_shadcn_add.py
+|       |               test_tailwind_config_gen.py
+|       |               
+|       +---ui-ux-pro-max
+|       |   |   SKILL.md
+|       |   |   
+|       |   +---data
+|       |   |   |   app-interface.csv
+|       |   |   |   catalog-summary.json
+|       |   |   |   charts.csv
+|       |   |   |   colors.csv
+|       |   |   |   data-provenance.json
+|       |   |   |   google-font-licenses.json
+|       |   |   |   google-fonts.csv
+|       |   |   |   icons.csv
+|       |   |   |   landing.csv
+|       |   |   |   motion.csv
+|       |   |   |   phosphor-icons-upstream.json
+|       |   |   |   products.csv
+|       |   |   |   react-performance.csv
+|       |   |   |   styles.csv
+|       |   |   |   typography.csv
+|       |   |   |   ui-reasoning.csv
+|       |   |   |   ux-guidelines.csv
+|       |   |   |   
+|       |   |   \---stacks
+|       |   |           angular.csv
+|       |   |           astro.csv
+|       |   |           avalonia.csv
+|       |   |           flutter.csv
+|       |   |           html-tailwind.csv
+|       |   |           javafx.csv
+|       |   |           jetpack-compose.csv
+|       |   |           laravel.csv
+|       |   |           nextjs.csv
+|       |   |           nuxt-ui.csv
+|       |   |           nuxtjs.csv
+|       |   |           react-native.csv
+|       |   |           react.csv
+|       |   |           shadcn.csv
+|       |   |           svelte.csv
+|       |   |           swiftui.csv
+|       |   |           threejs.csv
+|       |   |           uno.csv
+|       |   |           uwp.csv
+|       |   |           vue.csv
+|       |   |           winui.csv
+|       |   |           wpf.csv
+|       |   |           
+|       |   +---references
+|       |   |       pro-rules.md
+|       |   |       quick-reference.md
+|       |   |       
+|       |   \---scripts
+|       |       |   core.py
+|       |       |   design_system.py
+|       |       |   reasoning_contract.py
+|       |       |   search.py
+|       |       |   validate_data.py
+|       |       |   
+|       |       \---tests
+|       |           |   test_catalog_refresh.py
+|       |           |   test_catalog_summary_line_endings.py
+|       |           |   test_core.py
+|       |           |   test_core_data_quality.py
+|       |           |   test_data_contracts.py
+|       |           |   test_design_system_mode.py
+|       |           |   test_design_system_stack.py
+|       |           |   test_native_desktop_stack_freshness.py
+|       |           |   test_relevance_evaluator.py
+|       |           |   test_skill_script_paths.py
+|       |           |   test_style_taxonomy.py
+|       |           |   test_text_layout_resilience.py
+|       |           |   test_web_stack_freshness.py
+|       |           |   
+|       |           \---fixtures
+|       |               |   relevance-baseline.json
+|       |               |   relevance-cases.json
+|       |               |   relevance-thresholds.json
+|       |               |   
+|       |               \---catalogs
+|       |                       google-api.json
+|       |                       google-catalog.json
+|       |                       google-existing.csv
+|       |                       google-metadata.json
+|       |                       google-overrides.json
+|       |                       icons-curated.csv
+|       |                       phosphor-core.json
+|       |                       phosphor-package.json
+|       |                       phosphor-react-exports.json
+|       |                       phosphor-react-package.json
+|       |                       
+|       +---using-blender
+|       |   |   banner.png
+|       |   |   SKILL.en.md
+|       |   |   SKILL.es.md
+|       |   |   SKILL.fr.md
+|       |   |   SKILL.ja.md
+|       |   |   SKILL.md
+|       |   |   SKILL.ru.md
+|       |   |   SKILL.zh.md
+|       |   |   
+|       |   +---agents
+|       |   |       openai.yaml
+|       |   |       
+|       |   \---references
+|       |           blender-mcp-review.md
+|       |           
+|       \---vercel-react-best-practices
+|           |   AGENTS.md
+|           |   metadata.json
+|           |   README.md
+|           |   SKILL.md
+|           |   
+|           \---rules
+|                   advanced-effect-event-deps.md
+|                   advanced-event-handler-refs.md
+|                   advanced-init-once.md
+|                   advanced-use-latest.md
+|                   async-api-routes.md
+|                   async-cheap-condition-before-await.md
+|                   async-defer-await.md
+|                   async-dependencies.md
+|                   async-parallel.md
+|                   async-suspense-boundaries.md
+|                   bundle-analyzable-paths.md
+|                   bundle-barrel-imports.md
+|                   bundle-conditional.md
+|                   bundle-defer-third-party.md
+|                   bundle-dynamic-imports.md
+|                   bundle-preload.md
+|                   client-event-listeners.md
+|                   client-localstorage-schema.md
+|                   client-passive-event-listeners.md
+|                   client-swr-dedup.md
+|                   js-batch-dom-css.md
+|                   js-cache-function-results.md
+|                   js-cache-property-access.md
+|                   js-cache-storage.md
+|                   js-combine-iterations.md
+|                   js-early-exit.md
+|                   js-flatmap-filter.md
+|                   js-hoist-regexp.md
+|                   js-index-maps.md
+|                   js-length-check-first.md
+|                   js-min-max-loop.md
+|                   js-request-idle-callback.md
+|                   js-set-map-lookups.md
+|                   js-tosorted-immutable.md
+|                   rendering-activity.md
+|                   rendering-animate-svg-wrapper.md
+|                   rendering-conditional-render.md
+|                   rendering-content-visibility.md
+|                   rendering-hoist-jsx.md
+|                   rendering-hydration-no-flicker.md
+|                   rendering-hydration-suppress-warning.md
+|                   rendering-resource-hints.md
+|                   rendering-script-defer-async.md
+|                   rendering-svg-precision.md
+|                   rendering-usetransition-loading.md
+|                   rerender-defer-reads.md
+|                   rerender-dependencies.md
+|                   rerender-derived-state-no-effect.md
+|                   rerender-derived-state.md
+|                   rerender-functional-setstate.md
+|                   rerender-lazy-state-init.md
+|                   rerender-memo-with-default-value.md
+|                   rerender-memo.md
+|                   rerender-move-effect-to-event.md
+|                   rerender-no-inline-components.md
+|                   rerender-simple-expression-in-memo.md
+|                   rerender-split-combined-hooks.md
+|                   rerender-transitions.md
+|                   rerender-use-deferred-value.md
+|                   rerender-use-ref-transient-values.md
+|                   server-after-nonblocking.md
+|                   server-auth-actions.md
+|                   server-cache-lru.md
+|                   server-cache-react.md
+|                   server-dedup-props.md
+|                   server-hoist-static-io.md
+|                   server-no-shared-module-state.md
+|                   server-parallel-fetching.md
+|                   server-parallel-nested-fetching.md
+|                   server-serialization.md
+|                   _sections.md
+|                   _template.md
+|                   
++---assets
+|   +---3d
+|   +---documents
+|   +---images
+|   \---logos
++---client-assets
+|   +---COLLAGE PAGE
+|   |   +---01
+|   |   |       S.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.53.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.54.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.55.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.56.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.57.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.58 (1).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.58.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.59 (1).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.59 (2).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.52.59.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.06.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.07.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.08 (1).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.08 (2).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.08.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.09 (1).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.09 (2).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.09.jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.10 (1).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.10 (2).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.13 (1).jpeg
+|   |   |       WhatsApp Image 2026-08-03 at 12.53.13 (2).jpeg
+|   |   |       WhatsApp Video 2026-08-03 at 12.53.13.mp4
+|   |   |       
+|   |   \---02
+|   |           WhatsApp Image 2026-06-17 at 23.06.16.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.17 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.17.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.18.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.19 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.19.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.20.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.21 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.21 (2).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.21.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.22 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.22 (2).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.22.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.23 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.23 (2).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.23 (3).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.23.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.24 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.24 (2).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.24.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.25 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.25 (2).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.25.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.26 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.26 (2).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.26.jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.27 (1).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.27 (2).jpeg
+|   |           WhatsApp Image 2026-06-17 at 23.06.27.jpeg
+|   |           
+|   +---Cultural Oasis_01
+|   |   +---3D
+|   |   |       SITE 3D_09F.skp
+|   |   |       
+|   |   +---PDF
+|   |   |   \---KVN ANA
+|   |   |           Artboard 3.png
+|   |   |           Edge map of Katra.pdf
+|   |   |           Katra Activity map.pdf
+|   |   |           kevin lynch study.pdf
+|   |   |           node.pdf
+|   |   |           
+|   |   \---PNG
+|   |       +---PHYSICAL MODEL
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.16.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.17 (1).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.17.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.18.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.19 (1).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.19.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.20.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.21 (1).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.21 (2).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.21.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.22 (1).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.22 (2).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.22.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.23 (1).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.23 (2).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.23 (3).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.23.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.24 (1).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.24 (2).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.24.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.25 (1).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.25 (2).jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.25.jpeg
+|   |       |       WhatsApp Image 2026-06-17 at 23.06.26.jpeg
+|   |       |       
+|   |       \---RENDER
+|   |               Image10.jpg
+|   |               Image11.jpg
+|   |               Image13_000.jpg
+|   |               Image16.jpg
+|   |               Image17.jpg
+|   |               Image18.png
+|   |               Image19.jpg
+|   |               Image19.png
+|   |               Image20.png
+|   |               Image21.jpg
+|   |               Image23.jpg
+|   |               Image6.jpg
+|   |               Image7.jpg
+|   |               Image9.jpg
+|   |               
+|   +---Eco ressort_03
+|   |   +---3D
+|   |   |       SITE_3D_02.rvt
+|   |   |       
+|   |   +---PDF
+|   |   |   |   final griha.pdf
+|   |   |   |   SITE_3D_01.pdf
+|   |   |   |   SITE_3D_02.pdf
+|   |   |   |   SITE_3D_03.pdf
+|   |   |   |   SITE_3D_04.pdf
+|   |   |   |   SITE_3D_05.pdf
+|   |   |   |   
+|   |   |   \---IND. BUILD. 3D
+|   |   |           club house.pdf
+|   |   |           Containter Home.pdf
+|   |   |           Containter Home1_02_dor.pdf
+|   |   |           reception 3d 1.pdf
+|   |   |           RESTAURANT-2FINAL-1.pdf
+|   |   |           
+|   |   \---PNG
+|   |       +---PNG -PART-1 GRIHA
+|   |       |       desktop.ini
+|   |       |       GR1.jpg
+|   |       |       GR10.jpg
+|   |       |       GR11.jpg
+|   |       |       GR12.jpg
+|   |       |       GR13.jpg
+|   |       |       GR14.jpg
+|   |       |       GR19.jpg
+|   |       |       GR2.jpg
+|   |       |       GR21.jpg
+|   |       |       GR22.jpg
+|   |       |       GR23.jpg
+|   |       |       GR24.jpg
+|   |       |       GR25.jpg
+|   |       |       GR26.jpg
+|   |       |       GR27.jpg
+|   |       |       GR3.jpg
+|   |       |       GR4.jpg
+|   |       |       GR5.jpg
+|   |       |       GR6.jpg
+|   |       |       GR8.jpg
+|   |       |       
+|   |       \---PNG -PART-2-GRIHA
+|   |               desktop.ini
+|   |               GR19-1.png
+|   |               GR20-1.png
+|   |               GR22-1.png
+|   |               GR23-1.png
+|   |               GR24-1.jpg
+|   |               GR32.jpg
+|   |               GR33.jpg
+|   |               GR34.jpg
+|   |               GR35.jpg
+|   |               GR36.jpg
+|   |               GR37.jpg
+|   |               GR38.jpg
+|   |               GR39.jpg
+|   |               GR40.jpg
+|   |               GR41.jpg
+|   |               GR42.jpg
+|   |               GR43.jpg
+|   |               GR44.jpg
+|   |               GR45.jpg
+|   |               snazzy-image (45).png
+|   |               
+|   +---HOSPITAL_NEW01
+|   |   +---3D
+|   |   |       SITE HOSPITAL_02.rvt
+|   |   |       
+|   |   \---PNG
+|   |       \---RENDER
+|   |               1.png
+|   |               2.png
+|   |               3.png
+|   |               4.png
+|   |               5.png
+|   |               6.png
+|   |               7.png
+|   |               8.png
+|   |               8_000.png
+|   |               Image12.png
+|   |               Image19.png
+|   |               Image20.png
+|   |               Image21.png
+|   |               Image22.png
+|   |               Image23.png
+|   |               Image24.png
+|   |               Image25.png
+|   |               Image26.png
+|   |               Image27.png
+|   |               
+|   +---On the path to Rediscovery_06
+|   |   +---3D
+|   |   |       MOBIUS_03.3dm
+|   |   |       
+|   |   +---PDF
+|   |   |       MOBIUS_03.pdf
+|   |   |       MOBIUS_04.pdf
+|   |   |       
+|   |   \---PNG
+|   |       |   ChatGPT Image Jun 30, 2026, 03_10_30 AM.png
+|   |       |   
+|   |       \---RENDER
+|   |               render-1.png
+|   |               render-2.png
+|   |               render-3.png
+|   |               render-4.png
+|   |               
+|   +---OTHER PROJECTS
+|   |       DESING PES3 OF MOTEL ,DHABA, RESTAURANT.pdf
+|   |       
+|   +---PORTFOLIO PNG_s
+|   |       01__COVER PAGE.png
+|   |       02_CV_PAGE.png
+|   |       03_CONTENT_PAGE.png
+|   |       04_PROJECT 01_ CULTURAL OIASIS _PAGE 01.png
+|   |       05_PROJECT 01_ CULTURAL OIASIS _PAGE 2.png
+|   |       06_PROJECT 01_ CULTURAL OIASIS _PAGE 3.png
+|   |       07_PROJECT 01_ CULTURAL OIASIS _PAGE 4.png
+|   |       08_PROJECT 01_ CULTURAL OIASIS _PAGE 5.png
+|   |       09_PROJECT 01_ CULTURAL OIASIS _PAGE 6.png
+|   |       10_PROJECT 02_ Techno-park _PAGE 1.png
+|   |       11_PROJECT 02_ Techno-park _PAGE 2.png
+|   |       12_PROJECT 02_ Techno-park _PAGE 3.png
+|   |       13_PROJECT 02_ Techno-park _PAGE 4.png
+|   |       14_PROJECT 02_ Techno-park _PAGE 5.png
+|   |       15_PROJECT 02_ Techno-park _PAGE 6.png
+|   |       16_PROJECT 03_ Echo ressort _PAGE 1.png
+|   |       17_PROJECT 03_ Echo ressort _PAGE 2.png
+|   |       18_PROJECT 03_ Echo ressort _PAGE 3.png
+|   |       19_PROJECT 03_ Echo ressort _PAGE 4.png
+|   |       20_PROJECT 03_ Echo ressort _PAGE 6.png
+|   |       21_PROJECT 03_ Echo ressort _PAGE 5.png
+|   |       22_PROJECT 04_ Watchtower_PAGE 1.png
+|   |       23_PROJECT 04_ Watchtower_PAGE 2.png
+|   |       24_PROJECT 04_ Watchtower_PAGE 3.png
+|   |       25_PROJECT 04_ Watchtower_PAGE 4.png
+|   |       26_PROJECT 04_ Watchtower_PAGE 5.png
+|   |       27_PROJECT 04_ Watchtower_PAGE 6.png
+|   |       28_PROJECT 05_ TPOR _PAGE 1.png
+|   |       29_PROJECT 05_ TPOR _PAGE 2.png
+|   |       30_PROJECT 05_ TPOR _PAGE 3.png
+|   |       31_PROJECT 06_ pethouse&co _PAGE 1.png
+|   |       32_PROJECT 06_ pethouse&co _PAGE 2.png
+|   |       33_PROJECT 06_ pethouse&co _PAGE 3.png
+|   |       34_Collage images_33pg.png
+|   |       
+|   +---PRODUCT DESIGN
+|   |   +---3D
+|   |   +---PDF
+|   |   |       SK FD PORTFOLIO.pdf
+|   |   |       
+|   |   \---PNG
+|   +---RIBBON OF LIFE_THESIS_02
+|   |   +---3D
+|   |   |       SITE MODEL_03_final.3dm
+|   |   |       
+|   |   +---PDFS
+|   |   |       CUR OPT (1).pdf
+|   |   |       Housing_ele_01.pdf
+|   |   |       Housing_ele_02.pdf
+|   |   |       OP1,1.pdf
+|   |   |       OP1.pdf
+|   |   |       OP2,2.pdf
+|   |   |       
+|   |   +---PNG
+|   |   |       260125_SITE ANALYSIS_02.png
+|   |   |       260127_INTRO SHEET_A1.png
+|   |   |       AREA CALCULATION.png
+|   |   |       CASE STUDY_02.png
+|   |   |       CASE STUDY_03.png
+|   |   |       CONCEPT_01.png
+|   |   |       Gemini_Generated_Image_ebd4pnebd4pnebd4 (1).png
+|   |   |       Gemini_Generated_Image_eglb9keglb9keglbB.png
+|   |   |       LITERATURE STUDY_01.png
+|   |   |       SITE WITH TXT FINAL.jpg.jpeg
+|   |   |       snazzy-image (1).png
+|   |   |       snazzy-image (4).png
+|   |   |       
+|   |   \---TENDER
+|   |           160 -rfp.pdf
+|   |           584- EoI.pdf
+|   |           584.pdf
+|   |           RFP approved27042021.pdf
+|   |           
+|   \---WATCH TOWER_FLOW SPIRE_05
+|       +---3D
+|       +---PDF
+|       |   |   Section and Elevations.pdf
+|       |   |   
+|       |   +---MALL
+|       |   |       ELE_01.pdf
+|       |   |       ELE_02.pdf
+|       |   |       
+|       |   \---WATCH TOWER
+|       |           SKY_MODEL_08_1.pdf
+|       |           SKY_MODEL_08_2.pdf
+|       |           SKY_MODEL_08_3.pdf
+|       |           SKY_MODEL_08_4.pdf
+|       |           SKY_MODEL_08_5.pdf
+|       |           SKY_MODEL_08_6.pdf
+|       |           SKY_MODEL_08_7.pdf
+|       |           SKY_MODEL_08_8.pdf
+|       |           
+|       \---PNG
+|               Layer 2.png
+|               Layer 3.png
+|               site plan RENDER.png
+|               VIVA_08_05_25.png
+|               WhatsApp Image 2025-06-03 at 10.33.05 (1).jpeg
+|               WhatsApp Image 2025-06-03 at 10.33.05 (1).png
+|               WhatsApp Image 2025-06-03 at 10.33.05.jpeg
+|               WhatsApp Image 2025-06-03 at 10.33.05.png
+|               WhatsApp Image 2025-06-03 at 10.33.06.jpeg
+|               WhatsApp Image 2025-06-03 at 10.36.16.jpeg
+|               WhatsApp Image 2025-06-03 at 10.36.16.png
+|               
++---docs
+|   +---client
+|   +---design
+|   +---requirements
+|   \---research
+\---temp-anthropic-skills
+    |   .gitignore
+    |   README.md
+    |   THIRD_PARTY_NOTICES.md
+    |   
+    +---.claude-plugin
+    |       marketplace.json
+    |       
+    +---skills
+    |   +---academy-guide
+    |   |       LICENSE.txt
+    |   |       SKILL.md
+    |   |       
+    |   +---algorithmic-art
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   \---templates
+    |   |           generator_template.js
+    |   |           viewer.html
+    |   |           
+    |   +---brand-guidelines
+    |   |       LICENSE.txt
+    |   |       SKILL.md
+    |   |       
+    |   +---canvas-design
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   \---canvas-fonts
+    |   |           ArsenalSC-OFL.txt
+    |   |           ArsenalSC-Regular.ttf
+    |   |           BigShoulders-Bold.ttf
+    |   |           BigShoulders-OFL.txt
+    |   |           BigShoulders-Regular.ttf
+    |   |           Boldonse-OFL.txt
+    |   |           Boldonse-Regular.ttf
+    |   |           BricolageGrotesque-Bold.ttf
+    |   |           BricolageGrotesque-OFL.txt
+    |   |           BricolageGrotesque-Regular.ttf
+    |   |           CrimsonPro-Bold.ttf
+    |   |           CrimsonPro-Italic.ttf
+    |   |           CrimsonPro-OFL.txt
+    |   |           CrimsonPro-Regular.ttf
+    |   |           DMMono-OFL.txt
+    |   |           DMMono-Regular.ttf
+    |   |           EricaOne-OFL.txt
+    |   |           EricaOne-Regular.ttf
+    |   |           GeistMono-Bold.ttf
+    |   |           GeistMono-OFL.txt
+    |   |           GeistMono-Regular.ttf
+    |   |           Gloock-OFL.txt
+    |   |           Gloock-Regular.ttf
+    |   |           IBMPlexMono-Bold.ttf
+    |   |           IBMPlexMono-OFL.txt
+    |   |           IBMPlexMono-Regular.ttf
+    |   |           IBMPlexSerif-Bold.ttf
+    |   |           IBMPlexSerif-BoldItalic.ttf
+    |   |           IBMPlexSerif-Italic.ttf
+    |   |           IBMPlexSerif-Regular.ttf
+    |   |           InstrumentSans-Bold.ttf
+    |   |           InstrumentSans-BoldItalic.ttf
+    |   |           InstrumentSans-Italic.ttf
+    |   |           InstrumentSans-OFL.txt
+    |   |           InstrumentSans-Regular.ttf
+    |   |           InstrumentSerif-Italic.ttf
+    |   |           InstrumentSerif-Regular.ttf
+    |   |           Italiana-OFL.txt
+    |   |           Italiana-Regular.ttf
+    |   |           JetBrainsMono-Bold.ttf
+    |   |           JetBrainsMono-OFL.txt
+    |   |           JetBrainsMono-Regular.ttf
+    |   |           Jura-Light.ttf
+    |   |           Jura-Medium.ttf
+    |   |           Jura-OFL.txt
+    |   |           LibreBaskerville-OFL.txt
+    |   |           LibreBaskerville-Regular.ttf
+    |   |           Lora-Bold.ttf
+    |   |           Lora-BoldItalic.ttf
+    |   |           Lora-Italic.ttf
+    |   |           Lora-OFL.txt
+    |   |           Lora-Regular.ttf
+    |   |           NationalPark-Bold.ttf
+    |   |           NationalPark-OFL.txt
+    |   |           NationalPark-Regular.ttf
+    |   |           NothingYouCouldDo-OFL.txt
+    |   |           NothingYouCouldDo-Regular.ttf
+    |   |           Outfit-Bold.ttf
+    |   |           Outfit-OFL.txt
+    |   |           Outfit-Regular.ttf
+    |   |           PixelifySans-Medium.ttf
+    |   |           PixelifySans-OFL.txt
+    |   |           PoiretOne-OFL.txt
+    |   |           PoiretOne-Regular.ttf
+    |   |           RedHatMono-Bold.ttf
+    |   |           RedHatMono-OFL.txt
+    |   |           RedHatMono-Regular.ttf
+    |   |           Silkscreen-OFL.txt
+    |   |           Silkscreen-Regular.ttf
+    |   |           SmoochSans-Medium.ttf
+    |   |           SmoochSans-OFL.txt
+    |   |           Tektur-Medium.ttf
+    |   |           Tektur-OFL.txt
+    |   |           Tektur-Regular.ttf
+    |   |           WorkSans-Bold.ttf
+    |   |           WorkSans-BoldItalic.ttf
+    |   |           WorkSans-Italic.ttf
+    |   |           WorkSans-OFL.txt
+    |   |           WorkSans-Regular.ttf
+    |   |           YoungSerif-OFL.txt
+    |   |           YoungSerif-Regular.ttf
+    |   |           
+    |   +---claude-api
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   +---csharp
+    |   |   |   \---claude-api
+    |   |   |           batches.md
+    |   |   |           files-api.md
+    |   |   |           README.md
+    |   |   |           streaming.md
+    |   |   |           tool-use.md
+    |   |   |           
+    |   |   +---curl
+    |   |   |       examples.md
+    |   |   |       managed-agents.md
+    |   |   |       
+    |   |   +---go
+    |   |   |   +---claude-api
+    |   |   |   |       files-api.md
+    |   |   |   |       README.md
+    |   |   |   |       streaming.md
+    |   |   |   |       tool-use.md
+    |   |   |   |       
+    |   |   |   \---managed-agents
+    |   |   |           README.md
+    |   |   |           
+    |   |   +---java
+    |   |   |   +---claude-api
+    |   |   |   |       files-api.md
+    |   |   |   |       README.md
+    |   |   |   |       streaming.md
+    |   |   |   |       tool-use.md
+    |   |   |   |       
+    |   |   |   \---managed-agents
+    |   |   |           README.md
+    |   |   |           
+    |   |   +---php
+    |   |   |   +---claude-api
+    |   |   |   |       batches.md
+    |   |   |   |       files-api.md
+    |   |   |   |       README.md
+    |   |   |   |       streaming.md
+    |   |   |   |       tool-use.md
+    |   |   |   |       
+    |   |   |   \---managed-agents
+    |   |   |           README.md
+    |   |   |           
+    |   |   +---python
+    |   |   |   +---claude-api
+    |   |   |   |       batches.md
+    |   |   |   |       files-api.md
+    |   |   |   |       README.md
+    |   |   |   |       sdk-upgrade.md
+    |   |   |   |       streaming.md
+    |   |   |   |       tool-use.md
+    |   |   |   |       
+    |   |   |   \---managed-agents
+    |   |   |           README.md
+    |   |   |           
+    |   |   +---ruby
+    |   |   |   +---claude-api
+    |   |   |   |       README.md
+    |   |   |   |       streaming.md
+    |   |   |   |       tool-use.md
+    |   |   |   |       
+    |   |   |   \---managed-agents
+    |   |   |           README.md
+    |   |   |           
+    |   |   +---shared
+    |   |   |       admin-api.md
+    |   |   |       agent-design.md
+    |   |   |       anthropic-cli.md
+    |   |   |       claude-platform-on-aws.md
+    |   |   |       cost-optimization.md
+    |   |   |       error-codes.md
+    |   |   |       live-sources.md
+    |   |   |       managed-agents-api-reference.md
+    |   |   |       managed-agents-client-patterns.md
+    |   |   |       managed-agents-core.md
+    |   |   |       managed-agents-environments.md
+    |   |   |       managed-agents-events.md
+    |   |   |       managed-agents-memory.md
+    |   |   |       managed-agents-multiagent.md
+    |   |   |       managed-agents-onboarding.md
+    |   |   |       managed-agents-outcomes.md
+    |   |   |       managed-agents-overview.md
+    |   |   |       managed-agents-scheduled-deployments.md
+    |   |   |       managed-agents-self-hosted-sandboxes.md
+    |   |   |       managed-agents-tools.md
+    |   |   |       managed-agents-webhooks.md
+    |   |   |       model-migration.md
+    |   |   |       models.md
+    |   |   |       platform-availability.md
+    |   |   |       prompt-audit.md
+    |   |   |       prompt-caching.md
+    |   |   |       token-counting.md
+    |   |   |       tool-use-concepts.md
+    |   |   |       
+    |   |   \---typescript
+    |   |       +---claude-api
+    |   |       |       batches.md
+    |   |       |       files-api.md
+    |   |       |       README.md
+    |   |       |       streaming.md
+    |   |       |       tool-use.md
+    |   |       |       
+    |   |       \---managed-agents
+    |   |               README.md
+    |   |               
+    |   +---discernment-nudge
+    |   |       LICENSE.txt
+    |   |       SKILL.md
+    |   |       
+    |   +---doc-coauthoring
+    |   |       SKILL.md
+    |   |       
+    |   +---docx
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   \---scripts
+    |   |       |   accept_changes.py
+    |   |       |   comment.py
+    |   |       |   merge_runs.py
+    |   |       |   __init__.py
+    |   |       |   
+    |   |       +---office
+    |   |       |   |   soffice.py
+    |   |       |   |   validate.py
+    |   |       |   |   
+    |   |       |   +---helpers
+    |   |       |   |       pptx_chart.py
+    |   |       |   |       pptx_slide.py
+    |   |       |   |       pptx_theme.py
+    |   |       |   |       __init__.py
+    |   |       |   |       
+    |   |       |   +---schemas
+    |   |       |   |   +---ecma
+    |   |       |   |   |   \---fouth-edition
+    |   |       |   |   |           opc-contentTypes.xsd
+    |   |       |   |   |           opc-coreProperties.xsd
+    |   |       |   |   |           opc-digSig.xsd
+    |   |       |   |   |           opc-relationships.xsd
+    |   |       |   |   |           
+    |   |       |   |   +---ISO-IEC29500-4_2016
+    |   |       |   |   |       dml-chart.xsd
+    |   |       |   |   |       dml-chartDrawing.xsd
+    |   |       |   |   |       dml-diagram.xsd
+    |   |       |   |   |       dml-lockedCanvas.xsd
+    |   |       |   |   |       dml-main.xsd
+    |   |       |   |   |       dml-picture.xsd
+    |   |       |   |   |       dml-spreadsheetDrawing.xsd
+    |   |       |   |   |       dml-wordprocessingDrawing.xsd
+    |   |       |   |   |       pml.xsd
+    |   |       |   |   |       shared-additionalCharacteristics.xsd
+    |   |       |   |   |       shared-bibliography.xsd
+    |   |       |   |   |       shared-commonSimpleTypes.xsd
+    |   |       |   |   |       shared-customXmlDataProperties.xsd
+    |   |       |   |   |       shared-customXmlSchemaProperties.xsd
+    |   |       |   |   |       shared-documentPropertiesCustom.xsd
+    |   |       |   |   |       shared-documentPropertiesExtended.xsd
+    |   |       |   |   |       shared-documentPropertiesVariantTypes.xsd
+    |   |       |   |   |       shared-math.xsd
+    |   |       |   |   |       shared-relationshipReference.xsd
+    |   |       |   |   |       sml.xsd
+    |   |       |   |   |       vml-main.xsd
+    |   |       |   |   |       vml-officeDrawing.xsd
+    |   |       |   |   |       vml-presentationDrawing.xsd
+    |   |       |   |   |       vml-spreadsheetDrawing.xsd
+    |   |       |   |   |       vml-wordprocessingDrawing.xsd
+    |   |       |   |   |       wml.xsd
+    |   |       |   |   |       xml.xsd
+    |   |       |   |   |       
+    |   |       |   |   +---mce
+    |   |       |   |   |       mc.xsd
+    |   |       |   |   |       
+    |   |       |   |   \---microsoft
+    |   |       |   |           wml-2010.xsd
+    |   |       |   |           wml-2012.xsd
+    |   |       |   |           wml-2018.xsd
+    |   |       |   |           wml-cex-2018.xsd
+    |   |       |   |           wml-cid-2016.xsd
+    |   |       |   |           wml-sdtdatahash-2020.xsd
+    |   |       |   |           wml-symex-2015.xsd
+    |   |       |   |           
+    |   |       |   \---validators
+    |   |       |           base.py
+    |   |       |           docx.py
+    |   |       |           pptx.py
+    |   |       |           redlining.py
+    |   |       |           __init__.py
+    |   |       |           
+    |   |       \---templates
+    |   |               comments.xml
+    |   |               commentsExtended.xml
+    |   |               commentsExtensible.xml
+    |   |               commentsIds.xml
+    |   |               people.xml
+    |   |               
+    |   +---frontend-design
+    |   |       LICENSE.txt
+    |   |       SKILL.md
+    |   |       
+    |   +---internal-comms
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   \---examples
+    |   |           3p-updates.md
+    |   |           company-newsletter.md
+    |   |           faq-answers.md
+    |   |           general-comms.md
+    |   |           
+    |   +---mcp-builder
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   +---reference
+    |   |   |       evaluation.md
+    |   |   |       mcp_best_practices.md
+    |   |   |       node_mcp_server.md
+    |   |   |       python_mcp_server.md
+    |   |   |       
+    |   |   \---scripts
+    |   |           connections.py
+    |   |           evaluation.py
+    |   |           example_evaluation.xml
+    |   |           requirements.txt
+    |   |           
+    |   +---pdf
+    |   |   |   forms.md
+    |   |   |   LICENSE.txt
+    |   |   |   reference.md
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   \---scripts
+    |   |           check_bounding_boxes.py
+    |   |           check_fillable_fields.py
+    |   |           convert_pdf_to_images.py
+    |   |           create_validation_image.py
+    |   |           extract_form_field_info.py
+    |   |           extract_form_structure.py
+    |   |           fill_fillable_fields.py
+    |   |           fill_pdf_form_with_annotations.py
+    |   |           
+    |   +---pptx
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   \---scripts
+    |   |       |   add_slide.py
+    |   |       |   clean.py
+    |   |       |   thumbnail.py
+    |   |       |   __init__.py
+    |   |       |   
+    |   |       \---office
+    |   |           |   soffice.py
+    |   |           |   validate.py
+    |   |           |   
+    |   |           +---helpers
+    |   |           |       pptx_chart.py
+    |   |           |       pptx_slide.py
+    |   |           |       pptx_theme.py
+    |   |           |       __init__.py
+    |   |           |       
+    |   |           +---schemas
+    |   |           |   +---ecma
+    |   |           |   |   \---fouth-edition
+    |   |           |   |           opc-contentTypes.xsd
+    |   |           |   |           opc-coreProperties.xsd
+    |   |           |   |           opc-digSig.xsd
+    |   |           |   |           opc-relationships.xsd
+    |   |           |   |           
+    |   |           |   +---ISO-IEC29500-4_2016
+    |   |           |   |       dml-chart.xsd
+    |   |           |   |       dml-chartDrawing.xsd
+    |   |           |   |       dml-diagram.xsd
+    |   |           |   |       dml-lockedCanvas.xsd
+    |   |           |   |       dml-main.xsd
+    |   |           |   |       dml-picture.xsd
+    |   |           |   |       dml-spreadsheetDrawing.xsd
+    |   |           |   |       dml-wordprocessingDrawing.xsd
+    |   |           |   |       pml.xsd
+    |   |           |   |       shared-additionalCharacteristics.xsd
+    |   |           |   |       shared-bibliography.xsd
+    |   |           |   |       shared-commonSimpleTypes.xsd
+    |   |           |   |       shared-customXmlDataProperties.xsd
+    |   |           |   |       shared-customXmlSchemaProperties.xsd
+    |   |           |   |       shared-documentPropertiesCustom.xsd
+    |   |           |   |       shared-documentPropertiesExtended.xsd
+    |   |           |   |       shared-documentPropertiesVariantTypes.xsd
+    |   |           |   |       shared-math.xsd
+    |   |           |   |       shared-relationshipReference.xsd
+    |   |           |   |       sml.xsd
+    |   |           |   |       vml-main.xsd
+    |   |           |   |       vml-officeDrawing.xsd
+    |   |           |   |       vml-presentationDrawing.xsd
+    |   |           |   |       vml-spreadsheetDrawing.xsd
+    |   |           |   |       vml-wordprocessingDrawing.xsd
+    |   |           |   |       wml.xsd
+    |   |           |   |       xml.xsd
+    |   |           |   |       
+    |   |           |   +---mce
+    |   |           |   |       mc.xsd
+    |   |           |   |       
+    |   |           |   \---microsoft
+    |   |           |           wml-2010.xsd
+    |   |           |           wml-2012.xsd
+    |   |           |           wml-2018.xsd
+    |   |           |           wml-cex-2018.xsd
+    |   |           |           wml-cid-2016.xsd
+    |   |           |           wml-sdtdatahash-2020.xsd
+    |   |           |           wml-symex-2015.xsd
+    |   |           |           
+    |   |           \---validators
+    |   |                   base.py
+    |   |                   docx.py
+    |   |                   pptx.py
+    |   |                   redlining.py
+    |   |                   __init__.py
+    |   |                   
+    |   +---skill-creator
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   +---agents
+    |   |   |       analyzer.md
+    |   |   |       comparator.md
+    |   |   |       grader.md
+    |   |   |       
+    |   |   +---assets
+    |   |   |       eval_review.html
+    |   |   |       
+    |   |   +---eval-viewer
+    |   |   |       generate_review.py
+    |   |   |       viewer.html
+    |   |   |       
+    |   |   +---references
+    |   |   |       schemas.md
+    |   |   |       
+    |   |   \---scripts
+    |   |           aggregate_benchmark.py
+    |   |           generate_report.py
+    |   |           improve_description.py
+    |   |           package_skill.py
+    |   |           quick_validate.py
+    |   |           run_eval.py
+    |   |           run_loop.py
+    |   |           utils.py
+    |   |           __init__.py
+    |   |           
+    |   +---slack-gif-creator
+    |   |   |   LICENSE.txt
+    |   |   |   requirements.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   \---core
+    |   |           easing.py
+    |   |           frame_composer.py
+    |   |           gif_builder.py
+    |   |           validators.py
+    |   |           
+    |   +---theme-factory
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   theme-showcase.pdf
+    |   |   |   
+    |   |   \---themes
+    |   |           arctic-frost.md
+    |   |           botanical-garden.md
+    |   |           desert-rose.md
+    |   |           forest-canopy.md
+    |   |           golden-hour.md
+    |   |           midnight-galaxy.md
+    |   |           modern-minimalist.md
+    |   |           ocean-depths.md
+    |   |           sunset-boulevard.md
+    |   |           tech-innovation.md
+    |   |           
+    |   +---web-artifacts-builder
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   \---scripts
+    |   |           bundle-artifact.sh
+    |   |           init-artifact.sh
+    |   |           shadcn-components.tar.gz
+    |   |           
+    |   +---webapp-testing
+    |   |   |   LICENSE.txt
+    |   |   |   SKILL.md
+    |   |   |   
+    |   |   +---examples
+    |   |   |       console_logging.py
+    |   |   |       element_discovery.py
+    |   |   |       static_html_automation.py
+    |   |   |       
+    |   |   \---scripts
+    |   |           with_server.py
+    |   |           
+    |   \---xlsx
+    |       |   LICENSE.txt
+    |       |   SKILL.md
+    |       |   
+    |       \---scripts
+    |           |   recalc.py
+    |           |   
+    |           \---office
+    |               |   soffice.py
+    |               |   validate.py
+    |               |   
+    |               +---helpers
+    |               |       pptx_chart.py
+    |               |       pptx_slide.py
+    |               |       pptx_theme.py
+    |               |       __init__.py
+    |               |       
+    |               +---schemas
+    |               |   +---ecma
+    |               |   |   \---fouth-edition
+    |               |   |           opc-contentTypes.xsd
+    |               |   |           opc-coreProperties.xsd
+    |               |   |           opc-digSig.xsd
+    |               |   |           opc-relationships.xsd
+    |               |   |           
+    |               |   +---ISO-IEC29500-4_2016
+    |               |   |       dml-chart.xsd
+    |               |   |       dml-chartDrawing.xsd
+    |               |   |       dml-diagram.xsd
+    |               |   |       dml-lockedCanvas.xsd
+    |               |   |       dml-main.xsd
+    |               |   |       dml-picture.xsd
+    |               |   |       dml-spreadsheetDrawing.xsd
+    |               |   |       dml-wordprocessingDrawing.xsd
+    |               |   |       pml.xsd
+    |               |   |       shared-additionalCharacteristics.xsd
+    |               |   |       shared-bibliography.xsd
+    |               |   |       shared-commonSimpleTypes.xsd
+    |               |   |       shared-customXmlDataProperties.xsd
+    |               |   |       shared-customXmlSchemaProperties.xsd
+    |               |   |       shared-documentPropertiesCustom.xsd
+    |               |   |       shared-documentPropertiesExtended.xsd
+    |               |   |       shared-documentPropertiesVariantTypes.xsd
+    |               |   |       shared-math.xsd
+    |               |   |       shared-relationshipReference.xsd
+    |               |   |       sml.xsd
+    |               |   |       vml-main.xsd
+    |               |   |       vml-officeDrawing.xsd
+    |               |   |       vml-presentationDrawing.xsd
+    |               |   |       vml-spreadsheetDrawing.xsd
+    |               |   |       vml-wordprocessingDrawing.xsd
+    |               |   |       wml.xsd
+    |               |   |       xml.xsd
+    |               |   |       
+    |               |   +---mce
+    |               |   |       mc.xsd
+    |               |   |       
+    |               |   \---microsoft
+    |               |           wml-2010.xsd
+    |               |           wml-2012.xsd
+    |               |           wml-2018.xsd
+    |               |           wml-cex-2018.xsd
+    |               |           wml-cid-2016.xsd
+    |               |           wml-sdtdatahash-2020.xsd
+    |               |           wml-symex-2015.xsd
+    |               |           
+    |               \---validators
+    |                       base.py
+    |                       docx.py
+    |                       pptx.py
+    |                       redlining.py
+    |                       __init__.py
+    |                       
+    +---spec
+    |       agent-skills-spec.md
+    |       
+    \---template
+            SKILL.md
+            

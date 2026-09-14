@@ -1,0 +1,243 @@
+/**
+ * Fullscreen Architectural Menu Overlay
+ * Monumental typography, staggered links, technical grid datum
+ */
+
+.menu-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99980;
+  background-color: var(--color-raw-near-black);
+  color: var(--color-raw-warm-paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--page-gutter) var(--space-xl);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Subtle CAD Grid on Menu Background */
+.menu-overlay-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(to right, rgba(244, 240, 232, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(244, 240, 232, 0.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.7;
+}
+
+/* Top Bar inside Menu */
+.menu-overlay-topbar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid rgba(244, 240, 232, 0.1);
+}
+
+.menu-overlay-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-overlay-brand-name {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-raw-warm-paper);
+}
+
+.menu-overlay-brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  color: var(--color-raw-chalk);
+  opacity: 0.6;
+}
+
+.menu-overlay-close-btn {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-raw-warm-paper);
+  background: transparent;
+  border: 1px solid rgba(244, 240, 232, 0.3);
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  transition: all 0.25s ease;
+}
+
+.menu-overlay-close-btn:hover,
+.menu-overlay-close-btn:focus-visible {
+  background-color: var(--color-raw-crimson);
+  border-color: var(--color-raw-crimson);
+  color: #FFFFFF;
+}
+
+/* Menu Body: Links & Side Datum */
+.menu-overlay-body {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-2xl);
+  align-items: center;
+  padding: var(--space-xl) 0;
+  min-height: 50vh;
+}
+
+/* Primary Nav List */
+.menu-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.8vh, 1.75rem);
+}
+
+.menu-nav-item {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  text-decoration: none;
+  color: var(--color-raw-warm-paper);
+  transition: transform 0.3s ease, color 0.3s ease;
+  width: fit-content;
+}
+
+.menu-nav-index {
+  font-family: var(--font-mono);
+  font-size: clamp(0.75rem, 1.2vw, 1rem);
+  letter-spacing: 0.16em;
+  color: var(--color-raw-crimson);
+}
+
+.menu-nav-label {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5.2vw, 4.25rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: letter-spacing 0.3s ease, color 0.3s ease;
+}
+
+.menu-nav-item:hover .menu-nav-label,
+.menu-nav-item:focus-visible .menu-nav-label {
+  color: #FFFFFF;
+  letter-spacing: 0.05em;
+  transform: translateX(8px);
+}
+
+.menu-nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background-color: var(--color-raw-crimson);
+  transition: width 0.35s ease;
+}
+
+.menu-nav-item:hover::after,
+.menu-nav-item:focus-visible::after {
+  width: 100%;
+}
+
+/* Secondary Sub-links under Projects */
+.menu-sublinks {
+  display: flex;
+  gap: var(--space-md);
+  margin-left: clamp(2rem, 4vw, 3.5rem);
+  margin-top: -0.25rem;
+  margin-bottom: var(--space-2xs);
+}
+
+.menu-sublink {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-raw-chalk);
+  opacity: 0.65;
+  text-decoration: none;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.menu-sublink:hover,
+.menu-sublink:focus-visible {
+  opacity: 1;
+  color: var(--color-raw-crimson);
+}
+
+/* Side Metadata Column */
+.menu-side-datum {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: 320px;
+  border-left: 1px solid rgba(244, 240, 232, 0.1);
+  padding-left: var(--space-xl);
+}
+
+.menu-datum-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+}
+
+.menu-datum-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-raw-chalk);
+  opacity: 0.5;
+}
+
+.menu-datum-value {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-raw-warm-paper);
+}
+
+/* Menu Bottom Bar */
+.menu-overlay-footer {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(244, 240, 232, 0.1);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--color-raw-chalk);
+  opacity: 0.75;
+}
+
+@media (max-width: 900px) {
+  .menu-overlay-body {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+  .menu-side-datum {
+    border-left: none;
+    border-top: 1px solid rgba(244, 240, 232, 0.1);
+    padding-left: 0;
+    padding-top: var(--space-md);
+  }
+}

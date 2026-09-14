@@ -1,0 +1,466 @@
+/**
+ * Hero Section Styles — Heron AI-Inspired Architectural Canvas
+ * Ribbon of Life Drawing Focus (Linework & Shaded Drawings)
+ * Strict Grid Layout & 1px Borders
+ */
+
+.arch-hero-section {
+  position: relative;
+  width: 100%;
+  padding-top: 64px; /* offset for fixed navbar */
+  background-color: transparent;
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. Main CAD Architectural Drawing Stage */
+.arch-hero-canvas-frame {
+  position: relative;
+  width: 100%;
+  height: clamp(540px, 78vh, 880px);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+  user-select: none;
+  cursor: crosshair;
+  background: radial-gradient(circle at 50% 50%, rgba(246, 245, 240, 0.4) 0%, rgba(238, 236, 230, 0.6) 100%);
+}
+
+/* Subtle Drafting Guidelines */
+.arch-hero-guide-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--color-border-subtle);
+  z-index: 1;
+  pointer-events: none;
+}
+.arch-hero-guide-v.left { left: 22%; }
+.arch-hero-guide-v.center { left: 50%; }
+.arch-hero-guide-v.right { left: 78%; }
+
+.arch-hero-guide-h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--color-border);
+  z-index: 1;
+  pointer-events: none;
+}
+.arch-hero-guide-h.bottom {
+  bottom: 14%;
+}
+
+/* Small Orange Square Markers (Heron AI signature detail) */
+.arch-hero-orange-marker {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background-color: var(--color-accent);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Top Plate Badges */
+.arch-hero-plate-badge {
+  position: absolute;
+  top: 18px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+}
+
+.arch-hero-plate-badge.top-left {
+  left: var(--page-gutter);
+}
+
+.arch-hero-plate-badge.top-right {
+  right: var(--page-gutter);
+  text-align: right;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.arch-hero-plate-badge .plate-num {
+  font-weight: 700;
+  color: var(--color-accent);
+  padding: 2px 6px;
+  border: 1px solid var(--color-accent);
+  background-color: rgba(196, 30, 42, 0.04);
+}
+
+.arch-hero-plate-badge .plate-title {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.arch-hero-plate-badge .plate-status {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.arch-hero-plate-badge .plate-status.is-drawing {
+  color: var(--color-accent);
+}
+
+.arch-hero-plate-badge .plate-status.is-ready {
+  color: #2e7d32;
+}
+
+.arch-hero-plate-badge .plate-step {
+  font-size: 0.5625rem;
+  color: var(--color-text-muted);
+}
+
+/* Bottom Left Architectural Stamp */
+.arch-hero-drawing-stamp {
+  position: absolute;
+  bottom: 22px;
+  left: var(--page-gutter);
+  z-index: 10;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  border-left: 2px solid var(--color-border);
+  padding-left: 10px;
+}
+
+.arch-hero-drawing-stamp .bold {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+/* Dynamic Live Hover HUD (Bottom Right) */
+.arch-hero-hud-crosshair {
+  position: absolute;
+  bottom: 22px;
+  right: var(--page-gutter);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.arch-hero-hud-crosshair .crosshair-icon {
+  color: var(--color-accent);
+  font-size: 14px;
+}
+
+/* Interactive Controls Dock */
+.arch-hero-interactive-dock {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: rgba(246, 245, 240, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  padding: 4px 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.arch-dock-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.arch-dock-btn:hover {
+  background-color: rgba(196, 30, 42, 0.08);
+}
+
+.arch-dock-segmented {
+  display: flex;
+  align-items: center;
+  border-left: 1px solid var(--color-border);
+  padding-left: 6px;
+  gap: 4px;
+}
+
+.arch-dock-seg-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.arch-dock-seg-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.arch-dock-seg-btn.active {
+  background-color: var(--color-text-primary);
+  color: #f6f5f0;
+}
+
+/* ==========================================================================
+   THE ARCHITECTURAL DRAWING STAGE LAYERS
+   ========================================================================== */
+.arch-hero-drawing-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Layer A: SVG Construction Linework */
+.arch-hero-svg-linework {
+  position: absolute;
+  width: min(85%, 900px);
+  height: 85%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Layer B: Hand-Drawn Ink Linework Sketch */
+.arch-hero-sketch-img {
+  position: absolute;
+  width: min(78%, 820px);
+  height: 80%;
+  object-fit: contain;
+  object-position: center bottom;
+  display: block;
+  z-index: 4;
+  mix-blend-mode: multiply;
+  filter: contrast(1.15) brightness(0.98);
+  pointer-events: none;
+  transform-origin: center bottom;
+}
+
+/* Layer C: Architectural Tonal Graphite Shading */
+.arch-hero-shaded-img {
+  position: absolute;
+  width: min(78%, 820px);
+  height: 80%;
+  object-fit: contain;
+  object-position: center bottom;
+  display: block;
+  z-index: 5;
+  mix-blend-mode: multiply;
+  filter: contrast(1.1) brightness(0.95);
+  pointer-events: none;
+  transform-origin: center bottom;
+}
+
+/* ==========================================================================
+   2. GIANT TYPOGRAPHY BLOCK GRID
+   ========================================================================== */
+.arch-hero-typography-grid {
+  display: grid;
+  grid-template-columns: 2.4fr 1.2fr 1fr;
+  width: 100%;
+  border-bottom: 1px solid var(--color-border);
+  background-color: transparent;
+}
+
+.arch-hero-headline-box {
+  padding: var(--space-xl) var(--page-gutter);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.arch-hero-badge-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.arch-hero-giant-text {
+  font-family: var(--font-body);
+  font-size: clamp(2.4rem, 5.2vw, 6.2rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--color-text-primary);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.arch-hero-desc-box {
+  padding: var(--space-lg) var(--space-md);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.arch-hero-desc-text {
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.arch-hero-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-top: var(--space-lg);
+}
+
+.arch-hero-cta-box {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.arch-hero-discover-btn {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  padding: var(--space-lg) var(--space-md);
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.arch-hero-discover-btn:hover {
+  background-color: rgba(196, 30, 42, 0.05);
+}
+
+.arch-hero-discover-btn .arrow {
+  font-size: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.arch-hero-discover-btn:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   3. SCROLLING TICKER MARQUEE
+   ========================================================================== */
+.arch-hero-ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.arch-hero-ticker {
+  display: flex;
+  width: fit-content;
+  animation: heroTickerLoop 40s linear infinite;
+  white-space: nowrap;
+}
+
+.arch-hero-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-right: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.arch-hero-ticker-track span.sep {
+  color: var(--color-border);
+  font-weight: 400;
+}
+
+@keyframes heroTickerLoop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUT
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .arch-hero-typography-grid {
+    grid-template-columns: 2fr 1fr;
+  }
+  .arch-hero-cta-box {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--color-border);
+  }
+  .arch-hero-discover-btn {
+    min-height: 70px;
+  }
+}
+
+@media (max-width: 768px) {
+  .arch-hero-typography-grid {
+    grid-template-columns: 1fr;
+  }
+  .arch-hero-headline-box,
+  .arch-hero-desc-box {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-lg) var(--page-gutter);
+  }
+  .arch-hero-canvas-frame {
+    height: 60vh;
+  }
+  .arch-hero-giant-text {
+    font-size: clamp(2rem, 8.5vw, 3.8rem);
+  }
+  .arch-hero-interactive-dock {
+    bottom: 60px;
+    transform: translateX(-50%) scale(0.9);
+  }
+  .arch-hero-drawing-stamp {
+    display: none; /* keep mobile clean */
+  }
+}

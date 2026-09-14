@@ -1,0 +1,72 @@
+/**
+ * Architectural Spatial Page Transition
+ * Precision drafting sheet, registration hairline, tectonic wipe
+ */
+
+.arch-transition-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.arch-transition-sheet {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  background-color: var(--color-raw-near-black);
+  transform: translateY(-100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-xl) var(--page-gutter);
+}
+
+.arch-transition-rule {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-accent);
+  box-shadow: 0 0 16px rgba(196, 30, 42, 0.65);
+}
+
+.arch-transition-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(244, 240, 232, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(244, 240, 232, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.arch-transition-meta {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-raw-chalk);
+  opacity: 0.8;
+}
+
+.arch-transition-target {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--color-raw-warm-paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arch-transition-sheet {
+    display: none !important;
+  }
+}

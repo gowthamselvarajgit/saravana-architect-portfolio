@@ -1,0 +1,118 @@
+/**
+ * ==============================================================================
+ * GLOBAL ARCHITECTURAL STYLESHEET
+ * Core CSS Reset, Theme Variables, Accessibility & Base Layer
+ * ==============================================================================
+ */
+
+@import './variables.css';
+@import './typography.css';
+@import './layout.css';
+@import './primitives.css';
+
+/* 1. Universal Box-Sizing Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. Root Document Standards */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-light-bg);
+  color: var(--color-light-text-primary);
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* Explicit local surface overrides (only when explicitly decoupled from root theme) */
+.theme-surface-root {
+  background-color: var(--color-bg);
+  /* White chart texture: fine noise + faint drafting grid */
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"),
+    linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 200px 200px, 64px 64px, 64px 64px;
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-base) ease, color var(--transition-base) ease;
+}
+
+html[data-theme="dark"] {
+  background-color: var(--color-dark-bg);
+  color: var(--color-dark-text-primary);
+}
+
+/* 3. Base Body Properties */
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: var(--weight-regular);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  cursor: auto; /* Explicitly standard cursor — no custom follower */
+}
+
+/* 4. Selection Palette */
+::selection {
+  background-color: var(--color-blueprint);
+  color: var(--color-raw-warm-paper);
+}
+
+/* 5. Accessible Keyboard Focus */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* 6. Media Resets */
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* 7. Unordered & Ordered List Reset */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 8. Button & Input Defaults */
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+/* 9. Accessibility: Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

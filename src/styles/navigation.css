@@ -1,0 +1,177 @@
+/**
+ * Modern Visible Architectural Navigation Bar
+ * Heron AI Clone: Strict CSS Grid with 1px borders
+ */
+
+.arch-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .arch-navbar {
+  background-color: var(--color-dark-bg);
+}
+
+.arch-navbar-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 80px 1fr auto auto; /* Logo | Spacer | Links | Contact */
+  height: 64px;
+}
+
+/* Left Brand Box */
+.arch-nav-brand-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.arch-nav-brand-box:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .arch-nav-brand-box:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Empty Spacer */
+.arch-nav-spacer {
+  /* empty space expanding to fill */
+}
+
+/* Desktop Links Grid */
+.arch-nav-links-grid {
+  display: flex;
+  align-items: stretch;
+}
+
+.arch-nav-grid-link {
+  display: flex;
+  align-items: center;
+  padding: 0 1.75rem;
+  border-left: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.arch-nav-grid-link:hover,
+.arch-nav-grid-link.active {
+  color: var(--color-text-primary);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .arch-nav-grid-link:hover,
+[data-theme="dark"] .arch-nav-grid-link.active {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Heron-style small ticks at the bottom right corner */
+.arch-nav-grid-link::after {
+  content: '⌟';
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-size: 10px;
+  opacity: 0.3;
+}
+
+/* Right Actions: Contact & Mobile Trigger */
+.arch-nav-actions-grid {
+  display: flex;
+  align-items: stretch;
+}
+
+.arch-nav-contact-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 2rem;
+  border-left: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.arch-nav-contact-btn:hover {
+  background-color: rgba(196, 30, 42, 0.05);
+}
+
+.arch-nav-contact-btn .arrow {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Mobile Toggle Button (hidden on desktop) */
+.arch-mobile-toggle {
+  display: none;
+  background: transparent;
+  border-left: 1px solid var(--color-border);
+  padding: 0 1.5rem;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  font-size: 1.25rem;
+}
+
+/* Mobile Drawer (Only for < 880px) */
+.arch-mobile-drawer {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  animation: drawer-slide-down 0.25s ease forwards;
+}
+
+.arch-mobile-drawer .arch-nav-grid-link,
+.arch-mobile-drawer .arch-nav-contact-btn {
+  border-left: none;
+  border-bottom: 1px solid var(--color-border);
+  padding: 1.25rem var(--page-gutter);
+}
+.arch-mobile-drawer .arch-nav-grid-link::after {
+  display: none;
+}
+
+@keyframes drawer-slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 880px) {
+  .arch-navbar-container {
+    grid-template-columns: 80px 1fr auto; /* Logo | Spacer | Mobile Toggle */
+  }
+  .arch-nav-links-grid,
+  .arch-nav-contact-btn:not(.mobile-only) {
+    display: none;
+  }
+  .arch-mobile-toggle {
+    display: flex;
+    align-items: center;
+  }
+}

@@ -1,0 +1,159 @@
+/**
+ * ==============================================================================
+ * ARCHITECTURAL TYPOGRAPHY SYSTEM
+ * Cormorant Garamond (Display) | Inter (Body) | DM Mono (Technical)
+ * ==============================================================================
+ */
+
+/* Display Hero: Grand architectural titles, landing moments */
+.arch-display-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 6.5vw + 1rem, 6rem);
+  line-height: 1.05;
+  font-weight: var(--weight-light);
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Display Large: Major section landmarks, project names */
+.arch-display-large {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 4.5vw + 0.5rem, 4.25rem);
+  line-height: 1.1;
+  font-weight: var(--weight-regular);
+  letter-spacing: -0.015em;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Display Medium: Narrative thesis titles, secondary architectural statements */
+.arch-display-medium {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw + 0.35rem, 2.85rem);
+  line-height: 1.15;
+  font-weight: var(--weight-regular);
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Section Heading: Primary structured headings */
+.arch-section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.2vw + 0.3rem, 2.25rem);
+  line-height: 1.2;
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.005em;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Italic Display Nuance: Ensures descenders (g, j, p, q, y) are never clipped */
+.arch-display-hero em,
+.arch-display-large em,
+.arch-display-medium em {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: var(--weight-light);
+  line-height: 1.15;
+  padding-bottom: 0.1em;
+  display: inline-block;
+}
+
+/* Body Large: Editorial introductory paragraphs, lead copy */
+.arch-body-large {
+  font-family: var(--font-body);
+  font-size: clamp(1.125rem, 0.8vw + 0.85rem, 1.35rem);
+  line-height: 1.65;
+  font-weight: var(--weight-light);
+  color: var(--color-text-secondary);
+  max-width: 65ch;
+  margin: 0;
+}
+
+/* Body Regular: Standard descriptive narrative */
+.arch-body {
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 0.25vw + 0.875rem, 1rem);
+  line-height: 1.65;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-secondary);
+  max-width: 70ch;
+  margin: 0;
+}
+
+/* Body Small: Supporting captions, secondary notes */
+.arch-body-small {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  font-weight: var(--weight-regular);
+  color: var(--color-text-muted);
+  max-width: 60ch;
+  margin: 0;
+}
+
+/* Eyebrow / Technical Label: Controlled architectural discipline */
+.arch-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; /* 11px */
+  line-height: 1.2;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+/* Section Index: E.g., [ 01 / FORM ] */
+.arch-section-index {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  font-weight: var(--weight-regular);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Technical Label: For blueprint metrics, coordinates, drawing notes */
+.arch-tech-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  font-weight: var(--weight-regular);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Technical Value: Numeric figures, project dates, coordinates */
+.arch-tech-value {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.04em;
+  color: var(--color-text-primary);
+}
+
+/* Navigation Typography */
+.arch-nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1;
+  font-weight: var(--weight-regular);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast) ease;
+}
+
+.arch-nav-link:hover,
+.arch-nav-link:focus-visible {
+  color: var(--color-text-primary);
+}

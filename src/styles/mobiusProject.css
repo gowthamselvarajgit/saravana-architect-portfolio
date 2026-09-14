@@ -1,0 +1,375 @@
+/**
+ * ==============================================================================
+ * MÖBIUS PROJECT PAGE STYLING
+ * SARAVANAKUMAR K — ARCHITECTURAL PORTFOLIO MONOGRAPH
+ * "Architecture Shaped by Place"
+ * ==============================================================================
+ */
+
+.mobius-page-root {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-base) ease, color var(--transition-base) ease;
+  overflow-x: hidden;
+}
+
+/* 1. Header Navigation Chrome */
+.mobius-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-xl);
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.mobius-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.mobius-nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.mobius-nav-link:hover {
+  color: var(--color-text-primary);
+}
+
+.mobius-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.mobius-theme-toggle {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobius-theme-toggle:hover {
+  border-color: var(--color-border-strong);
+  background-color: var(--color-surface);
+}
+
+/* 2. Project Hero & Intro */
+.mobius-hero-section {
+  padding: var(--space-3xl) var(--space-xl) var(--space-xl);
+  max-width: var(--container-xl);
+  margin: 0 auto;
+}
+
+.mobius-project-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--color-border-subtle);
+  margin-bottom: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.mobius-coords {
+  color: var(--color-text-muted);
+}
+
+.mobius-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-xs);
+  color: var(--color-text-primary);
+}
+
+.mobius-subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-lg);
+}
+
+.mobius-intro-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: var(--space-2xl);
+  align-items: start;
+  margin-bottom: var(--space-xl);
+}
+
+.mobius-thesis {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  border-left: 2px solid var(--color-accent);
+  padding-left: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.mobius-body-text {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+
+.mobius-meta-card {
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  padding: var(--space-lg);
+  font-family: var(--font-mono);
+}
+
+.mobius-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+  font-size: 0.75rem;
+}
+
+.mobius-meta-row:last-child {
+  border-bottom: none;
+}
+
+.mobius-meta-key {
+  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mobius-meta-val {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-align: right;
+}
+
+/* 3. 3D Maquette Stage Wrapper */
+.mobius-maquette-section {
+  max-width: var(--container-xl);
+  margin: 0 auto var(--space-4xl);
+  padding: 0 var(--space-xl);
+}
+
+.mobius-stage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* 4. Process & Drawing Transition Section */
+.mobius-process-section {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  padding: var(--space-4xl) var(--space-xl);
+}
+
+.mobius-section-container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+}
+
+.mobius-process-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--space-3xl);
+  align-items: center;
+}
+
+.mobius-process-figure {
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+.mobius-process-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: contrast(1.02);
+  transition: transform 0.4s ease;
+}
+
+.mobius-process-img:hover {
+  transform: scale(1.02);
+}
+
+.mobius-figure-caption {
+  padding: var(--space-sm) var(--space-md);
+  border-top: 1px solid var(--color-border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.mobius-process-content h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 300;
+  line-height: 1.15;
+  margin-bottom: var(--space-md);
+  color: var(--color-text-primary);
+}
+
+.mobius-process-content p {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+/* 5. Photographic Render Gallery */
+.mobius-gallery-section {
+  padding: var(--space-4xl) var(--space-xl);
+  max-width: var(--container-xl);
+  margin: 0 auto;
+}
+
+.mobius-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-xl);
+  margin-top: var(--space-2xl);
+}
+
+.mobius-gallery-card {
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  overflow: hidden;
+}
+
+.mobius-gallery-img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobius-gallery-card:hover .mobius-gallery-img {
+  transform: scale(1.03);
+}
+
+.mobius-gallery-meta {
+  padding: var(--space-md);
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.mobius-gallery-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.mobius-gallery-sub {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+/* 6. Step 4C Walkthrough Dispatch Banner */
+.mobius-walkthrough-dispatch {
+  max-width: var(--container-xl);
+  margin: 0 auto var(--space-4xl);
+  padding: 0 var(--space-xl);
+}
+
+.mobius-dispatch-box {
+  border: 1px solid var(--color-border-strong);
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-elevated) 100%);
+  padding: var(--space-2xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xl);
+}
+
+.mobius-dispatch-info h4 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.mobius-dispatch-info p {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  max-width: 600px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 900px) {
+  .mobius-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .mobius-hero-section,
+  .mobius-maquette-section,
+  .mobius-process-section,
+  .mobius-gallery-section,
+  .mobius-walkthrough-dispatch {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  .mobius-intro-grid,
+  .mobius-process-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .mobius-dispatch-box {
+    padding: var(--space-lg);
+  }
+}

@@ -1,0 +1,402 @@
+/**
+ * ==============================================================================
+ * ARCHITECTURAL LAYOUT SYSTEM
+ * Structural alignment, editorial grids, spacious architectural hierarchy
+ * ==============================================================================
+ */
+
+/* 1. Page Container */
+.arch-container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--page-gutter);
+  padding-right: var(--page-gutter);
+}
+
+/* 2. Editorial Container: For balanced editorial reading sections */
+.arch-container-editorial {
+  width: 100%;
+  max-width: var(--container-editorial-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--page-gutter);
+  padding-right: var(--page-gutter);
+}
+
+/* 3. Narrow Container: Focused technical text, project descriptions */
+.arch-container-narrow {
+  width: 100%;
+  max-width: var(--container-narrow-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--page-gutter);
+  padding-right: var(--page-gutter);
+}
+
+/* 4. Full-Width Section Wrapper */
+.arch-section {
+  position: relative;
+  width: 100%;
+  padding-top: var(--section-padding-y);
+  padding-bottom: var(--section-padding-y);
+}
+
+.arch-section-compact {
+  position: relative;
+  width: 100%;
+  padding-top: calc(var(--section-padding-y) * 0.65);
+  padding-bottom: calc(var(--section-padding-y) * 0.65);
+}
+
+/* 5. 12-Column Architectural Grid */
+.arch-grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: clamp(1rem, 2vw, 2rem);
+  row-gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+/* 6. Asymmetric Two-Column Split (7 cols / 5 cols on desktop) */
+.arch-split-asymmetric {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 4vw, 4.5rem);
+}
+
+@media (min-width: 900px) {
+  .arch-split-asymmetric {
+    grid-template-columns: 7fr 5fr;
+    align-items: start;
+  }
+}
+
+/* 7. Equal Two-Column Split (6 cols / 6 cols) */
+.arch-split-equal {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 4vw, 4rem);
+}
+
+@media (min-width: 768px) {
+  .arch-split-equal {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+/* 8. Three-Column Technical / Editorial Grid */
+.arch-grid-3col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 2.5vw, 2.5rem);
+}
+
+@media (min-width: 768px) {
+  .arch-grid-3col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .arch-grid-3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 9. Four-Column Technical Metadata Grid */
+.arch-grid-4col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+@media (min-width: 600px) {
+  .arch-grid-4col {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .arch-grid-4col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 10. Architectural Hairline Dividers */
+.arch-hairline {
+  border: none;
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0;
+  width: 100%;
+}
+
+.arch-hairline-subtle {
+  border: none;
+  height: 1px;
+  background-color: var(--color-border-subtle);
+  margin: 0;
+  width: 100%;
+}
+
+.arch-hairline-strong {
+  border: none;
+  height: 1px;
+  background-color: var(--color-border-strong);
+  margin: 0;
+  width: 100%;
+}
+
+.arch-hairline-vertical {
+  width: 1px;
+  height: 100%;
+  background-color: var(--color-border);
+  margin: 0;
+}
+
+/* 11. Spatial Architectural Project Card Interaction */
+.arch-card-tilt-container {
+  perspective: 1200px;
+  position: relative;
+}
+
+.arch-card-tilt-inner {
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.arch-project-interactive {
+  position: relative;
+  transition: transform var(--transition-base) ease;
+}
+
+.arch-project-interactive .project-img-wrapper {
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  transform: translateZ(0);
+}
+
+.arch-project-interactive .project-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+  will-change: transform;
+  display: block;
+}
+
+.arch-project-interactive:hover .project-num {
+  color: var(--color-accent);
+  opacity: 1;
+}
+
+.arch-project-interactive .project-rule {
+  width: 100%;
+  height: 1px;
+  background-color: var(--color-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.arch-project-interactive .project-rule::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: var(--color-accent);
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arch-project-interactive:hover .project-rule::after {
+  width: 100%;
+}
+
+.arch-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  opacity: 0.75;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+
+.arch-project-interactive:hover .arch-card-badge {
+  opacity: 1;
+  color: var(--color-accent);
+  transform: translateX(4px);
+}
+
+/* 11b. Magnetic 3D Perspective Tilt */
+.arch-card-tilt-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.arch-card-tilt-inner {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.arch-card-tilt-inner.is-hovered {
+  box-shadow: 0 20px 40px rgba(10, 9, 6, 0.08);
+}
+
+/* 12. Archive High-Density Editorial Table & Floating Preview */
+.archive-table-row {
+  display: grid;
+  grid-template-columns: 3.5rem 1.6fr 1fr 1fr 1.2fr 2.5rem;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 0.85rem 0.5rem;
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background-color var(--transition-fast) ease, padding-left var(--transition-fast) ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.archive-table-row:hover {
+  background-color: rgba(26, 43, 74, 0.05);
+  padding-left: var(--space-xs);
+}
+
+.archive-row-rule {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--color-accent);
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.archive-table-row:hover .archive-row-rule {
+  width: 100%;
+}
+
+.archive-float-preview {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  width: 220px;
+  height: 135px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 16px 36px rgba(10, 9, 6, 0.16);
+  background-color: var(--color-surface);
+  overflow: hidden;
+  transform: translate(-50%, -115%);
+  transition: opacity 0.25s ease, transform 0.15s ease-out;
+}
+
+@media (max-width: 840px) {
+  .archive-table-row {
+    grid-template-columns: 3rem 1fr auto;
+    gap: var(--space-xs);
+  }
+  .archive-col-hide-mobile {
+    display: none !important;
+  }
+}
+
+/* 13. Cartographic & Dynamic Atlas Animations */
+@keyframes gridScanHorizontal {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes radarPing {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  70% { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes coordinateFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+.atlas-radar-beacon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.atlas-radar-beacon::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid var(--color-accent);
+  animation: radarPing 2.4s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+/* 14. Hero Pinned Stage Layering */
+.hero-pinned-viewport {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 640px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hero-drawing-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  will-change: transform, opacity;
+}
+
+.hero-render-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  will-change: clip-path, transform, opacity;
+}
+
+.hero-registration-crosshair {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+.hero-registration-crosshair::before,
+.hero-registration-crosshair::after {
+  content: '';
+  position: absolute;
+  background-color: var(--color-border);
+}
+
+.hero-registration-crosshair::before {
+  top: 11px;
+  left: 0;
+  width: 24px;
+  height: 1px;
+}
+
+.hero-registration-crosshair::after {
+  top: 0;
+  left: 11px;
+  width: 1px;
+  height: 24px;
+}
+
+
