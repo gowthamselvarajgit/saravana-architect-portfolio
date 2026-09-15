@@ -17,13 +17,17 @@ export default function Navigation({ theme = 'light', onToggleTheme, onNavigate,
 
   const isDark = theme === 'dark';
 
+  const isHomepage = currentPath === '/';
+
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 25);
+      const threshold = isHomepage ? window.innerHeight * 1.5 : 25;
+      setIsScrolled(window.scrollY > threshold);
     };
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHomepage]);
 
   const navLinks = [
     { label: 'PROJECTS', path: '/projects', targetId: 'projects' },
@@ -42,8 +46,10 @@ export default function Navigation({ theme = 'light', onToggleTheme, onNavigate,
     }
   };
 
+  const shouldHideOnHero = isHomepage && !isScrolled;
+
   return (
-    <header role="banner" data-anim="nav" className={`arch-navbar ${isScrolled ? 'scrolled' : ''}`}>
+    <header role="banner" data-anim="nav" className={`arch-navbar ${isScrolled ? 'scrolled' : ''} ${shouldHideOnHero ? 'navbar-hero-hidden' : ''}`}>
       <div className="arch-navbar-container">
         
         {/* Left Brand Box */}

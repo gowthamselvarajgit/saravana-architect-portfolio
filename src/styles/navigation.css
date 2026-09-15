@@ -11,7 +11,13 @@
   z-index: 1000;
   background-color: var(--color-bg);
   border-bottom: 1px solid var(--color-border);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.4s ease, opacity 0.4s ease;
+}
+
+.arch-navbar.navbar-hero-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-100%);
 }
 
 [data-theme="dark"] .arch-navbar {

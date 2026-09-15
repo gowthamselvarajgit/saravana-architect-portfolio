@@ -23,4 +23,17 @@ export default defineConfig({
       ],
     },
   },
+  build: {
+    chunkSizeWarningLimit: 900,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-three': ['three'],
+          'vendor-gsap': ['gsap', '@gsap/react'],
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-utils': ['lenis', 'topojson-client'],
+        },
+      },
+    },
+  },
 });

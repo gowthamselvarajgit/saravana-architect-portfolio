@@ -124,47 +124,49 @@ export function usePageAnimations(containerRef) {
           }
 
           // =================================================================
-          // 3. HERO — heading, frame reveal, then narrative sub-bar
+          // 3. HERO — heading, frame reveal (if legacy hero-bar present)
           // =================================================================
-          const heroTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: '[data-anim="hero-bar"]',
-              start: 'top 88%',
-              once: true,
-            },
-          });
+          if (container.querySelector('[data-anim="hero-bar"]')) {
+            const heroTl = gsap.timeline({
+              scrollTrigger: {
+                trigger: '[data-anim="hero-bar"]',
+                start: 'top 88%',
+                once: true,
+              },
+            });
 
-          heroTl
-            .from('[data-anim="hero-bar"]', {
-              autoAlpha: 0,
-              y: 12,
-              duration: 0.55,
-              ease: EASE_GSAP,
-              clearProps: 'transform',
-            })
-            .from(
-              '[data-anim="hero-frame"]',
-              {
+            heroTl
+              .from('[data-anim="hero-bar"]', {
                 autoAlpha: 0,
-                y: 20,
-                duration: 0.9,
+                y: 12,
+                duration: 0.55,
                 ease: EASE_GSAP,
                 clearProps: 'transform',
-              },
-              '-=0.2'
-            )
-            .from(
-              '[data-anim="hero-sub"]',
-              {
-                autoAlpha: 0,
-                y: 10,
-                duration: 0.5,
-                ease: EASE_GSAP,
-                stagger: 0.08,
-                clearProps: 'transform',
-              },
-              '-=0.35'
-            );
+              })
+              .from(
+                '[data-anim="hero-frame"]',
+                {
+                  autoAlpha: 0,
+                  y: 20,
+                  duration: 0.9,
+                  ease: EASE_GSAP,
+                  clearProps: 'transform',
+                },
+                '-=0.2'
+              )
+              .from(
+                '[data-anim="hero-sub"]',
+                {
+                  autoAlpha: 0,
+                  y: 10,
+                  duration: 0.5,
+                  ease: EASE_GSAP,
+                  stagger: 0.08,
+                  clearProps: 'transform',
+                },
+                '-=0.35'
+              );
+          }
 
           // =================================================================
           // 4. SECTION HEADERS — subtle ScrollTrigger reveal
