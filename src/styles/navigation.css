@@ -272,23 +272,23 @@
 /* Illustration / Media container */
 .mega-card-illustration {
   margin-top: 1rem;
-  height: 108px;
+  height: 184px;
   border-radius: 12px;
-  border: 1px dashed rgba(0, 0, 0, 0.14);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: block;
+  background: rgba(0, 0, 0, 0.04);
   color: #68707D;
   overflow: hidden;
   position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 [data-theme="dark"] .mega-card-illustration,
 .arch-navbar-pill.on-hero .mega-card-illustration {
-  border-color: rgba(255, 255, 255, 0.14);
-  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
   color: #9E9B95;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .mega-card-img {
@@ -305,47 +305,35 @@
   transform: scale(1.04);
 }
 
-/* Portrait Badge in Profile Card */
+/* Portrait in Profile Card */
 .mega-card-portrait-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.03);
+  background: #141311;
+  position: relative;
 }
 
 [data-theme="dark"] .mega-card-portrait-container,
 .arch-navbar-pill.on-hero .mega-card-portrait-container {
-  background: rgba(255, 255, 255, 0.02) !important;
-}
-
-.mega-portrait-badge-wrapper {
-  position: relative;
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  padding: 3px;
-  border: 1.5px solid #0066FF;
-  box-shadow: 0 0 16px rgba(0, 102, 255, 0.28);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-}
-
-.arch-mega-card-featured:hover .mega-portrait-badge-wrapper {
-  transform: scale(1.06);
-  box-shadow: 0 0 24px rgba(0, 102, 255, 0.45);
+  background: #100f0d !important;
 }
 
 .mega-portrait-img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 11px;
   object-fit: cover;
-  object-position: center 22%;
+  object-position: center 18%;
   display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arch-mega-card-featured:hover .mega-portrait-img {
+  transform: scale(1.04);
 }
 
 /* Sketched project image styling */
 .mega-card-sketch-container {
   background: #f7f6f2 !important;
+  position: relative;
 }
 
 [data-theme="dark"] .mega-card-sketch-container,
@@ -354,13 +342,22 @@
 }
 
 .mega-card-sketch-img {
-  object-fit: contain;
-  padding: 6px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  padding: 0;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="dark"] .mega-card-sketch-img,
 .arch-navbar-pill.on-hero .mega-card-sketch-img {
   filter: invert(0.92) contrast(1.1);
+}
+
+.arch-mega-card-featured:hover .mega-card-sketch-img {
+  transform: scale(1.04);
 }
 
 /* Mini diagram in stacked cards */

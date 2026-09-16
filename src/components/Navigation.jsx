@@ -107,15 +107,13 @@ export default function Navigation({ theme = 'light', onToggleTheme, onNavigate,
                     </p>
                   </div>
 
-                  {/* Architect portrait image as requested */}
+                  {/* Architect portrait image covered inside card */}
                   <div className="mega-card-illustration mega-card-portrait-container" aria-hidden="true">
-                    <div className="mega-portrait-badge-wrapper">
-                      <img
-                        src="/assets/images/saravanakumar-portrait.png"
-                        alt="Saravanakumar K - Graduate Architect"
-                        className="mega-portrait-img"
-                      />
-                    </div>
+                    <img
+                      src="/assets/images/saravanakumar-portrait.png"
+                      alt="Saravanakumar K - Graduate Architect"
+                      className="mega-card-img mega-portrait-img"
+                    />
                   </div>
                 </a>
 
