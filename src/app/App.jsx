@@ -73,37 +73,26 @@ export default function App() {
       return;
     }
 
-    if (to === '/projects') {
-      if (route.path !== '/') {
-        window.history.pushState({}, '', '/');
-        setRoute(parseCurrentRoute());
-      }
-      setTimeout(() => {
-        const el = document.getElementById('projects');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-      return;
-    }
+    const sectionMap = {
+      '/projects': 'projects',
+      '/about': 'about',
+      '/experience': 'experience',
+      '/education': 'education',
+      '/achievements': 'achievements',
+      '/technology': 'technology',
+      '/gallery': 'gallery',
+      '/archive': 'archive',
+      '/contact': 'contact',
+    };
 
-    if (to === '/experience' || to === '/education' || to === '/about') {
+    if (sectionMap[to]) {
+      const targetId = sectionMap[to];
       if (route.path !== '/') {
         window.history.pushState({}, '', '/');
         setRoute(parseCurrentRoute());
       }
       setTimeout(() => {
-        const el = document.getElementById('about');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-      return;
-    }
-
-    if (to === '/contact') {
-      if (route.path !== '/') {
-        window.history.pushState({}, '', '/');
-        setRoute(parseCurrentRoute());
-      }
-      setTimeout(() => {
-        const el = document.getElementById('contact');
+        const el = document.getElementById(targetId);
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }, 100);
       return;

@@ -120,6 +120,32 @@ export default function AboutSection() {
                 </span>
               </div>
             ))}
+
+            {/* Direct Download Button inside CV summary */}
+            <div style={{ marginTop: 'var(--space-md)', paddingTop: 'var(--space-sm)' }}>
+              <a
+                href="/Saravanakumar_K_Architect_Resume.pdf"
+                download="Saravanakumar_K_Architect_Resume.pdf"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.05em',
+                  color: 'var(--color-bg)',
+                  backgroundColor: 'var(--color-accent)',
+                  padding: '8px 16px',
+                  textDecoration: 'none',
+                  transition: 'opacity 0.2s ease',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.85'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+              >
+                <span>DOWNLOAD COMPLETE CV (PDF)</span>
+                <span>↓</span>
+              </a>
+            </div>
           </div>
         </div>
       </Container>

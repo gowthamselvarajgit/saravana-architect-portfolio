@@ -10,7 +10,6 @@ import Lenis from 'lenis';
 
 import { Globe } from './globe/Globe.js';
 import ArchitectLoader from './ArchitectLoader.jsx';
-import GooeyNav from '../navigation/GooeyNav.jsx';
 import { ARCHITECTURAL_HEADLINES, ARCHITECTURAL_TELEMETRY } from './globe/architecturalData.js';
 import '../../styles/architect-hero.css';
 
@@ -19,8 +18,6 @@ gsap.registerPlugin(ScrollTrigger);
 export default function ArchitectHero({ onNavigate }) {
   const canvasRef = useRef(null);
   const labelsRef = useRef(null);
-  const burgerRef = useRef(null);
-  const mobileDrawerRef = useRef(null);
   const tickerLineRef = useRef(null);
   const readoutLaneRef = useRef(null);
   const readoutModeRef = useRef(null);
@@ -29,16 +26,6 @@ export default function ArchitectHero({ onNavigate }) {
   const dragHintRef = useRef(null);
 
   const globeRef = useRef(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const navItems = [
-    { label: 'Works', href: '#projects', targetId: 'projects' },
-    { label: 'Atlas', href: '/atlas' },
-    { label: 'Craft', href: '#craft', targetId: 'craft' },
-    { label: 'Archive', href: '#archive', targetId: 'archive' },
-    { label: 'Credentials', href: '/about', targetId: 'about' },
-    { label: 'Contact', href: '/contact', targetId: 'contact' },
-  ];
 
   // 1. Procedural Film Grain
   const makeGrain = () => {
@@ -163,7 +150,6 @@ export default function ArchitectHero({ onNavigate }) {
     }
 
     tl.to('.rail', { opacity: 1, duration: 1.0 }, 0.1);
-    tl.to('.nav', { opacity: 1, duration: 1.1 }, 0.25);
 
     tl.to('.hero__eyebrow .mask__i', { y: '0%', duration: 1.05 }, 0.4);
 
@@ -194,10 +180,10 @@ export default function ArchitectHero({ onNavigate }) {
     let lenis = null;
     if (!reduced) {
       lenis = new Lenis({
-        duration: 1.15,
+        duration: 0.75,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        touchMultiplier: 1.6,
+        touchMultiplier: 1.1,
       });
 
       lenis.on('scroll', ScrollTrigger.update);
@@ -214,7 +200,6 @@ export default function ArchitectHero({ onNavigate }) {
     const readout = document.querySelector('#readout');
     const drag = document.querySelector('#dragHint');
     const rail = document.querySelector('.rail');
-    const nav = document.querySelector('.nav');
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -229,14 +214,17 @@ export default function ArchitectHero({ onNavigate }) {
     tl.to(heroCopy, { y: -90, opacity: 0, ease: 'none', duration: 0.32 }, 0)
       .to([cue, drag], { opacity: 0, ease: 'none', duration: 0.14 }, 0)
       .to(readout, { opacity: 0, y: 16, ease: 'none', duration: 0.18 }, 0.02)
-      .to([rail, nav], { opacity: 0, y: -16, ease: 'none', duration: 0.24 }, 0.04);
+      .to(rail, { opacity: 0, y: -16, ease: 'none', duration: 0.24 }, 0.04);
 
     // Camera dives into limb
     tl.to(globe, {
       dive: 1,
       ease: 'none',
       duration: 0.92,
-      onUpdate: () => globe.setDive(globe.dive),
+      onUpdate: () => {
+        globe.setDive(globe.dive);
+        globe.update();
+      },
     }, 0.05);
 
     // DOM bloom swells then blows out
@@ -265,6 +253,8 @@ export default function ArchitectHero({ onNavigate }) {
     };
   };
 
+  const loaderCompletedRef = useRef(false);
+
   // Mount Effect
   useEffect(() => {
     makeGrain();
@@ -274,8 +264,15 @@ export default function ArchitectHero({ onNavigate }) {
     if (!canvas || !labels) return;
 
     const globe = new Globe(canvas, labels);
-    globe.setIntro(0);
     globeRef.current = globe;
+
+    // 1. Immediately initialize the scroll-driven atmospheric descent so ScrollTrigger is ALWAYS active!
+    let scrollClean = null;
+    try {
+      scrollClean = initScroll(globe);
+    } catch (e) {
+      console.warn('Scroll init warning:', e);
+    }
 
     // Bind drag hint dismissal on user orbit
     globe.onDragged = () => {
@@ -285,22 +282,49 @@ export default function ArchitectHero({ onNavigate }) {
       globe.onDragged = null;
     };
 
+    const hasSeenLoader = typeof window !== 'undefined' && sessionStorage.getItem('saravana_loader_seen');
+
+    if (hasSeenLoader || loaderCompletedRef.current) {
+      document.body.classList.remove('is-locked');
+      globe.setIntro(1);
+      gsap.set('.mask__i', { y: '0%' });
+      gsap.set('[data-intro], .rail, .hero__actions, #readout, .scrollcue, #dragHint', { opacity: 1, y: 0 });
+    } else {
+      document.body.classList.add('is-locked');
+      globe.setIntro(0);
+    }
+
     let rafId = 0;
+    let isVisible = true;
     const loop = () => {
-      globe.update();
+      if (isVisible) {
+        globe.update();
+      }
       rafId = requestAnimationFrame(loop);
     };
     rafId = requestAnimationFrame(loop);
 
-    document.body.classList.add('is-locked');
+    const heroEl = document.getElementById('hero');
+    let observer = null;
+    if (heroEl && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          isVisible = entry.isIntersecting;
+        },
+        { rootMargin: '300px 0px 300px 0px', threshold: 0 }
+      );
+      observer.observe(heroEl);
+    }
 
     const cleanTicker = startTicker();
     const cleanTelemetry = startTelemetry();
 
     return () => {
       cancelAnimationFrame(rafId);
+      if (observer) observer.disconnect();
       cleanTicker();
       cleanTelemetry();
+      scrollClean?.destroy();
       globe.dispose();
       globeRef.current = null;
       document.body.classList.remove('is-locked');
@@ -310,17 +334,19 @@ export default function ArchitectHero({ onNavigate }) {
   // Handler when loader completes
   const handleLoaderComplete = useCallback(() => {
     document.body.classList.remove('is-locked');
+    loaderCompletedRef.current = true;
     const globe = globeRef.current;
 
-    const intro = playIntro(globe);
     if (globe) {
-      intro.eventCallback('onComplete', () => {
-        initScroll(globe);
-      });
+      playIntro(globe);
+      globe.setIntro(1);
     }
 
     if (document.fonts?.ready) {
-      document.fonts.ready.then(() => window.dispatchEvent(new Event('resize')));
+      document.fonts.ready.then(() => {
+        window.dispatchEvent(new Event('resize'));
+        ScrollTrigger.refresh();
+      });
     }
   }, []);
 
@@ -381,89 +407,6 @@ export default function ArchitectHero({ onNavigate }) {
               <span className="rail__sep">/</span>
               <span className="rail__link" onClick={(e) => handleNavClick(e, '/contact', 'contact')}>Dispatch</span>
             </div>
-          </div>
-
-          {/* ── Navigation with GooeyNav ── */}
-          <header className="nav" data-intro="nav">
-            <a
-              className="nav__logo"
-              href="/"
-              onClick={(e) => handleNavClick(e, '/')}
-              aria-label="Saravanakumar K — Architectural Portfolio"
-            >
-              <span>SARAVANAKUMAR</span><em>ARCHITECT</em>
-            </a>
-
-            {/* Gooey Nav from React Bits */}
-            <div className="nav__gooey-slot">
-              <GooeyNav items={navItems} onNavigate={onNavigate} />
-            </div>
-
-            <div className="nav__right">
-              <a className="btn btn--solid nav__cta" href="#contact" onClick={(e) => handleNavClick(e, '/contact', 'contact')}>
-                <span className="btn__label roll"><i>Let's Connect</i><i aria-hidden="true">Let's Connect</i></span>
-              </a>
-
-              <button
-                className="nav__burger"
-                id="navBurger"
-                ref={burgerRef}
-                aria-label="Open menu"
-                aria-expanded={mobileMenuOpen}
-                onClick={() => {
-                  const next = !mobileMenuOpen;
-                  setMobileMenuOpen(next);
-                  if (mobileDrawerRef.current) {
-                    if (next) {
-                      gsap.set(mobileDrawerRef.current, {
-                        display: 'flex',
-                        position: 'fixed',
-                        inset: '0',
-                        zIndex: 100,
-                        margin: 0,
-                        padding: '16vh 8vw',
-                        gap: '1.8rem',
-                        background: 'rgba(5,6,10,0.96)',
-                        backdropFilter: 'blur(16px)',
-                      });
-                      gsap.fromTo(mobileDrawerRef.current.children,
-                        { opacity: 0, y: 22 },
-                        { opacity: 1, y: 0, duration: 0.6, stagger: 0.06, ease: 'expo.out' });
-                    } else {
-                      gsap.to(mobileDrawerRef.current, {
-                        opacity: 0,
-                        duration: 0.25,
-                        onComplete: () => gsap.set(mobileDrawerRef.current, { clearProps: 'all' }),
-                      });
-                    }
-                  }
-                }}
-              >
-                <i></i><i></i>
-              </button>
-            </div>
-          </header>
-
-          {/* Mobile Drawer */}
-          <div className="nav__mobile-drawer" ref={mobileDrawerRef} style={{ display: 'none' }}>
-            {navItems.map((item, idx) => (
-              <a
-                key={idx}
-                className="nav__mobile-link"
-                href={item.href}
-                onClick={(e) => handleNavClick(e, item.href, item.targetId)}
-              >
-                {item.label}
-              </a>
-            ))}
-            <a
-              className="btn btn--solid"
-              style={{ marginTop: '1.5rem', width: 'fit-content' }}
-              href="#contact"
-              onClick={(e) => handleNavClick(e, '/contact', 'contact')}
-            >
-              Initiate Dialogue
-            </a>
           </div>
 
           {/* ── Hero Copy (Personal, High-Engagement Architectural Lockup) ── */}

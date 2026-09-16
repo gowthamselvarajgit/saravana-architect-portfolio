@@ -11,18 +11,19 @@
   /* Locked from MASTER_CREATIVE_DIRECTION_FINAL.md */
   --color-raw-near-black: #0A0906;
   --color-raw-warm-paper: #F4F0E8;
-  --color-raw-ink: #1A1815;
+  --color-raw-ink: #111111;
   --color-raw-chalk: #E8E4DC;
   --color-raw-blueprint: #1A2B4A;
-  --color-raw-crimson: #C41E2A;
+  --color-raw-accent: #0066FF;
+  --color-raw-crimson: #0066FF;
 
   /* --- 2. SEMANTIC TOKENS: DARK SURFACE (Default Master Surface) --- */
   --color-dark-bg: var(--color-raw-near-black);
   --color-dark-surface: #12100C;
   --color-dark-surface-elevated: #181612;
-  --color-dark-text-primary: var(--color-raw-warm-paper);
-  --color-dark-text-secondary: rgba(244, 240, 232, 0.74);
-  --color-dark-text-muted: rgba(244, 240, 232, 0.46);
+  --color-dark-text-primary: #FFFFFF;
+  --color-dark-text-secondary: rgba(255, 255, 255, 0.68);
+  --color-dark-text-muted: rgba(255, 255, 255, 0.44);
   --color-dark-border: rgba(232, 228, 220, 0.12);
   --color-dark-border-subtle: rgba(232, 228, 220, 0.06);
   --color-dark-border-strong: rgba(232, 228, 220, 0.24);
@@ -31,17 +32,18 @@
   --color-light-bg: var(--color-raw-warm-paper);
   --color-light-surface: #ECE7DE;
   --color-light-surface-elevated: #E5E0D5;
-  --color-light-text-primary: var(--color-raw-ink);
-  --color-light-text-secondary: rgba(26, 24, 21, 0.78);
-  --color-light-text-muted: rgba(26, 24, 21, 0.50);
+  --color-light-text-primary: #111111;
+  --color-light-text-secondary: #68707D;
+  --color-light-text-muted: rgba(17, 17, 17, 0.46);
   --color-light-border: rgba(26, 24, 21, 0.12);
   --color-light-border-subtle: rgba(26, 24, 21, 0.06);
   --color-light-border-strong: rgba(26, 24, 21, 0.24);
 
-  /* --- 4. ACCENTS & METRIC INDICATORS --- */
-  --color-accent: var(--color-raw-crimson);
-  --color-blueprint: var(--color-raw-blueprint);
+  /* --- 4. ACCENTS & METRIC INDICATORS (Color 3: Precision Architectural Blue) --- */
+  --color-accent: #0066FF;
+  --color-blueprint: #0066FF;
   --color-chalk: var(--color-raw-chalk);
+  --color-text-accent: #0066FF;
 
   /* --- 5. ACTIVE SURFACE VARIABLES (Defaults to Light Theme — Warm Paper) --- */
   --color-bg: var(--color-light-bg);

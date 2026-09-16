@@ -175,14 +175,22 @@ export default function ArchitectLoader({ readyPromise, onComplete }) {
       tick();
     });
 
-    const MIN_PHASE_1 = 1800;
+    const hasSeenLoader = typeof window !== 'undefined' && sessionStorage.getItem('saravana_loader_seen');
+    if (hasSeenLoader) {
+      root.classList.add('is-gone');
+      stage.style.display = 'none';
+      if (onCompleteRef.current) onCompleteRef.current();
+      return;
+    }
+
+    const MIN_PHASE_1 = 380;
     const startedAt = performance.now();
 
     let assetsDone = false;
     const ready = readyPromiseRef.current || Promise.resolve();
     const fontReady = document.fonts ? document.fonts.ready : Promise.resolve();
-    // Guarantee asset completion within 1.5 seconds even on slow networks
-    const assetTimeout = new Promise((r) => setTimeout(r, 1500));
+    // Guarantee asset completion within 300ms
+    const assetTimeout = new Promise((r) => setTimeout(r, 300));
     Promise.race([Promise.all([ready, fontReady]), assetTimeout])
       .then(() => { assetsDone = true; })
       .catch(() => { assetsDone = true; });
@@ -204,14 +212,14 @@ export default function ArchitectLoader({ readyPromise, onComplete }) {
 
           const floor = Math.min(100, (elapsed / MIN_PHASE_1) * 100);
           const cap = assetsDone ? 100 : 94;
-          target = Math.min(cap, Math.max(target + 50 * dt, floor));
-          shown += (target - shown) * Math.min(1, 14 * dt);
+          target = Math.min(cap, Math.max(target + 80 * dt, floor));
+          shown += (target - shown) * Math.min(1, 24 * dt);
 
           if (pctEl) {
             pctEl.textContent = String(Math.min(100, Math.round(shown))).padStart(2, '0');
           }
 
-          if (elapsed >= MIN_PHASE_1 && (shown >= 98.5 || elapsed >= MIN_PHASE_1 + 600)) {
+          if (elapsed >= MIN_PHASE_1 && (shown >= 98.5 || elapsed >= MIN_PHASE_1 + 250)) {
             if (pctEl) pctEl.textContent = '100';
             resolve();
             return;
@@ -230,6 +238,7 @@ export default function ArchitectLoader({ readyPromise, onComplete }) {
 
       if (reduced) {
         stop();
+        sessionStorage.setItem('saravana_loader_seen', '1');
         root.classList.add('is-gone');
         if (onCompleteRef.current) onCompleteRef.current();
         return;
@@ -245,37 +254,37 @@ export default function ArchitectLoader({ readyPromise, onComplete }) {
       const bodyEl = stage.querySelector('.loader__body');
       tl.to([bodyEl, mapEl, pctEl.parentElement], {
         opacity: 0,
-        duration: 0.35,
+        duration: 0.2,
         ease: 'power2.inOut',
         onComplete: stop,
-      }, 0.1);
+      }, 0.05);
 
       tl.to(mark, {
         x: dx,
         y: dy,
-        duration: 0.75,
+        duration: 0.4,
         ease: 'expo.inOut',
-      }, 0.2);
+      }, 0.1);
 
       tl.to(rings, {
         opacity: 1,
         scale: 1,
-        duration: 0.75,
+        duration: 0.4,
         ease: 'expo.out',
-        stagger: 0.05,
-      }, 0.4);
+        stagger: 0.03,
+      }, 0.18);
 
       /* Phase 3: Circular wipe opening onto the hero */
       const hole = { v: 0 };
       tl.to(hole, {
         v: 80,
-        duration: 0.95,
+        duration: 0.5,
         ease: 'power2.inOut',
         onUpdate: () => root.style.setProperty('--hole', `${hole.v}%`),
-      }, 1.15);
+      }, 0.45);
 
-      tl.to(mark, { opacity: 0, duration: 0.25, ease: 'power2.in' }, 1.25);
-      tl.to(rings, { opacity: 0, duration: 0.35, ease: 'power2.in', stagger: 0.03 }, 1.3);
+      tl.to(mark, { opacity: 0, duration: 0.18, ease: 'power2.in' }, 0.5);
+      tl.to(rings, { opacity: 0, duration: 0.22, ease: 'power2.in', stagger: 0.02 }, 0.52);
 
       const span = Math.hypot(window.innerWidth, window.innerHeight) * 1.25;
       wipes.forEach((el, i) => {
@@ -285,12 +294,13 @@ export default function ArchitectLoader({ readyPromise, onComplete }) {
             opacity: 0,
             width: span,
             height: span,
-            duration: 0.85,
+            duration: 0.48,
             ease: 'power2.out',
-          }, 1.14 + i * 0.08);
+          }, 0.46 + i * 0.05);
       });
 
       await tl.then();
+      sessionStorage.setItem('saravana_loader_seen', '1');
       root.classList.add('is-gone');
       stage.style.display = 'none';
       if (onCompleteRef.current) onCompleteRef.current();

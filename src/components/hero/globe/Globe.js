@@ -669,7 +669,7 @@ export class Globe {
         uBase:       { value: new THREE.Color('#f0f5ff') },
         uSize:       { value: 5.4 },
         uPixelRatio: { value: this.size.dpr },
-        uReveal:     { value: 0 },
+        uReveal:     { value: this.introP !== undefined ? this.introP : 1 },
         uOpacity:    { value: 1 },
       },
       transparent: true,
@@ -681,6 +681,10 @@ export class Globe {
     this.dots.renderOrder = 2;
     this.dots.frustumCulled = false;
     this.globe.add(this.dots);
+
+    if (this.introP !== undefined) {
+      this.dotMat.uniforms.uReveal.value = this.introP;
+    }
 
     this._makeCityLights(coastal);
 
@@ -914,7 +918,10 @@ export class Globe {
     this.arcs.setOpacity(detail);
     this.markerMat.uniforms.uOpacity.value =
       THREE.MathUtils.clamp((this.introP - 0.35) / 0.5, 0, 1) * detail;
-    if (this.dotMat) this.dotMat.uniforms.uOpacity.value = 0.35 + 0.65 * detail;
+    if (this.dotMat) {
+      this.dotMat.uniforms.uReveal.value = this.introP !== undefined ? this.introP : 1;
+      this.dotMat.uniforms.uOpacity.value = 0.35 + 0.65 * detail;
+    }
     this.labels.setMaster(detail);
 
     this.bloom.strength = 0.62 + diveEase * 0.42;
