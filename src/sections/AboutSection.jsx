@@ -113,8 +113,8 @@ export default function AboutSection() {
                   <div className="arch-char-badge-left">
                     <span className="arch-char-badge-dot" />
                     <div>
-                      <div className="arch-char-badge-title">Saravanakumar K · CAD Studio</div>
-                      <div className="arch-char-badge-sub">Interactive Cursor Tracking &amp; Typing Active</div>
+                      <div className="arch-char-badge-title">Saravanakumar K · Digital Twin</div>
+                      <div className="arch-char-badge-sub">Real-Time Cursor &amp; Eye Tracking Active</div>
                     </div>
                   </div>
                   <span style={{ fontFamily: 'var(--f-mono)', fontSize: '0.62rem', color: '#666', letterSpacing: '0.05em' }}>
@@ -148,7 +148,7 @@ export default function AboutSection() {
                   {/* Architect Portrait */}
                   <div className="arch-id-photo-wrapper">
                     <img
-                      src="/assets/images/saravanakumar-portrait.png"
+                      src="/assets/images/saravanakumar-3d-avatar.png"
                       alt="Saravanakumar K - Graduate Architect"
                       className="arch-id-photo-img"
                     />
