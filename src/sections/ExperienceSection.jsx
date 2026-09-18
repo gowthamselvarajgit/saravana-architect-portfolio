@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROFESSIONAL_ARCHIVE } from '../data/projectsData';
@@ -8,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Animated Metric Counter Component
- * Triggers a smooth numeric count-up animation when scrolled into view via GSAP
+ * Triggers a smooth numeric count-up animation when scrolled into view
  */
 function AnimatedCounter({ value, suffix = '', label }) {
   const [displayValue, setDisplayValue] = useState('0');
@@ -18,18 +19,17 @@ function AnimatedCounter({ value, suffix = '', label }) {
     const el = countRef.current;
     if (!el) return;
 
-    // Numerical value parsing
     const numericPart = parseFloat(value);
     const obj = { count: 0 };
 
     const st = ScrollTrigger.create({
       trigger: el,
-      start: 'top 85%',
+      start: 'top 88%',
       once: true,
       onEnter: () => {
         gsap.to(obj, {
           count: numericPart,
-          duration: 1.8,
+          duration: 1.6,
           ease: 'power2.out',
           onUpdate: () => {
             if (value.includes('.')) {
@@ -46,724 +46,500 @@ function AnimatedCounter({ value, suffix = '', label }) {
   }, [value]);
 
   return (
-    <div ref={countRef} className="arch-metric-tile">
-      <div className="arch-crosshair arch-crosshair-tl" aria-hidden="true" />
-      <div className="arch-crosshair arch-crosshair-br" aria-hidden="true" />
-      <div className="arch-metric-num">
+    <div ref={countRef} className="arch-metric-card">
+      <div className="arch-metric-card-num">
         {displayValue}
-        {suffix}
+        <span>{suffix}</span>
       </div>
-      <div className="arch-metric-label">{label}</div>
+      <div className="arch-metric-card-label">{label}</div>
     </div>
   );
 }
 
 /**
- * Stylized Architectural Blueprint Graphic for Each Practice Scheme
- * Renders technical vector CAD drawing geometries (Elevations, Arches, Diagrids, Contours, Radials)
+ * Vector SVG Icons for Card Badges
  */
-function BlueprintGraphic({ id }) {
-  const gridPattern = (
-    <defs>
-      <pattern id={`cadGrid-${id}`} width="18" height="18" patternUnits="userSpaceOnUse">
-        <path d="M 18 0 L 0 0 0 18" fill="none" stroke="rgba(0, 102, 255, 0.12)" strokeWidth="0.75" />
-      </pattern>
-    </defs>
-  );
-
-  let drawing = null;
-
-  switch (id) {
-    case 'ahc-clubhouse-upper-thane':
-      drawing = (
-        <g stroke="#00E5FF" strokeWidth="1.2" fill="none">
-          <path d="M 45 85 C 85 38, 160 38, 205 85 C 235 115, 115 122, 45 85 Z" stroke="#00E5FF" strokeWidth="1.5" fill="rgba(0, 229, 255, 0.08)" />
-          <path d="M 60 83 C 90 48, 150 48, 190 83" stroke="rgba(0, 229, 255, 0.4)" strokeDasharray="3 3" />
-          <rect x="175" y="24" width="135" height="56" rx="2" stroke="#0066FF" strokeWidth="1.5" fill="rgba(0, 102, 255, 0.12)" />
-          <line x1="175" y1="42" x2="310" y2="42" stroke="#0066FF" strokeDasharray="4 2" />
-          <line x1="195" y1="24" x2="195" y2="80" stroke="rgba(0, 229, 255, 0.35)" />
-          <line x1="218" y1="24" x2="218" y2="80" stroke="rgba(0, 229, 255, 0.35)" />
-          <line x1="240" y1="24" x2="240" y2="80" stroke="rgba(0, 229, 255, 0.35)" />
-          <line x1="262" y1="24" x2="262" y2="80" stroke="rgba(0, 229, 255, 0.35)" />
-          <line x1="285" y1="24" x2="285" y2="80" stroke="rgba(0, 229, 255, 0.35)" />
-          <text x="210" y="102" fill="#94a3b8" fontSize="8" fontFamily="monospace" letterSpacing="0.05em">74-ACRE TOWNSHIP</text>
-        </g>
-      );
-      break;
-
-    case 'ahc-vertical-nexus-kharadi':
-      drawing = (
-        <g stroke="#00E5FF" strokeWidth="1.2" fill="none">
-          <rect x="135" y="14" width="85" height="106" stroke="#00E5FF" strokeWidth="1.5" fill="rgba(0, 102, 255, 0.1)" />
-          {[24, 33, 42, 51, 60, 69, 78, 87, 96, 105].map((y) => (
-            <line key={y} x1="135" y1={y} x2="220" y2={y} stroke="rgba(0, 229, 255, 0.35)" />
-          ))}
-          <line x1="155" y1="14" x2="155" y2="120" stroke="#0066FF" strokeDasharray="3 2" />
-          <line x1="177" y1="14" x2="177" y2="120" stroke="#00E5FF" strokeWidth="1.4" />
-          <line x1="200" y1="14" x2="200" y2="120" stroke="#0066FF" strokeDasharray="3 2" />
-          <line x1="177" y1="5" x2="177" y2="14" stroke="#00E5FF" strokeWidth="1.8" />
-          <line x1="235" y1="14" x2="235" y2="120" stroke="rgba(148, 163, 184, 0.5)" strokeDasharray="2 2" />
-          <text x="242" y="68" fill="#00E5FF" fontSize="7.5" fontFamily="monospace">2.03M SQ FT</text>
-        </g>
-      );
-      break;
-
-    case 'ahc-portico-prive-goa':
-      drawing = (
-        <g stroke="#00E5FF" strokeWidth="1.2" fill="none">
-          <path d="M 45 95 L 45 48 A 20 20 0 0 1 85 48 L 85 95" stroke="#00E5FF" strokeWidth="1.5" />
-          <path d="M 85 95 L 85 48 A 20 20 0 0 1 125 48 L 125 95" stroke="#00E5FF" strokeWidth="1.5" />
-          <path d="M 125 95 L 125 48 A 20 20 0 0 1 165 48 L 165 95" stroke="#00E5FF" strokeWidth="1.5" fill="rgba(0, 229, 255, 0.1)" />
-          <path d="M 165 95 L 165 48 A 20 20 0 0 1 205 48 L 205 95" stroke="#00E5FF" strokeWidth="1.5" />
-          <path d="M 205 95 L 205 48 A 20 20 0 0 1 245 48 L 245 95" stroke="#00E5FF" strokeWidth="1.5" />
-          <line x1="35" y1="26" x2="255" y2="26" stroke="#0066FF" strokeWidth="2" />
-          <line x1="40" y1="30" x2="250" y2="30" stroke="rgba(0, 229, 255, 0.4)" />
-          <text x="256" y="62" fill="#94a3b8" fontSize="8" fontFamily="monospace">ARCH OP3–OP6</text>
-          <text x="256" y="75" fill="#00E5FF" fontSize="8" fontFamily="monospace">120-ACRE MASTER</text>
-        </g>
-      );
-      break;
-
-    case 'ahc-crest-bkc':
-      drawing = (
-        <g stroke="#00E5FF" strokeWidth="1.2" fill="none">
-          <polygon points="105,18 250,18 235,116 120,116" stroke="#00E5FF" strokeWidth="1.5" fill="rgba(0, 102, 255, 0.1)" />
-          <line x1="105" y1="18" x2="235" y2="116" stroke="#0066FF" strokeWidth="1.5" />
-          <line x1="250" y1="18" x2="120" y2="116" stroke="#0066FF" strokeWidth="1.5" />
-          <line x1="112" y1="67" x2="242" y2="67" stroke="#00E5FF" strokeDasharray="4 2" />
-          <line x1="85" y1="116" x2="270" y2="116" stroke="#00E5FF" strokeWidth="2" />
-          <text x="35" y="66" fill="#00E5FF" fontSize="8" fontFamily="monospace">SECTIONS A,B,E,I</text>
-        </g>
-      );
-      break;
-
-    case 'ahc-zenith-institution-campus':
-      drawing = (
-        <g stroke="#00E5FF" strokeWidth="1.2" fill="none">
-          <circle cx="180" cy="65" r="50" stroke="rgba(0, 229, 255, 0.25)" strokeDasharray="3 3" />
-          <circle cx="180" cy="65" r="35" stroke="#0066FF" strokeWidth="1.5" />
-          <circle cx="180" cy="65" r="18" stroke="#00E5FF" strokeWidth="1.5" fill="rgba(0, 229, 255, 0.15)" />
-          <line x1="180" y1="15" x2="180" y2="115" stroke="#0066FF" />
-          <line x1="130" y1="65" x2="230" y2="65" stroke="#0066FF" />
-          <line x1="145" y1="30" x2="215" y2="100" stroke="rgba(0, 229, 255, 0.4)" strokeDasharray="2 2" />
-          <path d="M 40 105 Q 180 85, 320 110" stroke="#00E5FF" strokeWidth="1.8" />
-          <text x="38" y="32" fill="#94a3b8" fontSize="8" fontFamily="monospace">10 LAC SQ FT BLOCK</text>
-        </g>
-      );
-      break;
-
-    case 'ahc-ridgeview-institute':
-      drawing = (
-        <g stroke="#00E5FF" strokeWidth="1.2" fill="none">
-          <path d="M 30 35 Q 160 55, 330 25" stroke="rgba(0, 229, 255, 0.3)" />
-          <path d="M 30 55 Q 170 80, 330 45" stroke="#0066FF" strokeWidth="1.5" />
-          <path d="M 30 75 Q 180 100, 330 65" stroke="#00E5FF" strokeWidth="1.6" />
-          <path d="M 30 95 Q 190 120, 330 85" stroke="rgba(0, 229, 255, 0.4)" strokeDasharray="3 3" />
-          <rect x="85" y="42" width="48" height="22" stroke="#00E5FF" strokeWidth="1.5" fill="rgba(0, 102, 255, 0.2)" />
-          <rect x="145" y="60" width="58" height="24" stroke="#00E5FF" strokeWidth="1.5" fill="rgba(0, 102, 255, 0.2)" />
-          <rect x="220" y="48" width="48" height="22" stroke="#00E5FF" strokeWidth="1.5" fill="rgba(0, 102, 255, 0.2)" />
-          <text x="90" y="24" fill="#00E5FF" fontSize="7.5" fontFamily="monospace">3D TERRAIN CONTOURS</text>
-        </g>
-      );
-      break;
-
-    case 'ahc-diadem-tower':
-      drawing = (
-        <g stroke="#00E5FF" strokeWidth="1.2" fill="none">
-          <polygon points="120,115 135,45 155,25 180,12 205,25 225,45 240,115" stroke="#00E5FF" strokeWidth="1.6" fill="rgba(0, 102, 255, 0.12)" />
-          <line x1="180" y1="3" x2="180" y2="15" stroke="#00E5FF" strokeWidth="2" />
-          {[40, 52, 64, 76, 88, 100].map((y) => (
-            <line key={y} x1="130" y1={y} x2="230" y2={y} stroke="rgba(0, 229, 255, 0.35)" />
-          ))}
-          <line x1="115" y1="76" x2="135" y2="76" stroke="#00E5FF" strokeWidth="1.5" />
-          <line x1="225" y1="76" x2="245" y2="76" stroke="#00E5FF" strokeWidth="1.5" />
-          <text x="35" y="60" fill="#94a3b8" fontSize="8" fontFamily="monospace">6BHK/7BHK SIMPLEX</text>
-        </g>
-      );
-      break;
-
-    case 'ahc-interpretation-centre-lothal':
-    default:
-      drawing = (
-        <g stroke="#00E5FF" strokeWidth="1.2" fill="none">
-          <line x1="180" y1="14" x2="180" y2="105" stroke="#00E5FF" strokeWidth="2" />
-          <line x1="180" y1="18" x2="80" y2="95" stroke="#0066FF" strokeWidth="1.5" />
-          <line x1="180" y1="18" x2="120" y2="95" stroke="rgba(0, 229, 255, 0.5)" />
-          <line x1="180" y1="18" x2="240" y2="95" stroke="rgba(0, 229, 255, 0.5)" />
-          <line x1="180" y1="18" x2="280" y2="95" stroke="#0066FF" strokeWidth="1.5" />
-          <path d="M 80 95 Q 180 55, 280 95" stroke="#00E5FF" strokeWidth="1.8" fill="rgba(0, 102, 255, 0.12)" />
-          <text x="95" y="115" fill="#00E5FF" fontSize="7.5" fontFamily="monospace">TENSILE CABLE MAST SYSTEM</text>
-        </g>
-      );
-      break;
-  }
-
+function BuildingIcon() {
   return (
-    <svg
-      width="100%"
-      height="100%"
-      viewBox="0 0 360 130"
-      preserveAspectRatio="xMidYMid slice"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ display: 'block' }}
-    >
-      {gridPattern}
-      <rect width="360" height="130" fill={`url(#cadGrid-${id})`} />
-      {drawing}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="2" width="16" height="20" rx="2" />
+      <line x1="9" y1="6" x2="9" y2="6.01" />
+      <line x1="15" y1="6" x2="15" y2="6.01" />
+      <line x1="9" y1="10" x2="9" y2="10.01" />
+      <line x1="15" y1="10" x2="15" y2="10.01" />
+      <line x1="9" y1="14" x2="9" y2="14.01" />
+      <line x1="15" y1="14" x2="15" y2="14.01" />
+      <line x1="9" y1="18" x2="15" y2="18" />
+    </svg>
+  );
+}
+
+function ArchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 21V10a8 8 0 0 1 16 0v11" />
+      <path d="M8 21v-7a4 4 0 0 1 8 0v7" />
+    </svg>
+  );
+}
+
+function TowerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 22V7l6-5 6 5v15" />
+      <line x1="6" y1="12" x2="18" y2="12" />
+      <line x1="6" y1="17" x2="18" y2="17" />
+    </svg>
+  );
+}
+
+function VillaIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-9.5z" />
+      <path d="M9 21v-6a3 3 0 0 1 6 0v6" />
+    </svg>
+  );
+}
+
+function CampusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+      <path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5" />
+    </svg>
+  );
+}
+
+function MountainIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+    </svg>
+  );
+}
+
+function CompassIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
     </svg>
   );
 }
 
 /**
- * ExperienceSection — Interactive Architectural Bento Dashboard
- * Inspired by modern financial & product UI dashboards with high visual information density
- * Features:
- * - Card 1: Interactive Stacked Bar Chart (Total Built Scope // 3.25M+ Sq Ft)
- * - Card 2: Overlapping Brand Badges & Immersion Metric
- * - Card 3: 3D Embossed Architectural Glass Coin Token with Mouse Tilt
- * - Card 4: Precision Target Capsule Progress Card
- * - Card 5: Active Practice Ledger Stream with Circular Category Badges
- * - Click-to-Inspect Blueprint Modal Drawer
+ * Pinned Cards Configuration
+ * Directly mapped to PROFESSIONAL_ARCHIVE entries
  */
+const PINNED_CARDS_DATA = [
+  {
+    id: 'ahc-crest-bkc',
+    index: '01',
+    theme: 'theme-blue',
+    pinColor: 'blue',
+    categoryKey: 'commercial',
+    categoryLabel: 'Commercial High-Rise',
+    icon: <BuildingIcon />,
+    title: 'The Crest at BKC',
+    location: 'BKC, Mumbai',
+    desc: 'Commercial floor plate drafting, longitudinal sections, and structural slab-drop engineering coordination in Mumbai central financial hub.',
+  },
+  {
+    id: 'ahc-clubhouse-upper-thane',
+    index: '02',
+    theme: 'theme-red',
+    pinColor: 'red',
+    categoryKey: 'township',
+    categoryLabel: 'Township Leisure Club',
+    icon: <ArchIcon />,
+    title: 'Club House — Upper Thane',
+    location: 'Upper Thane, Mumbai',
+    desc: 'Schematic cross-sections, ground floor recreation spatial flow, and detail working drawings for a 74-acre integrated township masterplan.',
+  },
+  {
+    id: 'ahc-vertical-nexus-kharadi',
+    index: '03',
+    theme: 'theme-green',
+    pinColor: 'green',
+    categoryKey: 'high-rise',
+    categoryLabel: 'High-Rise Residential',
+    icon: <TowerIcon />,
+    title: 'Vertical Nexus',
+    location: 'Kharadi, Pune',
+    desc: 'High-rise residential circulation, podium fire-tender access compliance, and structural tower coordinates across a 2.03M sq ft site.',
+  },
+  {
+    id: 'ahc-portico-prive-goa',
+    index: '04',
+    theme: 'theme-pink',
+    pinColor: 'pink',
+    categoryKey: 'township',
+    categoryLabel: 'Luxury Villa Masterplan',
+    icon: <VillaIcon />,
+    title: 'The Portico Privé Villa',
+    location: 'Goa, India',
+    desc: 'Mediterranean plotted villa layout, classical colonnade arch options (OP3–OP6), and landscape coordination across 120 acres.',
+  },
+  {
+    id: 'ahc-zenith-institution-campus',
+    index: '05',
+    theme: 'theme-cyan',
+    pinColor: 'cyan',
+    categoryKey: 'campus',
+    categoryLabel: 'Educational Mega-Campus',
+    icon: <CampusIcon />,
+    title: 'The Zenith Campus',
+    location: 'Amaravati / Hyd.',
+    desc: 'Massing axonometrics, radial master planning layout, and residential cluster coordination for 7,524 student units and 10 Lac sq ft academic zones.',
+  },
+  {
+    id: 'ahc-ridgeview-institute',
+    index: '06',
+    theme: 'theme-amber',
+    pinColor: 'amber',
+    categoryKey: 'campus',
+    categoryLabel: 'Hill-Contour Integrated',
+    icon: <MountainIcon />,
+    title: 'Ridgeview Institute',
+    location: 'Navi Mumbai',
+    desc: 'Stepped contour sections, solar sun-path analysis, buildable slope mapping, and 4-phase master plan on natural mountain slopes.',
+  },
+];
+
+const CATEGORIES = [
+  { id: 'all', label: 'ALL SCHEMES', count: 6 },
+  { id: 'high-rise', label: '01 HIGH-RISE', count: 1 },
+  { id: 'township', label: '02 TOWNSHIPS', count: 2 },
+  { id: 'commercial', label: '03 COMMERCIAL', count: 1 },
+  { id: 'campus', label: '04 MEGA-CAMPUS', count: 2 },
+];
+
 export default function ExperienceSection() {
+  const [activeCategory, setActiveCategory] = useState('all');
   const [activeModalProject, setActiveModalProject] = useState(null);
-  const [chartMode, setChartMode] = useState('typology'); // 'typology' | 'quarter'
-  const [hoveredBar, setHoveredBar] = useState(null);
-  const [coinTilt, setCoinTilt] = useState({ x: 0, y: 0 });
+  const containerRef = useRef(null);
 
-  const sectionRef = useRef(null);
-  const headerRef = useRef(null);
+  // Filter cards by category
+  const filteredCards = activeCategory === 'all'
+    ? PINNED_CARDS_DATA
+    : PINNED_CARDS_DATA.filter((card) => card.categoryKey === activeCategory);
 
-  // Close modal on Escape key press
+  // Close modal on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setActiveModalProject(null);
+      if (e.key === 'Escape') {
+        setActiveModalProject(null);
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Lock body scroll while modal is active
-  useEffect(() => {
-    if (activeModalProject) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+  const handleCardClick = (projectId) => {
+    const found = PROFESSIONAL_ARCHIVE.find((p) => p.id === projectId);
+    if (found) {
+      setActiveModalProject(found);
     }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [activeModalProject]);
-
-  // 3D Glass Coin Interactive Cursor Tilt
-  const handleCoinMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    setCoinTilt({ x: x * 0.35, y: -y * 0.35 });
   };
-
-  const handleCoinMouseLeave = () => {
-    setCoinTilt({ x: 0, y: 0 });
-  };
-
-  // Stacked Bar Chart Data
-  const chartDataTypology = [
-    {
-      id: 'high-rise',
-      label: 'High-Rise',
-      val: '2.03M Sq Ft',
-      desc: 'Vertical Nexus & Crest BKC',
-      base: 70, // Cobalt Base (Schematics)
-      mid: 45,  // Cerulean (Revit BIM)
-      top: 30,  // Sky Blue (Coordination)
-      projectId: 'ahc-vertical-nexus-kharadi'
-    },
-    {
-      id: 'township',
-      label: 'Township',
-      val: '120+ Acres',
-      desc: 'Upper Thane & Goa Masterplan',
-      base: 80,
-      mid: 35,
-      top: 25,
-      projectId: 'ahc-clubhouse-upper-thane'
-    },
-    {
-      id: 'commercial',
-      label: 'Commercial',
-      val: 'BKC Flagship',
-      desc: 'Crest Commercial High-Rise',
-      base: 55,
-      mid: 40,
-      top: 30,
-      projectId: 'ahc-crest-bkc'
-    },
-    {
-      id: 'campus',
-      label: 'Campus',
-      val: '10 Lac Sq Ft',
-      desc: 'Zenith Institutional Block',
-      base: 65,
-      mid: 30,
-      top: 25,
-      projectId: 'ahc-zenith-institution-campus'
-    },
-  ];
-
-  const chartDataQuarter = [
-    { id: 'q1', label: 'Q1 (Jun)', val: '4 Schemes', desc: 'Schematic Onboarding', base: 40, mid: 25, top: 20 },
-    { id: 'q2', label: 'Q2 (Aug)', val: '8 Schemes', desc: 'BIM Slab Coordination', base: 65, mid: 35, top: 25 },
-    { id: 'q3', label: 'Q3 (Oct)', val: '12 Schemes', desc: 'Masterplan & Sections', base: 85, mid: 45, top: 30 },
-    { id: 'total', label: 'Total', val: '14+ Schemes', desc: 'Full Practice Immersion', base: 95, mid: 50, top: 35 },
-  ];
-
-  const activeBars = chartMode === 'typology' ? chartDataTypology : chartDataQuarter;
-
-  // Key Practice Schemes for the Activity Ledger
-  const ledgerItems = [
-    {
-      id: 'ahc-crest-bkc',
-      title: 'The Crest at BKC',
-      sub: 'Flagship Commercial High-Rise',
-      stat: '+36 Fl / Approved',
-      status: 'SECTIONS A,B,E,I',
-      iconClass: 'blue',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="4" y="2" width="16" height="20" rx="2" />
-          <line x1="9" y1="6" x2="9" y2="6.01" />
-          <line x1="15" y1="6" x2="15" y2="6.01" />
-          <line x1="9" y1="10" x2="9" y2="10.01" />
-          <line x1="15" y1="10" x2="15" y2="10.01" />
-          <line x1="9" y1="14" x2="9" y2="14.01" />
-          <line x1="15" y1="14" x2="15" y2="14.01" />
-          <path d="M9 18h6" />
-        </svg>
-      )
-    },
-    {
-      id: 'ahc-clubhouse-upper-thane',
-      title: 'Upper Thane Clubhouse',
-      sub: '74-Acre Township Leisure',
-      stat: 'Sections A–D',
-      status: 'SCHEMATICS 100%',
-      iconClass: 'sky',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-          <polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-      )
-    },
-    {
-      id: 'ahc-vertical-nexus-kharadi',
-      title: 'Vertical Nexus',
-      sub: 'High-Rise Residential · Kharadi',
-      stat: '2.03M Sq Ft',
-      status: 'FIRE CODE 100%',
-      iconClass: 'navy',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2L2 7l10 5 10-5-10-5z" />
-          <path d="M2 17l10 5 10-5" />
-          <path d="M2 12l10 5 10-5" />
-        </svg>
-      )
-    },
-    {
-      id: 'ahc-zenith-institution-campus',
-      title: 'Zenith Mega-Campus',
-      sub: 'Waterfront Educational Block',
-      stat: '10 Lac Sq Ft',
-      status: 'RADIAL ZONING',
-      iconClass: 'cyan',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" />
-          <polygon points="12 6 12 12 16 14" />
-        </svg>
-      )
-    },
-    {
-      id: 'ahc-ridgeview-institute',
-      title: 'Ridgeview Institute',
-      sub: 'Hill-Contour Terraced Campus',
-      stat: 'Contour 3D',
-      status: 'SUN-PATH 100%',
-      iconClass: 'blue',
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M3 18l5-8 4 6 5-10 4 12" />
-        </svg>
-      )
-    }
-  ];
-
-  // GSAP Header entrance
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headerRef.current,
-        { opacity: 0, y: 24 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 82%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
-    <section id="experience" ref={sectionRef} className="arch-exp-section">
+    <section id="experience" className="arch-exp-section" ref={containerRef}>
       <div className="arch-exp-container">
-        
-        {/* Technical Eyebrow */}
-        <div className="arch-exp-eyebrow">
-          <span className="arch-exp-eyebrow-dot" aria-hidden="true" />
-          <span>SEC. 03 // PROFESSIONAL PRACTICE &amp; ARCHITECTURAL IMMERSION</span>
-        </div>
-
         {/* Section Header */}
-        <div ref={headerRef} className="arch-exp-header">
+        <div className="arch-exp-header">
           <div className="arch-exp-title-wrap">
-            <h2 className="arch-exp-main-title">Architectural Experience</h2>
+            <div className="arch-exp-eyebrow">
+              <span className="arch-exp-eyebrow-dot" aria-hidden="true" />
+              <span>Section 03 // Professional Practice</span>
+            </div>
+            <h2 className="arch-exp-main-title">
+              Corporate Internship &amp; Architectural Practice
+            </h2>
             <p className="arch-exp-subtitle">
-              Corporate internship tenure contributing to live masterplans, commercial towers, and residential townships under the Principal Architect at Architect Hafeez Contractor (AHC), Mumbai.
+              Intensive studio residency at <strong>Architect Hafeez Contractor (AHC)</strong>, Mumbai. 
+              Hands-on contributions across live commercial high-rises, large-scale township masterplans, and institutional campus frameworks.
             </p>
           </div>
+
           <div className="arch-exp-header-badge">
             <span className="arch-exp-badge-firm">ARCHITECT HAFEEZ CONTRACTOR</span>
-            <span className="arch-exp-badge-coords">18°55'48"N 72°50'12"E · MUMBAI</span>
+            <span className="arch-exp-badge-coords">18°55&apos;42&quot;N 72°50&apos;02&quot;E · MUMBAI</span>
           </div>
         </div>
 
         {/* ─────────────────────────────────────────────────────────────
-           INTERACTIVE BENTO DASHBOARD (MATCHING REFERENCE IMAGE)
+           SPLIT LAYOUT: LEFT (FIRM DOSSIER) | RIGHT (PINNED CARDS DEMO)
            ───────────────────────────────────────────────────────────── */}
-        <div className="arch-bento-dashboard">
-          
-          {/* ───────────────────────────────────────────────────────────
-             CARD 1 (LEFT): TOTAL BUILT SCOPE & INTERACTIVE STACKED BARS
-             ─────────────────────────────────────────────────────────── */}
-          <div className="arch-bento-card arch-bento-chart-card">
-            <div className="arch-bento-header-row">
-              <div>
-                <div className="arch-bento-metric-title">Total Built Scope</div>
-                <div className="arch-bento-big-value">3.25M+ Sq Ft</div>
-              </div>
-              <div className="arch-chart-toggle-pills" role="tablist">
-                <button
-                  type="button"
-                  className={`arch-chart-toggle-btn ${chartMode === 'typology' ? 'active' : ''}`}
-                  onClick={() => setChartMode('typology')}
-                >
-                  TYPOLOGY
-                </button>
-                <button
-                  type="button"
-                  className={`arch-chart-toggle-btn ${chartMode === 'quarter' ? 'active' : ''}`}
-                  onClick={() => setChartMode('quarter')}
-                >
-                  QUARTERS
-                </button>
-              </div>
-            </div>
+        <div className="arch-split-layout">
+          {/* =========================================================
+             LEFT SECTION: UNIFIED PRACTICE CARD (Matching Pinned Style)
+             ========================================================= */}
+          <div className="arch-left-section">
+            <div className="arch-firm-pinned-card">
+              {/* Top 3D Pushpin */}
+              <div className="arch-pushpin blue" title="AHC Practice Dossier" />
 
-            {/* Stacked Bar Chart Canvas */}
-            <div className="arch-bento-chart-canvas">
-              {/* Dashed Horizontal Gridlines */}
-              <div className="arch-chart-grid-line" style={{ bottom: '150px' }}>
-                <span>24k</span>
-              </div>
-              <div className="arch-chart-grid-line" style={{ bottom: '100px' }}>
-                <span>16k</span>
-              </div>
-              <div className="arch-chart-grid-line" style={{ bottom: '50px' }}>
-                <span>8k</span>
-              </div>
-              <div className="arch-chart-grid-line" style={{ bottom: '0px' }}>
-                <span>0</span>
+              {/* Top Row: Index & Icon */}
+              <div className="arch-firm-top-row">
+                <div className="arch-firm-index-num">AHC // 00</div>
+                <div className="arch-firm-badge-icon" aria-hidden="true">
+                  <CompassIcon />
+                </div>
               </div>
 
-              {/* Stacked Pillars */}
-              <div className="arch-chart-bars-wrap">
-                {activeBars.map((bar) => (
-                  <div
-                    key={bar.id}
-                    className="arch-bar-column"
-                    onMouseEnter={() => setHoveredBar(bar.id)}
-                    onMouseLeave={() => setHoveredBar(null)}
-                    onClick={() => {
-                      if (bar.projectId) {
-                        const p = PROFESSIONAL_ARCHIVE.find((x) => x.id === bar.projectId);
-                        if (p) setActiveModalProject(p);
-                      }
-                    }}
-                  >
-                    {hoveredBar === bar.id && (
-                      <div className="arch-bar-tooltip-pop">
-                        <strong>{bar.val}</strong> — {bar.desc}
-                      </div>
-                    )}
+              {/* Firm & Role Info */}
+              <div className="arch-firm-tag-pill">
+                <span className="arch-firm-tag-pill-dot" />
+                <span>OFFICIAL STUDIO RESIDENCY</span>
+              </div>
+              <h3 className="arch-firm-name">Architect Hafeez Contractor</h3>
+              <div className="arch-firm-role-title">
+                Intern Architect · Commercial, High-Rise &amp; Township Division
+              </div>
 
-                    <div className="arch-stacked-pill-body">
-                      <div className="arch-pill-segment-base" style={{ height: `${bar.base}px` }} />
-                      <div className="arch-pill-segment-mid" style={{ height: `${bar.mid}px` }} />
-                      <div className="arch-pill-segment-top" style={{ height: `${bar.top}px` }} />
-                    </div>
+              <div className="arch-firm-tenure-strip">
+                <span>🗓 Jun 2025 – Nov 2025</span>
+                <span>•</span>
+                <span>Mumbai Headquarters</span>
+              </div>
 
-                    <span className="arch-bar-x-label">{bar.label}</span>
-                  </div>
-                ))}
+              <p className="arch-firm-narrative">
+                Contributed directly to live municipal submissions, working drawing packages, and cross-disciplinary 
+                structural coordination for landmark projects spanning high-density mixed-use towers, 74-acre township 
+                masterplans, and institutional campuses across India.
+              </p>
+
+              {/* Animated Live CAD Metrics */}
+              <div className="arch-firm-metrics-grid">
+                <AnimatedCounter value="6" suffix="+" label="Major Practice Schemes" />
+                <AnimatedCounter value="74" suffix=" AC" label="Township Masterplan" />
+                <AnimatedCounter value="2.03" suffix="M" label="Sq. Ft. High-Rise GFA" />
+                <AnimatedCounter value="100" suffix="%" label="FSI & Municipal Compliance" />
+              </div>
+
+              {/* BIM & Drafting Competencies */}
+              <div className="arch-firm-skills-wrap">
+                <div className="arch-firm-skills-title">Core Competencies &amp; Tooling</div>
+                <div className="arch-firm-skill-chips">
+                  <span className="arch-firm-chip">AutoCAD 2D Drafting</span>
+                  <span className="arch-firm-chip">Revit BIM Coordination</span>
+                  <span className="arch-firm-chip">Municipal FSI Verification</span>
+                  <span className="arch-firm-chip">Slab-Drop Detailing</span>
+                  <span className="arch-firm-chip">Principal Architect Review</span>
+                  <span className="arch-firm-chip">Consultant Dispatch</span>
+                </div>
+              </div>
+
+              {/* Verified Seal */}
+              <div className="arch-firm-seal-row">
+                <span className="arch-firm-seal-badge">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  VERIFIED STUDIO ARCHIVE
+                </span>
+                <span>MUMBAI, INDIA</span>
               </div>
             </div>
           </div>
 
-          {/* ───────────────────────────────────────────────────────────
-             CENTER COLUMN: OVERLAPPING BADGES, 3D COIN & TARGET GAUGE
-             ─────────────────────────────────────────────────────────── */}
-          <div className="arch-bento-center-stack">
-            
-            {/* Center Top Split: Overlapping Badges + 3D Glass Coin */}
-            <div className="arch-bento-center-top-split">
-              
-              {/* Overlapping Avatars Card */}
-              <div className="arch-bento-card arch-avatars-card">
-                <div className="arch-avatars-overlap-row">
-                  <div className="arch-avatar-circle cyan">LPU</div>
-                  <div className="arch-avatar-circle navy">AHC</div>
-                </div>
-                <div>
-                  <div className="arch-avatars-label">Corporate Practice</div>
-                  <div className="arch-avatars-val">14+ Schemes</div>
-                </div>
-              </div>
-
-              {/* 3D Glass & Chrome Coin Card */}
-              <div
-                className="arch-bento-card arch-coin-bento-card"
-                onMouseMove={handleCoinMouseMove}
-                onMouseLeave={handleCoinMouseLeave}
-              >
-                <div
-                  className="arch-3d-glass-coin"
-                  style={{
-                    transform: `rotateY(${coinTilt.x}deg) rotateX(${coinTilt.y}deg)`,
-                  }}
+          {/* =========================================================
+             RIGHT SECTION: 4 CATEGORIES & PINNED CARDS GRID
+             Exact match to demo image.png with colored pushpins & icons
+             ========================================================= */}
+          <div className="arch-right-section">
+            {/* 4 Category Filter Tabs */}
+            <div className="arch-tabs-bar" role="tablist" aria-label="Project typologies">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeCategory === cat.id}
+                  className={`arch-tab-btn ${activeCategory === cat.id ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(cat.id)}
                 >
-                  <div className="arch-3d-coin-text">AHC</div>
-                  <div className="arch-3d-coin-sub">MUMBAI · 2025</div>
-                </div>
-              </div>
-
+                  <span>{cat.label}</span>
+                  <span className="arch-tab-count">
+                    {cat.id === 'all'
+                      ? PINNED_CARDS_DATA.length
+                      : PINNED_CARDS_DATA.filter((c) => c.categoryKey === cat.id).length}
+                  </span>
+                </button>
+              ))}
             </div>
 
-            {/* Center Bottom: Precision Target Progress Card */}
-            <div className="arch-bento-card arch-target-bento-card">
-              <div className="arch-target-card-row">
-                <div className="arch-target-title">98.4% Drawing Sheet Precision Target</div>
-              </div>
-              <div className="arch-target-subline">0 Revision Delays (48h Principal Dispatch)</div>
-              
-              <div className="arch-target-pill-track">
-                <div className="arch-target-pill-fill">
-                  <div className="arch-target-knob" />
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* ───────────────────────────────────────────────────────────
-             CARD 5 (RIGHT): ACTIVE PRACTICE LEDGER STREAM
-             ─────────────────────────────────────────────────────────── */}
-          <div className="arch-bento-card arch-bento-ledger-card">
-            <div className="arch-ledger-top-row">
-              <span className="arch-ledger-date-label">Today, 2025 // IMMERSION</span>
-              <span className="arch-ledger-badge-pill">AHC MUMBAI</span>
-            </div>
-
-            <div className="arch-ledger-items-list">
-              {ledgerItems.map((item) => (
+            {/* Pinned Cards Grid */}
+            <div className="arch-pinned-grid">
+              {filteredCards.map((card) => (
                 <div
-                  key={item.id}
-                  className="arch-ledger-row"
-                  onClick={() => {
-                    const found = PROFESSIONAL_ARCHIVE.find((x) => x.id === item.id);
-                    if (found) setActiveModalProject(found);
-                  }}
+                  key={card.id}
+                  className={`arch-pinned-card ${card.theme}`}
+                  onClick={() => handleCardClick(card.id)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      const found = PROFESSIONAL_ARCHIVE.find((x) => x.id === item.id);
-                      if (found) setActiveModalProject(found);
+                      handleCardClick(card.id);
                     }
                   }}
                 >
-                  <div className="arch-ledger-left-group">
-                    <div className={`arch-ledger-icon-bubble ${item.iconClass}`}>
-                      {item.icon}
-                    </div>
-                    <div className="arch-ledger-info-meta">
-                      <span className="arch-ledger-project-name">{item.title}</span>
-                      <span className="arch-ledger-project-sub">{item.sub}</span>
+                  {/* Top 3D Pushpin Sphere */}
+                  <div className={`arch-pushpin ${card.pinColor}`} title={`Pin: ${card.title}`} />
+
+                  {/* Card Top Row: Number & Icon Badge */}
+                  <div className="arch-pinned-top-row">
+                    <div className="arch-pinned-num">{card.index}</div>
+                    <div className="arch-pinned-icon-badge" aria-hidden="true">
+                      {card.icon}
                     </div>
                   </div>
 
-                  <div className="arch-ledger-right-group">
-                    <span className="arch-ledger-metric-number">{item.stat}</span>
-                    <span className="arch-ledger-status-line">{item.status}</span>
-                    <div className="arch-ledger-mini-progress">
-                      <div className="arch-ledger-mini-bar" style={{ width: '100%' }} />
-                    </div>
+                  {/* Card Body */}
+                  <div className="arch-pinned-body">
+                    <span className="arch-pinned-category">{card.categoryLabel}</span>
+                    <h4 className="arch-pinned-title">{card.title}</h4>
+                    <p className="arch-pinned-desc">{card.desc}</p>
+                  </div>
+
+                  {/* Card Footer Action */}
+                  <div className="arch-pinned-footer">
+                    <span className="arch-pinned-location">{card.location}</span>
+                    <span className="arch-pinned-cta">
+                      BLUEPRINT <span>↗</span>
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-
         </div>
-
-        {/* Direct Link to Full Archive Ledger */}
-        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <a href="#archive" className="arch-exp-footer-link">
-            <span>INSPECT COMPLETE AHC ARCHIVE LEDGER ({PROFESSIONAL_ARCHIVE.length} SCHEMES)</span>
-            <span className="arch-exp-arrow">→</span>
-          </a>
-        </div>
-
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
          ARCHITECTURAL BLUEPRINT DOSSIER MODAL POPUP
+         Mounted to document.body via createPortal
          ───────────────────────────────────────────────────────────── */}
-      {activeModalProject && (
-        <div
-          className="arch-dossier-modal-overlay"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setActiveModalProject(null);
-          }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="arch-modal-title"
-        >
-          <div className="arch-dossier-modal" onClick={(e) => e.stopPropagation()}>
-            {/* Blueprint Header Bar */}
-            <div className="arch-modal-titlebar">
-              <div className="arch-modal-titlebar-left">
-                <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#00E5FF', boxShadow: '0 0 8px #00E5FF' }} />
-                <span>AHC PRACTICE ARCHIVE // DRAWING SHEET {activeModalProject.projectNumber}</span>
-              </div>
-              <button
-                type="button"
-                className="arch-modal-close-btn"
-                onClick={() => setActiveModalProject(null)}
-                aria-label="Close dossier"
-              >
-                ESC / ✕
-              </button>
-            </div>
-
-            {/* Modal Interior Body */}
-            <div className="arch-modal-body">
-              <div className="arch-crosshair arch-crosshair-tl" aria-hidden="true" />
-              <div className="arch-crosshair arch-crosshair-tr" aria-hidden="true" />
-              <div className="arch-crosshair arch-crosshair-bl" aria-hidden="true" />
-              <div className="arch-crosshair arch-crosshair-br" aria-hidden="true" />
-
-              <div className="arch-modal-eyebrow-row">
-                <span className="arch-modal-id">PROJECT REF: {activeModalProject.projectNumber}</span>
-                {activeModalProject.coordinates && (
-                  <span className="arch-modal-coords">COORDS: {activeModalProject.coordinates}</span>
-                )}
-              </div>
-
-              <h3 id="arch-modal-title" className="arch-modal-title">
-                {activeModalProject.title}
-              </h3>
-              <div className="arch-modal-location">
-                {activeModalProject.location} · {activeModalProject.firm}
-              </div>
-
-              <div className="arch-modal-section-title">PRACTICE CONTRIBUTION &amp; ROLE</div>
-              <p className="arch-modal-desc">{activeModalProject.contribution}</p>
-
-              <div className="arch-modal-section-title">TECHNICAL SPECIFICATIONS &amp; RECORD</div>
-              <table className="arch-modal-specs-table">
-                <tbody>
-                  <tr>
-                    <td className="arch-modal-specs-label">Architectural Firm</td>
-                    <td className="arch-modal-specs-value">{activeModalProject.firm} (Mumbai)</td>
-                  </tr>
-                  <tr>
-                    <td className="arch-modal-specs-label">Role &amp; Tenure</td>
-                    <td className="arch-modal-specs-value">Intern Architect · {activeModalProject.period}</td>
-                  </tr>
-                  <tr>
-                    <td className="arch-modal-specs-label">Typology &amp; Scope</td>
-                    <td className="arch-modal-specs-value">{activeModalProject.typology}</td>
-                  </tr>
-                  <tr>
-                    <td className="arch-modal-specs-label">Archive Source</td>
-                    <td className="arch-modal-specs-value">{activeModalProject.source}</td>
-                  </tr>
-                  <tr>
-                    <td className="arch-modal-specs-label">Coordinates</td>
-                    <td className="arch-modal-specs-value">{activeModalProject.coordinates || 'N/A'}</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div className="arch-modal-section-title">COORDINATION &amp; SOFTWARE PACKAGES</div>
-              <div className="arch-modal-tags">
-                <span className="arch-modal-pill primary">AutoCAD 2D</span>
-                <span className="arch-modal-pill primary">Revit BIM Coordination</span>
-                <span className="arch-modal-pill">Schematic Sections</span>
-                <span className="arch-modal-pill">Principal Architect Review</span>
-                <span className="arch-modal-pill">Consultant Dispatch</span>
-                {activeModalProject.typology && activeModalProject.typology.toLowerCase().includes('high-rise') && (
-                  <span className="arch-modal-pill">Structural Slab-Drop Detail</span>
-                )}
-                {activeModalProject.typology && activeModalProject.typology.toLowerCase().includes('township') && (
-                  <span className="arch-modal-pill">Township Masterplanning</span>
-                )}
-                {activeModalProject.typology && activeModalProject.typology.toLowerCase().includes('campus') && (
-                  <span className="arch-modal-pill">Radial Zoning Layout</span>
-                )}
-              </div>
-
-              {/* Modal Footer */}
-              <div className="arch-modal-footer">
-                <span style={{ fontFamily: 'var(--f-mono, monospace)', fontSize: '0.72rem', color: '#777' }}>
-                  PRESS ESC OR CLICK OUTSIDE TO DISMISS
-                </span>
+      {activeModalProject &&
+        createPortal(
+          <div
+            className="arch-dossier-modal-overlay"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setActiveModalProject(null);
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="arch-modal-title"
+          >
+            <div className="arch-dossier-modal" onClick={(e) => e.stopPropagation()}>
+              {/* Technical Drawing Header Bar */}
+              <div className="arch-modal-titlebar">
+                <div className="arch-modal-titlebar-left">
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      background: '#00E5FF',
+                      boxShadow: '0 0 8px #00E5FF',
+                    }}
+                  />
+                  <span>AHC PRACTICE ARCHIVE // DRAWING SHEET {activeModalProject.projectNumber}</span>
+                </div>
                 <button
                   type="button"
-                  className="arch-modal-btn-close"
+                  className="arch-modal-close-btn"
                   onClick={() => setActiveModalProject(null)}
+                  aria-label="Close dossier"
                 >
-                  CLOSE DOSSIER
+                  ESC / ✕
                 </button>
               </div>
+
+              {/* Modal Interior Body */}
+              <div className="arch-modal-body">
+                <div className="arch-modal-eyebrow-row">
+                  <span className="arch-modal-id">PROJECT REF: {activeModalProject.projectNumber}</span>
+                  {activeModalProject.coordinates && (
+                    <span className="arch-modal-coords">COORDS: {activeModalProject.coordinates}</span>
+                  )}
+                </div>
+
+                <h3 id="arch-modal-title" className="arch-modal-title">
+                  {activeModalProject.title}
+                </h3>
+                <div className="arch-modal-location">
+                  {activeModalProject.location} · {activeModalProject.firm}
+                </div>
+
+                <div className="arch-modal-section-title">PRACTICE CONTRIBUTION &amp; ROLE</div>
+                <p className="arch-modal-desc">{activeModalProject.contribution}</p>
+
+                <div className="arch-modal-section-title">TECHNICAL SPECIFICATIONS &amp; RECORD</div>
+                <table className="arch-modal-specs-table">
+                  <tbody>
+                    <tr>
+                      <td className="arch-modal-specs-label">Architectural Firm</td>
+                      <td className="arch-modal-specs-value">{activeModalProject.firm} (Mumbai)</td>
+                    </tr>
+                    <tr>
+                      <td className="arch-modal-specs-label">Role &amp; Tenure</td>
+                      <td className="arch-modal-specs-value">Intern Architect · {activeModalProject.period}</td>
+                    </tr>
+                    <tr>
+                      <td className="arch-modal-specs-label">Typology &amp; Scope</td>
+                      <td className="arch-modal-specs-value">{activeModalProject.typology}</td>
+                    </tr>
+                    <tr>
+                      <td className="arch-modal-specs-label">Archive Source</td>
+                      <td className="arch-modal-specs-value">{activeModalProject.source}</td>
+                    </tr>
+                    <tr>
+                      <td className="arch-modal-specs-label">Coordinates</td>
+                      <td className="arch-modal-specs-value">{activeModalProject.coordinates || 'N/A'}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div className="arch-modal-section-title">COORDINATION &amp; SOFTWARE PACKAGES</div>
+                <div className="arch-modal-tags">
+                  <span className="arch-modal-pill primary">AutoCAD 2D</span>
+                  <span className="arch-modal-pill primary">Revit BIM Coordination</span>
+                  <span className="arch-modal-pill">Schematic Sections</span>
+                  <span className="arch-modal-pill">Principal Architect Review</span>
+                  <span className="arch-modal-pill">Consultant Dispatch</span>
+                  {activeModalProject.typology && activeModalProject.typology.toLowerCase().includes('high-rise') && (
+                    <span className="arch-modal-pill">Structural Slab-Drop Detail</span>
+                  )}
+                  {activeModalProject.typology && activeModalProject.typology.toLowerCase().includes('township') && (
+                    <span className="arch-modal-pill">Township Masterplanning</span>
+                  )}
+                  {activeModalProject.typology && activeModalProject.typology.toLowerCase().includes('campus') && (
+                    <span className="arch-modal-pill">Radial Zoning Layout</span>
+                  )}
+                </div>
+
+                {/* Modal Footer */}
+                <div className="arch-modal-footer">
+                  <span style={{ fontFamily: 'var(--f-mono, monospace)', fontSize: '0.72rem', color: '#777' }}>
+                    PRESS ESC OR CLICK OUTSIDE TO DISMISS
+                  </span>
+                  <button
+                    type="button"
+                    className="arch-modal-btn-close"
+                    onClick={() => setActiveModalProject(null)}
+                  >
+                    CLOSE DOSSIER
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </section>
   );
 }

@@ -1,12 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { GazeEngine } from '../../utils/gazeEngine';
 
 /**
  * Creates espresso-brown eyes texture customized for Saravanakumar K
- * with crisp sclera, rich iris, and dual catchlight reflections.
  */
 function createBrownEyesTexture() {
   const canvas = document.createElement('canvas');
@@ -19,21 +18,18 @@ function createBrownEyesTexture() {
   ctx.fillRect(0, 0, 512, 512);
 
   const drawEye = (cx, cy, radius) => {
-    // Sclera (White of eye)
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fillStyle = '#FAFAFA';
     ctx.fill();
 
-    // Outer Iris Ring (Dark Chocolate)
     const irisR = radius * 0.58;
     ctx.beginPath();
     ctx.arc(cx, cy, irisR, 0, Math.PI * 2);
     ctx.fillStyle = '#1D120C';
     ctx.fill();
 
-    // Inner Iris Radial Gradient (Warm Espresso to Amber Hazel)
     const grad = ctx.createRadialGradient(cx, cy, irisR * 0.2, cx, cy, irisR);
     grad.addColorStop(0, '#5C381F');
     grad.addColorStop(0.6, '#382012');
@@ -43,13 +39,11 @@ function createBrownEyesTexture() {
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Pupil (Deep Jet Black)
     ctx.beginPath();
     ctx.arc(cx, cy, irisR * 0.45, 0, Math.PI * 2);
     ctx.fillStyle = '#0A0806';
     ctx.fill();
 
-    // Dual Specular Catchlights (Crisp White Reflections)
     ctx.beginPath();
     ctx.arc(cx - irisR * 0.28, cy - irisR * 0.28, irisR * 0.16, 0, Math.PI * 2);
     ctx.fillStyle = '#FFFFFF';
@@ -74,8 +68,7 @@ function createBrownEyesTexture() {
 }
 
 /**
- * Creates custom face texture for Saravanakumar K with warm skin tone,
- * mustache, and trimmed chin beard/goatee.
+ * Creates custom face texture for Saravanakumar K with warm skin tone and trimmed beard
  */
 function createSaravanaFaceTexture() {
   const canvas = document.createElement('canvas');
@@ -84,11 +77,9 @@ function createSaravanaFaceTexture() {
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
 
-  // Warm South Asian skin tone
   ctx.fillStyle = '#A8704D';
   ctx.fillRect(0, 0, 512, 512);
 
-  // Soft facial shading
   const grad = ctx.createRadialGradient(256, 230, 40, 256, 256, 240);
   grad.addColorStop(0, '#B8805D');
   grad.addColorStop(0.7, '#A8704D');
@@ -96,20 +87,17 @@ function createSaravanaFaceTexture() {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 512, 512);
 
-  // Trimmed mustache (above lip, under nose)
   ctx.fillStyle = '#161412';
   ctx.beginPath();
   ctx.ellipse(225, 305, 28, 10, -0.12, 0, Math.PI * 2);
   ctx.ellipse(287, 305, 28, 10, 0.12, 0, Math.PI * 2);
   ctx.fill();
 
-  // Natural warm lips
   ctx.fillStyle = '#874D38';
   ctx.beginPath();
   ctx.ellipse(256, 324, 25, 7, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Trimmed goatee & chin beard
   ctx.fillStyle = '#161412';
   ctx.beginPath();
   ctx.ellipse(256, 342, 9, 10, 0, 0, Math.PI * 2);
@@ -124,308 +112,343 @@ function createSaravanaFaceTexture() {
 }
 
 /**
- * ArchitectCharacterScene — Interactive 3D Cartoon Digital Twin of Saravanakumar K
- * Features:
- * - Isolated cartoon character (laptop, keyboard, desk, and room completely removed)
- * - Real-time eye pupil tracking and head orientation responsive to mouse cursor
- * - Periodic natural blinking loop
- * - Eyebrow reaction on hover
- * - Tailored architectural navy blazer, styled hair, and warm South Asian complexion
+ * ArchitectCharacterScene
+ * Interactive 3D Digital Twin with Saccade Gaze Engine, Avatar Mode Switch, and Gesture Actions
  */
 export default function ArchitectCharacterScene({ className = '', onLoaded }) {
   const containerRef = useRef(null);
   const canvasMountRef = useRef(null);
-  const hoverRef = useRef(null);
+  const [avatarMode, setAvatarMode] = useState('stylized'); // 'stylized' | 'humanoid'
+  const [activeAction, setActiveAction] = useState('idle');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (!canvasMountRef.current) return;
+  const playGestureRef = useRef(null);
 
+  useEffect(() => {
     let isMounted = true;
     const container = canvasMountRef.current;
-    let rect = container.getBoundingClientRect();
-    let width = rect.width || 420;
-    let height = rect.height || 520;
-    const aspect = width / height;
+    if (!container) return;
+
+    setIsLoading(true);
 
     // 1. Scene Setup
     const scene = new THREE.Scene();
 
-    // 2. Camera Setup (Architectural 3/4 viewpoint framing Saravanakumar's bust & face in full)
-    const camera = new THREE.PerspectiveCamera(14.5, aspect, 0.1, 1000);
-    camera.position.set(0, 13.6, 22.8);
-    camera.zoom = 1.15;
-    camera.lookAt(0.2, 11.2, 0);
-    camera.updateProjectionMatrix();
+    const rect = container.getBoundingClientRect();
+    const width = rect.width || 420;
+    const height = rect.height || 520;
+    const aspect = width / height;
 
-    // 3. Renderer Setup
+    // 2. Camera Setup (Calibrated portrait framing for each model)
+    const camera = new THREE.PerspectiveCamera(
+      avatarMode === 'stylized' ? 38 : 32,
+      aspect,
+      0.1,
+      100
+    );
+
+    if (avatarMode === 'stylized') {
+      camera.position.set(0, 1.25, 2.85);
+      camera.lookAt(0, 1.15, 0);
+    } else {
+      camera.position.set(0, 1.48, 1.55);
+      camera.lookAt(0, 1.40, 0);
+    }
+
+    // 3. WebGL Renderer with ACES Tone Mapping
     const renderer = new THREE.WebGLRenderer({
+      antialias: true,
       alpha: true,
-      antialias: window.devicePixelRatio < 2,
       powerPreference: 'high-performance',
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
 
-    // 4. Studio Lighting Setup (Warm key + subtle fill + architectural cyan & purple rims)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
+    // 4. Studio Lighting Rig
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    // Key Light (illuminating face, smile, and blazer warmly)
-    const keyLight = new THREE.DirectionalLight(0xfff7ed, 1.6);
-    keyLight.position.set(2.0, 15.0, 10.0);
+    const keyLight = new THREE.DirectionalLight(0xfff5ea, 2.4);
+    keyLight.position.set(0.8, 2.2, 3.0);
     scene.add(keyLight);
 
-    // Fill Light (soft cool tone for shadow depth)
-    const fillLight = new THREE.DirectionalLight(0xdce8ff, 0.8);
-    fillLight.position.set(-4.0, 12.0, 6.0);
+    const fillLight = new THREE.DirectionalLight(0xdbe7ff, 1.4);
+    fillLight.position.set(-2.0, 1.0, 2.5);
     scene.add(fillLight);
 
-    // Cyan Kicker Rim Light (Left shoulder & jawline)
-    const cyanRim = new THREE.DirectionalLight(0x00d0ff, 1.8);
-    cyanRim.position.set(-4.5, 13.5, -3.0);
+    const cyanRim = new THREE.DirectionalLight(0x00d0ff, 2.6);
+    cyanRim.position.set(-3.0, 2.0, -2.0);
     scene.add(cyanRim);
 
-    // Purple / Indigo Rim Light (Right hair silhouette matching reference portrait)
-    const purpleRim = new THREE.DirectionalLight(0x9d4edd, 2.0);
-    purpleRim.position.set(4.5, 14.0, -3.0);
+    const purpleRim = new THREE.DirectionalLight(0x9d4edd, 2.4);
+    purpleRim.position.set(3.0, 2.0, -2.0);
     scene.add(purpleRim);
 
-    // Top Hair Light
-    const hairLight = new THREE.DirectionalLight(0xffffff, 0.85);
-    hairLight.position.set(0, 17.0, 1.0);
-    scene.add(hairLight);
+    // 5. Gaze Engine
+    const gazeEngine = new GazeEngine();
 
-    // Optional HDR Environment for realistic PBR reflections
-    const rgbeLoader = new RGBELoader();
-    rgbeLoader.load(
-      '/assets/models/character/char_enviorment.hdr',
-      (texture) => {
-        if (!isMounted) { texture.dispose(); return; }
-        texture.mapping = THREE.EquirectangularReflectionMapping;
-        scene.environment = texture;
-        scene.environmentIntensity = 0.4;
-      },
-      undefined,
-      () => {}
-    );
-
-    // Procedural Textures & Materials for Saravanakumar K
-    const brownEyesTex = createBrownEyesTexture();
-    const faceTex = createSaravanaFaceTexture();
-
-    const skinMaterial = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0xa8704d),
-      roughness: 0.65,
-      metalness: 0.04,
-    });
-
-    const hairMaterial = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0x141212),
-      roughness: 0.8,
-      metalness: 0.05,
-    });
-
-    const blazerMaterial = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0x182030), // Architectural dark navy
-      roughness: 0.7,
-      metalness: 0.08,
-    });
-
-    const pantsMaterial = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0x111622),
-      roughness: 0.8,
-      metalness: 0.05,
-    });
-
-    // 5. Load the Cloned Cartoon Character Model
+    // 6. Loaders & Models
     const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/draco/');
-
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
     const gltfLoader = new GLTFLoader();
     gltfLoader.setDRACOLoader(dracoLoader);
 
+    let mixer = null;
     let characterModel = null;
     let headBone = null;
     let neckBone = null;
-    let mixer = null;
-    let browUpAction = null;
+    let brownEyesTex = null;
+    let faceTex = null;
+    let leftEyeBone = null;
+    let rightEyeBone = null;
 
-    // The strict set of nodes that compose ONLY the character
-    const characterNodeNames = new Set([
-      'hair',
-      'BODY.SHIRT',
-      'Ear.001',
-      'Eyebrow',
-      'EYEs.001',
-      'Face.002',
-      'Hand',
-      'Neck',
-      'Pant',
-      'Plane.007',
-      'Shoe',
-      'Sole'
-    ]);
+    const actions = {};
+    let currentActionName = 'idle';
 
-    gltfLoader.load(
-      '/assets/models/character/character.glb',
-      (gltf) => {
-        if (!isMounted) return;
+    const switchAction = (newActionName, duration = 0.25) => {
+      if (!mixer || currentActionName === newActionName) return;
+      const prevAction = actions[currentActionName];
+      const nextAction = actions[newActionName];
 
-        characterModel = gltf.scene;
+      if (nextAction) {
+        nextAction.reset();
+        nextAction.enabled = true;
+        if (prevAction) {
+          prevAction.crossFadeTo(nextAction, duration, true);
+        }
+        nextAction.play();
+        currentActionName = newActionName;
+        setActiveAction(newActionName);
+      }
+    };
 
-        // Traverse and isolate ONLY the character meshes; hide everything else (laptop, desk, keys, room)
-        characterModel.traverse((child) => {
-          if (child.isMesh) {
-            const name = child.name;
-
-            // Check if this mesh belongs to the character
-            const isCharacterPart = characterNodeNames.has(name) ||
-              name.includes('EYEs') ||
-              name.includes('Sphere.002') ||
-              name.includes('Face') ||
-              name.includes('SHIRT') ||
-              name.includes('Pant') ||
-              name.includes('hair') ||
-              name.includes('Eyebrow') ||
-              name.includes('Neck') ||
-              name.includes('Hand') ||
-              name.includes('Ear');
-
-            if (!isCharacterPart) {
-              // Hide laptop, monitor, keyboard keys, desk, floor, chair
-              child.visible = false;
-              return;
+    playGestureRef.current = (actionKey) => {
+      if (avatarMode === 'humanoid') {
+        if (actionKey === 'idle') {
+          switchAction('idle', 0.35);
+        } else if (actions[actionKey]) {
+          switchAction(actionKey, 0.2);
+          const clip = actions[actionKey].getClip();
+          setTimeout(() => {
+            if (isMounted && currentActionName === actionKey) {
+              switchAction('idle', 0.4);
             }
-
-            // Keep character part visible with polished materials
-            child.visible = true;
-            child.castShadow = false;
-            child.receiveShadow = false;
-
-            // 1. Face & Groomed Beard / Goatee
-            if (name.includes('Plane.007')) {
-              if (faceTex) {
-                child.material = new THREE.MeshStandardMaterial({
-                  map: faceTex,
-                  roughness: 0.65,
-                  metalness: 0.04,
-                });
-              }
-            }
-            // 2. Skin Tone (Head, Neck, Hands, Ears)
-            else if (
-              name.includes('Mesh.002') ||
-              name.includes('Face') ||
-              name.includes('Hand') ||
-              name.includes('Ear') ||
-              name.includes('Neck')
-            ) {
-              child.material = skinMaterial;
-            }
-            // 3. Stylized Volumetric Hair & Eyebrows
-            else if (
-              name.includes('hair') ||
-              name.includes('Eyebrow') ||
-              name.includes('Plane.003')
-            ) {
-              child.material = hairMaterial;
-            }
-            // 4. Cartoon Eyes (Espresso brown with pupil tracking texture)
-            else if (name.includes('EYEs') || name.includes('Sphere.002')) {
-              if (brownEyesTex) {
-                child.material = new THREE.MeshBasicMaterial({
-                  map: brownEyesTex,
-                });
-              }
-            }
-            // 5. Attire (Dark Architectural Navy Blazer)
-            else if (name.includes('BODY.SHIRT') || name.includes('SHIRT') || name.includes('Cube.002')) {
-              child.material = blazerMaterial;
-            }
-            // 6. Pants
-            else if (name.includes('Pant') || name.includes('Cube.004')) {
-              child.material = pantsMaterial;
-            }
-          }
-        });
-
-        // Bone Hierarchy References for Head & Neck Tracking
-        headBone = characterModel.getObjectByName('spine006') || characterModel.getObjectByName('spine.006');
-        neckBone = characterModel.getObjectByName('spine005') || characterModel.getObjectByName('spine.005');
-
-        // Animation Mixer Setup (Blinking loop + Eyebrow hover reaction)
-        if (gltf.animations && gltf.animations.length > 0) {
-          mixer = new THREE.AnimationMixer(characterModel);
-
-          // 1. Natural Blinking Loop every ~3.2 seconds
-          const blinkClip = gltf.animations.find((c) => c.name === 'Blink');
-          if (blinkClip) {
-            const blinkAction = mixer.clipAction(blinkClip);
-            const triggerBlink = () => {
-              if (!isMounted || !mixer) return;
-              blinkAction.reset().play();
-              setTimeout(triggerBlink, 2600 + Math.random() * 2400);
-            };
-            setTimeout(triggerBlink, 1200);
-          }
-
-          // 2. Eyebrow raise reaction on hover
-          const browClip = gltf.animations.find((c) => c.name === 'browup');
-          if (browClip) {
-            browUpAction = mixer.clipAction(browClip);
-            browUpAction.setLoop(THREE.LoopOnce, 1);
-            browUpAction.clampWhenFinished = true;
+          }, Math.max(2200, clip.duration * 1000 - 300));
+        }
+      } else {
+        // Stylized Model Gestures
+        setActiveAction(actionKey);
+        if (headBone) {
+          if (actionKey === 'think') {
+            headBone.rotation.z = 0.12;
+          } else if (actionKey === 'present') {
+            headBone.rotation.y = 0.22;
+          } else if (actionKey === 'wave') {
+            headBone.rotation.y = -0.22;
           }
         }
-
-        scene.add(characterModel);
-        setIsLoading(false);
-        if (onLoaded) onLoaded();
-      },
-      undefined,
-      (err) => {
-        console.error('Error loading 3D character:', err);
-        setIsLoading(false);
+        setTimeout(() => {
+          if (isMounted) {
+            setActiveAction('idle');
+            if (headBone) headBone.rotation.z = 0;
+          }
+        }, 2200);
       }
-    );
+    };
 
-    // 6. Interactive Mouse / Cursor Tracking Logic
-    let mouse = { x: 0, y: 0 };
-    let targetMouse = { x: 0, y: 0 };
+    // Mode A: Stylized Cartoon Digital Twin
+    if (avatarMode === 'stylized') {
+      brownEyesTex = createBrownEyesTexture();
+      faceTex = createSaravanaFaceTexture();
 
+      const characterNodeNames = new Set([
+        'Cube', 'Cube.001', 'Cube.002', 'Cube.004', 'Cube.006',
+        'Cylinder', 'Cylinder.001', 'BODY.HAIR', 'BODY.FACE',
+        'BODY.SHIRT', 'EYE.L', 'EYE.R', 'BODY.SKIN',
+      ]);
+
+      const skinMaterial = new THREE.MeshStandardMaterial({
+        color: 0x9e6844,
+        roughness: 0.65,
+        metalness: 0.04,
+      });
+
+      const faceMaterial = new THREE.MeshStandardMaterial({
+        map: faceTex,
+        roughness: 0.62,
+        metalness: 0.04,
+      });
+
+      const hairMaterial = new THREE.MeshStandardMaterial({
+        color: 0x11100e,
+        roughness: 0.85,
+        metalness: 0.05,
+      });
+
+      const blazerMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1b2838,
+        roughness: 0.72,
+        metalness: 0.08,
+      });
+
+      const pantsMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1e2229,
+        roughness: 0.8,
+        metalness: 0.02,
+      });
+
+      gltfLoader.load(
+        '/assets/models/character/character.glb',
+        (gltf) => {
+          if (!isMounted) return;
+          characterModel = gltf.scene;
+
+          characterModel.traverse((child) => {
+            if (child.isMesh) {
+              const name = child.name || '';
+              const isCharacterPart =
+                characterNodeNames.has(name) ||
+                name.startsWith('Cube') ||
+                name.startsWith('Cylinder') ||
+                name.includes('BODY') ||
+                name.includes('EYE') ||
+                name.includes('Pant') ||
+                name.includes('Hand');
+
+              if (!isCharacterPart) {
+                child.visible = false;
+                child.geometry?.dispose();
+                return;
+              }
+
+              if (name === 'BODY.FACE' || name === 'Cube.001') {
+                child.material = faceMaterial;
+              } else if (name === 'BODY.HAIR' || name.includes('HAIR')) {
+                child.material = hairMaterial;
+              } else if (name.includes('SKIN') || name.includes('Hand') || name === 'Cube') {
+                child.material = skinMaterial;
+              } else if (name.includes('EYE') || name.includes('Cylinder')) {
+                if (brownEyesTex) {
+                  child.material = new THREE.MeshBasicMaterial({ map: brownEyesTex });
+                }
+              } else if (name.includes('SHIRT') || name.includes('Cube.002')) {
+                child.material = blazerMaterial;
+              } else if (name.includes('Pant') || name.includes('Cube.004')) {
+                child.material = pantsMaterial;
+              }
+            }
+          });
+
+          headBone = characterModel.getObjectByName('spine006') || characterModel.getObjectByName('spine.006');
+          neckBone = characterModel.getObjectByName('spine005') || characterModel.getObjectByName('spine.005');
+
+          if (gltf.animations && gltf.animations.length > 0) {
+            mixer = new THREE.AnimationMixer(characterModel);
+            const blinkClip = gltf.animations.find((c) => c.name === 'Blink');
+            if (blinkClip) {
+              const blinkAction = mixer.clipAction(blinkClip);
+              const triggerBlink = () => {
+                if (!isMounted || !mixer) return;
+                blinkAction.reset().play();
+                setTimeout(triggerBlink, 2400 + Math.random() * 2000);
+              };
+              setTimeout(triggerBlink, 1000);
+            }
+          }
+
+          characterModel.scale.set(0.1, 0.1, 0.1);
+          characterModel.position.set(0, -0.05, 0);
+          scene.add(characterModel);
+          setIsLoading(false);
+          if (onLoaded) onLoaded();
+        },
+        undefined,
+        (err) => {
+          console.error('Error loading stylized character:', err);
+          setIsLoading(false);
+        }
+      );
+    } else {
+      // Mode B: Ready Player Me Photoreal Architect Humanoid
+      gltfLoader.load(
+        '/assets/models/character/humanoid_architect.glb',
+        (gltf) => {
+          if (!isMounted) return;
+          characterModel = gltf.scene;
+
+          characterModel.traverse((child) => {
+            if (child.isMesh && child.material) {
+              child.material.roughness = 0.55;
+              child.material.metalness = 0.05;
+            }
+          });
+
+          headBone = characterModel.getObjectByName('Head');
+          neckBone = characterModel.getObjectByName('Neck');
+          leftEyeBone = characterModel.getObjectByName('LeftEye');
+          rightEyeBone = characterModel.getObjectByName('RightEye');
+
+          characterModel.position.set(0, 0, 0);
+          scene.add(characterModel);
+
+          mixer = new THREE.AnimationMixer(characterModel);
+
+          // Load Modular Animation Clips
+          const animList = [
+            { key: 'idle', url: '/assets/models/character/animations/idle.glb' },
+            { key: 'present', url: '/assets/models/character/animations/present.glb' },
+            { key: 'think', url: '/assets/models/character/animations/think.glb' },
+            { key: 'wave', url: '/assets/models/character/animations/wave.glb' },
+          ];
+
+          let loadedCount = 0;
+          animList.forEach(({ key, url }) => {
+            gltfLoader.load(url, (animGltf) => {
+              if (!isMounted || !mixer) return;
+              if (animGltf.animations && animGltf.animations.length > 0) {
+                const action = mixer.clipAction(animGltf.animations[0]);
+                if (key === 'idle') {
+                  action.setLoop(THREE.LoopRepeat);
+                  action.play();
+                } else {
+                  action.setLoop(THREE.LoopOnce, 1);
+                  action.clampWhenFinished = true;
+                }
+                actions[key] = action;
+              }
+              loadedCount++;
+              if (loadedCount === animList.length) {
+                currentActionName = 'idle';
+                setActiveAction('idle');
+              }
+            });
+          });
+
+          setIsLoading(false);
+          if (onLoaded) onLoaded();
+        },
+        undefined,
+        (err) => {
+          console.error('Error loading humanoid architect:', err);
+          setIsLoading(false);
+        }
+      );
+    }
+
+    // 7. Mouse / Pointer Movement Tracking
     const handlePointerMove = (e) => {
-      // Coordinates normalized to [-1, 1] relative to viewport
-      targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-      targetMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = -(e.clientY / window.innerHeight) * 2 + 1;
+      gazeEngine.setTargetPointer(x, y);
     };
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
 
-    // Hover effect on character face
-    const hoverEl = hoverRef.current;
-    const handleMouseEnter = () => {
-      if (browUpAction) {
-        browUpAction.reset();
-        browUpAction.enabled = true;
-        browUpAction.fadeIn(0.25).play();
-      }
-    };
-    const handleMouseLeave = () => {
-      if (browUpAction) {
-        browUpAction.fadeOut(0.4);
-      }
-    };
-
-    if (hoverEl) {
-      hoverEl.addEventListener('mouseenter', handleMouseEnter);
-      hoverEl.addEventListener('mouseleave', handleMouseLeave);
-    }
-
-    // 7. Responsive Resize Handler
+    // 8. Responsive Resize Handler
     const handleResize = () => {
       if (!canvasMountRef.current) return;
       const r = canvasMountRef.current.getBoundingClientRect();
@@ -438,45 +461,48 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
 
     window.addEventListener('resize', handleResize);
 
-    // 8. Animation & Real-Time Eye / Head Tracking Loop
+    // 9. Animation & Gaze Loop
     let animId;
     const clock = new THREE.Clock();
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
-
       const delta = clock.getDelta();
-      const elapsed = clock.getElapsedTime();
 
       if (mixer) {
         mixer.update(delta);
       }
 
-      // Smooth cursor interpolation
-      mouse.x = THREE.MathUtils.lerp(mouse.x, targetMouse.x, 0.08);
-      mouse.y = THREE.MathUtils.lerp(mouse.y, targetMouse.y, 0.08);
+      // Update Saccades, Organic Micro-Tremors, and Breathing via GazeEngine
+      const gaze = gazeEngine.update(delta);
 
-      // Subtle organic breathing motion
-      const breathing = Math.sin(elapsed * 1.8) * 0.02;
-
-      // Real-Time Head & Neck Bone Tracking (Follows cursor smoothly)
+      // Head & Neck Tracking with Saccades
       if (headBone) {
-        const maxRotY = 0.45; // ~26 deg horizontal rotation
-        const maxRotX = 0.28; // ~16 deg vertical tilt
-        headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, mouse.x * maxRotY - 0.12, 0.1);
-        headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, -mouse.y * maxRotX - 0.08 + breathing * 0.5, 0.1);
+        if (avatarMode === 'stylized') {
+          headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, gaze.headRotY - 0.12, 0.1);
+          headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, gaze.headRotX - 0.08, 0.1);
+        } else {
+          headBone.rotation.y = THREE.MathUtils.lerp(headBone.rotation.y, gaze.headRotY * 0.75, 0.1);
+          headBone.rotation.x = THREE.MathUtils.lerp(headBone.rotation.x, gaze.headRotX * 0.75, 0.1);
+        }
       }
 
       if (neckBone) {
-        neckBone.rotation.y = THREE.MathUtils.lerp(neckBone.rotation.y, mouse.x * 0.12, 0.08);
+        neckBone.rotation.y = THREE.MathUtils.lerp(neckBone.rotation.y, gaze.neckRotY * 0.7, 0.08);
       }
 
-      // Real-Time Eye Pupil Tracking (Pupils smoothly slide inside eye sockets toward the cursor)
-      if (brownEyesTex) {
-        const targetEyeOffsetX = mouse.x * 0.045;
-        const targetEyeOffsetY = mouse.y * 0.04;
-        brownEyesTex.offset.x = THREE.MathUtils.lerp(brownEyesTex.offset.x, targetEyeOffsetX, 0.12);
-        brownEyesTex.offset.y = THREE.MathUtils.lerp(brownEyesTex.offset.y, targetEyeOffsetY, 0.12);
+      // Real-Time Eye Pupils for Stylized Model
+      if (avatarMode === 'stylized' && brownEyesTex) {
+        brownEyesTex.offset.x = THREE.MathUtils.lerp(brownEyesTex.offset.x, gaze.eyeOffsetX, 0.14);
+        brownEyesTex.offset.y = THREE.MathUtils.lerp(brownEyesTex.offset.y, gaze.eyeOffsetY, 0.14);
+      }
+
+      // Rigged Eye Bones for Humanoid Model
+      if (avatarMode === 'humanoid' && leftEyeBone && rightEyeBone) {
+        leftEyeBone.rotation.y = gaze.eyeRotY;
+        leftEyeBone.rotation.x = gaze.eyeRotX;
+        rightEyeBone.rotation.y = gaze.eyeRotY;
+        rightEyeBone.rotation.x = gaze.eyeRotX;
       }
 
       renderer.render(scene, camera);
@@ -491,11 +517,6 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('resize', handleResize);
 
-      if (hoverEl) {
-        hoverEl.removeEventListener('mouseenter', handleMouseEnter);
-        hoverEl.removeEventListener('mouseleave', handleMouseLeave);
-      }
-
       dracoLoader.dispose();
       scene.clear();
       renderer.dispose();
@@ -507,26 +528,90 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, [onLoaded]);
+  }, [avatarMode, onLoaded]);
+
+  const handleGestureClick = useCallback((actionKey) => {
+    if (playGestureRef.current) {
+      playGestureRef.current(actionKey);
+    }
+  }, []);
 
   return (
     <div ref={containerRef} className={`arch-char-scene-root ${className}`}>
-      {/* 3D Canvas Mount Point */}
-      <div className="arch-char-canvas-mount" ref={canvasMountRef}>
-        {/* Interactive Face Hover Zone */}
-        <div className="arch-char-hover-zone" ref={hoverRef} title="Interactive Architect Head & Eye Tracking" />
+      {/* Top Header Mode Toggle: Stylized vs Humanoid */}
+      <div className="arch-char-mode-selector">
+        <button
+          type="button"
+          className={`arch-char-mode-btn ${avatarMode === 'stylized' ? 'active' : ''}`}
+          onClick={() => setAvatarMode('stylized')}
+          title="Switch to stylized cartoon digital twin"
+        >
+          <span>🎭 Stylized Twin</span>
+        </button>
+        <button
+          type="button"
+          className={`arch-char-mode-btn ${avatarMode === 'humanoid' ? 'active' : ''}`}
+          onClick={() => setAvatarMode('humanoid')}
+          title="Switch to photoreal Ready Player Me humanoid avatar"
+        >
+          <span>👤 Photoreal Architect</span>
+        </button>
       </div>
+
+      {/* 3D Canvas Mount Point */}
+      <div className="arch-char-canvas-mount" ref={canvasMountRef} />
 
       {/* Loading Skeleton */}
       {isLoading && (
         <div className="arch-char-skeleton">
           <div className="arch-char-spin" />
-          <span>INITIALIZING 3D CARTOON TWIN...</span>
+          <span>
+            INITIALIZING {avatarMode === 'stylized' ? '3D CARTOON TWIN' : 'PHOTOREAL ARCHITECT'}...
+          </span>
         </div>
       )}
 
       {/* Ambient Blueprint Rim Light Glow */}
       <div className="arch-char-rim-glow" aria-hidden="true" />
+
+      {/* Interactive Floating Gesture Action Bar */}
+      <div className="arch-char-actions-bar" role="toolbar" aria-label="Avatar presentation gestures">
+        <button
+          type="button"
+          className={`arch-char-action-chip ${activeAction === 'wave' ? 'active' : ''}`}
+          onClick={() => handleGestureClick('wave')}
+          title="Greet visitors with a friendly wave"
+        >
+          <span>👋 Greet</span>
+        </button>
+
+        <button
+          type="button"
+          className={`arch-char-action-chip ${activeAction === 'present' ? 'active' : ''}`}
+          onClick={() => handleGestureClick('present')}
+          title="Architectural scheme presentation gesture"
+        >
+          <span>📐 Present</span>
+        </button>
+
+        <button
+          type="button"
+          className={`arch-char-action-chip ${activeAction === 'think' ? 'active' : ''}`}
+          onClick={() => handleGestureClick('think')}
+          title="Design review & contemplation pose"
+        >
+          <span>💡 Ponder</span>
+        </button>
+
+        <button
+          type="button"
+          className={`arch-char-action-chip ${activeAction === 'idle' ? 'active' : ''}`}
+          onClick={() => handleGestureClick('idle')}
+          title="Live cursor tracking with saccadic gaze"
+        >
+          <span>👁️ Track</span>
+        </button>
+      </div>
     </div>
   );
 }
