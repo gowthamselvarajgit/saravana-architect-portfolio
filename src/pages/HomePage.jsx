@@ -41,14 +41,14 @@ export default function HomePage({ onNavigate, currentPath = '/' }) {
         {/* Section 02: Architect Profile & Philosophy */}
         <AboutSection />
 
-        {/* Section 03: Professional Practice & Internship Experience */}
+        {/* Section 03: Selected Architectural Projects & 3D Real Earth Globe (Immediately following About) */}
+        <SelectedProjectsSection onNavigate={onNavigate} />
+
+        {/* Section 04: Professional Practice & Internship Experience */}
         <ExperienceSection />
 
-        {/* Section 04: Academic Degree & Pedagogy */}
+        {/* Section 05: Academic Degree & Pedagogy */}
         <EducationSection />
-
-        {/* Section 05: Selected Architectural Projects (5 Primary Works) */}
-        <SelectedProjectsSection />
 
         {/* Section 06: Architectural Gallery (Curated Visual Corpus) */}
         <GallerySection />

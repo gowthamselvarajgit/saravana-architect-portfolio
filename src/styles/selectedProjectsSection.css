@@ -1,0 +1,641 @@
+/* ============================================================================
+   SELECTED PROJECTS SECTION — CENTER GLOBE & SURROUNDING 3D SCHEME CARDS
+   Section 03 // Primary Corpus positioned directly following About Section
+   ========================================================================= */
+
+.arch-projects-section {
+  position: relative;
+  width: 100%;
+  background-color: #ffffff;
+  color: #111111;
+  padding: clamp(4.5rem, 6.5vw, 7rem) 0;
+  border-bottom: 1px solid #e8e6e1;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Subtle blueprint background coordinate grid */
+.arch-projects-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(0, 102, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 102, 255, 0.032) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.arch-projects-container {
+  position: relative;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 0 clamp(1.2rem, 3vw, 3rem);
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+/* Section Header Eyebrow */
+.arch-projects-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--f-mono, 'Martian Mono', 'DM Mono', monospace);
+  font-size: clamp(0.7rem, 0.85vw, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #0066FF;
+  margin-bottom: 1rem;
+}
+
+.arch-projects-eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #0066FF;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 10px rgba(0, 102, 255, 0.5);
+  animation: archProjectsDotPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes archProjectsDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Section Header Main */
+.arch-projects-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+  padding-bottom: 1.8rem;
+  border-bottom: 1px solid #e8e6e1;
+}
+
+.arch-projects-title-wrap {
+  max-width: 860px;
+}
+
+.arch-projects-main-title {
+  font-family: var(--f-display, 'Archivo', sans-serif);
+  font-size: clamp(2.2rem, 3.8vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: #111111;
+  text-transform: uppercase;
+  margin: 0 0 0.85rem;
+}
+
+.arch-projects-subtitle {
+  font-family: var(--f-body, sans-serif);
+  font-size: clamp(0.95rem, 1.1vw, 1.12rem);
+  line-height: 1.6;
+  color: #555555;
+  margin: 0;
+  max-width: 740px;
+}
+
+.arch-projects-header-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+}
+
+.arch-projects-badge-tag {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: 0.05em;
+}
+
+.arch-projects-badge-sub {
+  font-size: 0.7rem;
+  color: #0066FF;
+  letter-spacing: 0.08em;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   SURROUND PANORAMA STAGE:
+   WEST FLANK (CARDS 01 & 02) | CENTER FRAMELESS GLOBE | EAST FLANK (CARDS 03, 04, 05)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.arch-projects-surround-stage {
+  display: grid;
+  grid-template-columns: minmax(300px, 350px) minmax(440px, 1fr) minmax(300px, 350px);
+  gap: clamp(1.4rem, 2vw, 2.5rem);
+  align-items: center;
+  position: relative;
+}
+
+/* Tablet & Smaller Layout */
+@media (max-width: 1140px) {
+  .arch-projects-surround-stage {
+    grid-template-columns: 1fr;
+    gap: 2.8rem;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   FLANKS: LEFT (WEST) AND RIGHT (EAST) COLUMNS OF 3D CARDS
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.arch-projects-flank {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  z-index: 2;
+}
+
+@media (max-width: 1140px) {
+  .arch-projects-flank-west {
+    order: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .arch-projects-flank-east {
+    order: 3;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   AMAZING 3D SCHEME CARD COMPONENT
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.arch-card-3d {
+  position: relative;
+  perspective: 1200px;
+  cursor: pointer;
+  outline: none;
+  background: transparent;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arch-card-3d:focus-visible .arch-card-3d-inner {
+  outline: 2px solid #0066FF;
+  outline-offset: 3px;
+}
+
+.arch-card-3d-inner {
+  position: relative;
+  background: #ffffff;
+  border: 1.5px solid #e7e5df;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 
+    0 6px 20px rgba(17, 17, 17, 0.04),
+    0 1px 3px rgba(17, 17, 17, 0.02);
+  transition: 
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease,
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+}
+
+/* 3D Elevation on Hover */
+.arch-card-3d:hover .arch-card-3d-inner {
+  transform: translateY(-8px) scale(1.02);
+  border-color: #0066FF;
+  box-shadow: 
+    0 22px 48px -10px rgba(0, 102, 255, 0.18),
+    0 8px 16px -4px rgba(17, 17, 17, 0.06),
+    inset 0 0 0 1px rgba(0, 102, 255, 0.4);
+}
+
+/* Selected Active State */
+.arch-card-3d.is-selected .arch-card-3d-inner {
+  border-color: #0066FF;
+  background: #fcfdfe;
+  box-shadow: 
+    0 20px 44px -8px rgba(0, 102, 255, 0.22),
+    inset 0 0 0 1.5px #0066FF;
+}
+
+/* Render Thumbnail Media */
+.arch-card-3d-media {
+  position: relative;
+  width: 100%;
+  height: 165px;
+  background-color: #0c1220;
+  overflow: hidden;
+}
+
+.arch-card-3d-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arch-card-3d:hover .arch-card-3d-img {
+  transform: scale(1.08);
+}
+
+.arch-card-3d-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 15, 28, 0.15) 0%,
+    rgba(10, 15, 28, 0.05) 40%,
+    rgba(10, 15, 28, 0.65) 100%
+  );
+  pointer-events: none;
+}
+
+/* Badges on Top of Image */
+.arch-card-3d-badges {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.arch-card-3d-num {
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  background: rgba(0, 102, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.4);
+}
+
+.arch-card-3d-location {
+  font-family: var(--f-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: rgba(13, 21, 39, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  letter-spacing: 0.04em;
+}
+
+/* 3D Tech Status Badge */
+.arch-card-3d-tech-badge {
+  position: absolute;
+  bottom: 9px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(13, 21, 39, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #00e5ff;
+  letter-spacing: 0.08em;
+  z-index: 2;
+}
+
+.arch-card-3d-tech-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #00e5ff;
+  box-shadow: 0 0 6px #00e5ff;
+}
+
+/* Card Body */
+.arch-card-3d-body {
+  padding: 1.15rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.arch-card-3d-title {
+  font-family: var(--f-display, 'Archivo', sans-serif);
+  font-size: 1.18rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #111111;
+  margin: 0 0 0.35rem;
+  transition: color 0.25s ease;
+}
+
+.arch-card-3d:hover .arch-card-3d-title {
+  color: #0066FF;
+}
+
+.arch-card-3d-context {
+  font-family: var(--f-body, sans-serif);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #555555;
+  margin: 0 0 0.85rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Micro Specs Pills */
+.arch-card-3d-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1.1rem;
+}
+
+.arch-card-3d-spec-pill {
+  font-family: var(--f-mono, monospace);
+  font-size: 0.62rem;
+  background: #f6f5f1;
+  border: 1px solid #e7e4dc;
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: #444444;
+}
+
+/* 1-Click Direct Action Bar */
+.arch-card-3d-action {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #111111;
+  color: #ffffff;
+  padding: 7px 12px;
+  border-radius: 999px;
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.arch-card-3d:hover .arch-card-3d-action,
+.arch-card-3d.is-selected .arch-card-3d-action {
+  background: #0066FF;
+  transform: translateY(-1px);
+}
+
+.arch-card-3d-action-text {
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.arch-card-3d-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
+}
+
+.arch-card-3d:hover .arch-card-3d-action-icon {
+  transform: translate(2px, -2px);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   CENTER STAGE: FRAMELESS 3D REAL EARTH GLOBE
+   (No dark card box, no border enclosure. Pure organic celestial theater)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.arch-projects-globe-center-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(580px, 64vh, 740px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  z-index: 1;
+}
+
+@media (max-width: 1140px) {
+  .arch-projects-globe-center-stage {
+    order: 1;
+    height: 480px;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .arch-projects-globe-center-stage {
+    height: 380px;
+  }
+}
+
+/* Cosmic Atmospheric Aura Behind the Sphere */
+.arch-globe-ambient-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 102, 255, 0.12) 0%,
+    rgba(0, 229, 255, 0.05) 45%,
+    transparent 75%
+  );
+  pointer-events: none;
+  filter: blur(28px);
+}
+
+/* Decorative Celestial Orbit Rings */
+.arch-globe-orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.arch-globe-orbit-ring.ring-1 {
+  width: 520px;
+  height: 520px;
+  border: 1px dashed rgba(0, 102, 255, 0.14);
+  animation: orbitRingSpin 120s linear infinite;
+}
+
+.arch-globe-orbit-ring.ring-2 {
+  width: 640px;
+  height: 640px;
+  border: 1px solid rgba(0, 102, 255, 0.07);
+}
+
+@keyframes orbitRingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Frameless WebGL Canvas Mount */
+.arch-globe-canvas-mount {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.arch-globe-canvas-mount:active {
+  cursor: grabbing;
+}
+
+/* Top Telemetry Overlay */
+.arch-globe-telemetry-hud {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  z-index: 5;
+  width: max-content;
+  max-width: 90%;
+}
+
+.arch-globe-hud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(13, 21, 39, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 102, 255, 0.35);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #00e5ff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.arch-globe-hud-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00e5ff;
+  box-shadow: 0 0 8px #00e5ff;
+  animation: globeDotPulse 2s infinite ease-in-out;
+}
+
+@keyframes globeDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.arch-globe-hud-coords {
+  font-family: var(--f-mono, monospace);
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.06em;
+  background: rgba(13, 21, 39, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 5px 11px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Bottom Telemetry Guide Prompt */
+.arch-globe-telemetry-bottom {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(13, 21, 39, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 102, 255, 0.3);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.82);
+  pointer-events: none;
+  z-index: 5;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.arch-globe-instruction-dot {
+  color: #00e5ff;
+  font-size: 0.65rem;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   3D GLOBE PIN HOVER MICRO TAG (Sleek, lightweight, never blocks the sphere)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.arch-pin-micro-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10, 15, 28, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 229, 255, 0.45);
+  padding: 4px 10px;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: microTagFade 0.2s ease-out;
+}
+
+@keyframes microTagFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.arch-pin-tag-num {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #00e5ff;
+}
+
+.arch-pin-tag-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.arch-pin-tag-city {
+  font-size: 0.58rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+

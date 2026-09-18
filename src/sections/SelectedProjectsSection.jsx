@@ -1,756 +1,229 @@
-import React, { useState, useRef } from 'react';
-import { Container, SectionHeader, ArrowLink } from '../components/ArchPrimitives';
+import React, { useState, useCallback } from 'react';
 import { PRIMARY_PROJECTS } from '../data/projectsData';
+import GlobeCanvas from '../three/Globe/GlobeCanvas';
+import '../styles/selectedProjectsSection.css';
 
 /**
- * MagneticCard: Reusable wrapper providing pointer-driven 3D perspective tilt
- * and inner image counter-parallax.
+ * 3D Project Scheme Card Component
+ * Highly detailed architectural card featuring 3D elevation, authentic render
+ * thumbnail, editorial typography, and 1-click automatic flight launch.
  */
-function MagneticCard({ children, className = '', style = {}, onExpand, isExpanded }) {
-  const cardRef = useRef(null);
-  const [transform, setTransform] = useState({ rotateX: 0, rotateY: 0, imgX: 0, imgY: 0, isHovered: false });
-
-  const handlePointerMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    // Normalized coordinates (-1 to 1)
-    const normX = (x / rect.width) * 2 - 1;
-    const normY = (y / rect.height) * 2 - 1;
-
-    setTransform({
-      rotateX: -normY * 3.5, // subtle architectural tilt
-      rotateY: normX * 3.5,
-      imgX: normX * -12, // counter-parallax
-      imgY: normY * -12,
-      isHovered: true,
-    });
-  };
-
-  const handlePointerLeave = () => {
-    setTransform({ rotateX: 0, rotateY: 0, imgX: 0, imgY: 0, isHovered: false });
-  };
+function ProjectCard3D({ project, index, isSelected, onClick, onMouseEnter, onMouseLeave }) {
+  const formattedNum = String(index + 1).padStart(2, '0');
 
   return (
-    <div
-      ref={cardRef}
-      className={`arch-card-tilt-container ${className}`}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-      style={{
-        ...style,
+    <article
+      className={`arch-card-3d ${isSelected ? 'is-selected' : ''}`}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
       }}
+      tabIndex={0}
+      role="button"
+      aria-label={`Open 3D Monograph for ${project.title}`}
     >
-      <div
-        className={`arch-card-tilt-inner ${transform.isHovered ? 'is-hovered' : ''}`}
-        style={{
-          transform: `perspective(1000px) rotateX(${transform.rotateX}deg) rotateY(${transform.rotateY}deg)`,
-          transformStyle: 'preserve-3d',
-        }}
-      >
-        {typeof children === 'function' ? children(transform) : children}
+      <div className="arch-card-3d-inner">
+        {/* Render Thumbnail Image with Gradient Scrim */}
+        <div className="arch-card-3d-media">
+          <img
+            src={project.heroImage}
+            alt={project.title}
+            className="arch-card-3d-img"
+            loading="lazy"
+          />
+          <div className="arch-card-3d-scrim" />
+
+          {/* Top Metadata Badges on Image */}
+          <div className="arch-card-3d-badges">
+            <span className="arch-card-3d-num">// {formattedNum}</span>
+            <span className="arch-card-3d-location">
+              {project.location.city.toUpperCase()} · {project.year}
+            </span>
+          </div>
+
+          {/* 3D Model / Drawing Badge */}
+          <div className="arch-card-3d-tech-badge">
+            <span className="arch-card-3d-tech-dot" />
+            <span>{project.hasWebModel ? '3D MAQUETTE' : 'BIM CAD SET'}</span>
+          </div>
+        </div>
+
+        {/* Card Typography & Project Context */}
+        <div className="arch-card-3d-body">
+          <h3 className="arch-card-3d-title">{project.title}</h3>
+          <p className="arch-card-3d-context">
+            {project.thesis || project.context}
+          </p>
+
+          {/* Micro Typology Tags */}
+          <div className="arch-card-3d-specs">
+            <span className="arch-card-3d-spec-pill">
+              {project.technicalSpecs?.[0]?.value || 'Architecture'}
+            </span>
+            <span className="arch-card-3d-spec-pill">
+              {project.category?.split('/')?.[0]?.trim() || 'Design Scheme'}
+            </span>
+          </div>
+
+          {/* Direct 1-Click Flight Prompt */}
+          <div className="arch-card-3d-action">
+            <span className="arch-card-3d-action-text">FLY TO 3D MONOGRAPH</span>
+            <span className="arch-card-3d-action-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </span>
+          </div>
+        </div>
       </div>
-    </div>
+    </article>
   );
 }
 
-export default function SelectedProjectsSection() {
-  const [mobius, oasis, ribbon, ecoResort, flowSpire] = PRIMARY_PROJECTS;
-  const [expandedProjectId, setExpandedProjectId] = useState(null);
+/**
+ * SelectedProjectsSection
+ * Section 03 // Primary Architectural Corpus
+ * 
+ * Layout:
+ * - Centerpiece: Frameless 3D Real Earth Globe with atmospheric glow and orbit controls
+ * - Surrounded by: High-end 3D Scheme Cards (West Flank: Schemes 01 & 02; East Flank: Schemes 03, 04, 05)
+ * - Interaction: 1-click on any card or globe pin automatically triggers the cloud animation
+ *   and flies directly to the specific project monograph page.
+ */
+export default function SelectedProjectsSection({ onNavigate = () => {} }) {
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [hoveredProject, setHoveredProject] = useState(null);
 
-  const toggleExpand = (id) => {
-    setExpandedProjectId((prev) => (prev === id ? null : id));
-  };
+  // West Flank: First 2 projects (Möbius & Cultural Oasis)
+  const westProjects = PRIMARY_PROJECTS.slice(0, 2);
+  // East Flank: Remaining 3 projects (Ribbon of Life, Eco-Resort, Flow Spire)
+  const eastProjects = PRIMARY_PROJECTS.slice(2, 5);
+
+  const activeProject = hoveredProject || selectedProject;
+
+  // Single-action 1-click navigation:
+  // Immediately rotates globe to site and launches cloud transition into project monograph
+  const handleProjectDirectFlight = useCallback(
+    (project) => {
+      setSelectedProject(project);
+      onNavigate(`/projects/${project.slug || project.id}`, { withClouds: true });
+    },
+    [onNavigate]
+  );
 
   return (
-    <section
-      id="projects"
-      style={{
-        position: 'relative',
-        width: '100%',
-        paddingTop: 'var(--space-3xl)',
-        paddingBottom: 'var(--space-4xl)',
-        borderBottom: '1px solid var(--color-border)',
-        backgroundColor: 'var(--color-bg)',
-        color: 'var(--color-text-primary)',
-        transition: 'background-color var(--transition-base) ease, color var(--transition-base) ease',
-      }}
-    >
-      <Container>
-        <SectionHeader
-          data-anim="section-header"
-          index="SEC. 03 / PRIMARY CORPUS"
-          eyebrow="SELECTED ARCHITECTURAL WORKS"
-          title="Five Architectural Investigations"
-          subtitle="Topological structures, territorial masterplans, and climatic adaptations developed across academic and competition arenas."
-        />
-
-        {/* ================================================================== */}
-        {/* PROJECT 01: ON THE PATH TO REDISCOVERY (MÖBIUS) — MONUMENTAL HERO */}
-        {/* ================================================================== */}
-        <MagneticCard
-          data-anim="project-card"
-          className="arch-project-interactive"
-          style={{
-            marginBottom: 'var(--space-4xl)',
-            paddingBottom: 'var(--space-3xl)',
-            borderBottom: '1px solid var(--color-border)',
-          }}
-        >
-          {({ imgX, imgY, isHovered }) => (
-            <article aria-labelledby="mobius-heading">
-              {/* Project Label Header */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'baseline',
-                  paddingBottom: 'var(--space-xs)',
-                  marginBottom: 'var(--space-md)',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-                  <span className="arch-section-index project-num">// 01</span>
-                  <span className="arch-card-badge">
-                    <span className="arch-marker-dot" style={{ backgroundColor: 'var(--color-accent)' }} />
-                    COMPETITION WINNING PROPOSAL
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: 'var(--space-md)' }}>
-                  <span className="arch-tech-label">OSLO, NORWAY</span>
-                  <span className="arch-tech-label">2025</span>
-                </div>
-              </div>
-
-              <div className="project-rule" style={{ marginBottom: 'var(--space-lg)' }} />
-
-              <div className="arch-split-asymmetric">
-                {/* Left: Narrative & Parameters */}
-                <div>
-                  <h3
-                    id="mobius-heading"
-                    className="arch-display-large"
-                    style={{ marginBottom: 'var(--space-sm)' }}
-                  >
-                    {mobius.title}
-                  </h3>
-
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8125rem',
-                      color: 'var(--color-text-secondary)',
-                      marginBottom: 'var(--space-md)',
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: 'var(--space-xs)',
-                    }}
-                  >
-                    <span>{mobius.context}</span>
-                    <span>·</span>
-                    <span>{mobius.academicContext}</span>
-                  </div>
-
-                  <p className="arch-body" style={{ marginBottom: 'var(--space-md)', color: 'var(--color-text-secondary)' }}>
-                    {mobius.thesis}
-                  </p>
-
-                  <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap', marginBottom: 'var(--space-lg)' }}>
-                    <span className="arch-tech-label" style={{ border: '1px solid var(--color-border)', padding: '0.25rem 0.6rem' }}>
-                      CONTINUOUS SURFACE
-                    </span>
-                    <span className="arch-tech-label" style={{ border: '1px solid var(--color-border)', padding: '0.25rem 0.6rem' }}>
-                      ENGINEERED TIMBER RIBS
-                    </span>
-                    <span className="arch-tech-label" style={{ border: '1px solid var(--color-border)', padding: '0.25rem 0.6rem' }}>
-                      3D MAQUETTE READY
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: 'var(--space-md)', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <ArrowLink href={mobius.route}>
-                      EXPLORE MÖBIUS 3D DOSSIER
-                    </ArrowLink>
-                    <button
-                      type="button"
-                      onClick={() => toggleExpand('mobius')}
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.75rem',
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
-                        backgroundColor: 'transparent',
-                        border: '1px solid var(--color-border)',
-                        color: 'var(--color-text-primary)',
-                        padding: '0.45rem 0.85rem',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                      }}
-                    >
-                      {expandedProjectId === 'mobius' ? '[-] CLOSE TECHNICAL DRAWINGS' : '[+] VIEW GENERATIVE STUDY'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Right: Primary Render Frame with Counter Parallax */}
-                <div>
-                  <div
-                    className="project-img-wrapper"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '16 / 10',
-                      marginBottom: 'var(--space-sm)',
-                    }}
-                  >
-                    <img
-                      src={mobius.heroImage}
-                      alt={mobius.title}
-                      loading="lazy"
-                      className="project-img"
-                      style={{
-                        transform: `translate(${imgX}px, ${imgY}px) scale(${isHovered ? 1.05 : 1})`,
-                        transition: isHovered ? 'transform 0.15s ease-out' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                      }}
-                    />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span className="arch-tech-label">ELEVATED PLAZA PERSPECTIVE</span>
-                    <span className="arch-tech-label">RHINO · GRASSHOPPER · 2.5K WEBP</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* In-situ Expand Drawer for Möbius */}
-              {expandedProjectId === 'mobius' && (
-                <div
-                  style={{
-                    marginTop: 'var(--space-xl)',
-                    padding: 'var(--space-lg)',
-                    backgroundColor: 'var(--color-surface)',
-                    border: '1px solid var(--color-border)',
-                    animation: 'fadeIn 0.3s ease',
-                  }}
-                >
-                  <span className="arch-tech-label" style={{ color: 'var(--color-accent)', display: 'block', marginBottom: 'var(--space-xs)' }}>
-                    ARCHITECTURAL STUDY SHEET // MÖBIUS GENERATIVE EVOLUTION
-                  </span>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-md)' }}>
-                    <div>
-                      <img
-                        src="/assets/images/projects/mobius/mobius-process-01.webp"
-                        alt="Parametric Grasshopper study"
-                        style={{ width: '100%', height: 'auto', border: '1px solid var(--color-border-subtle)', display: 'block' }}
-                      />
-                      <span className="arch-tech-label" style={{ display: 'block', marginTop: 'var(--space-2xs)' }}>FIG 1.1: GRASSHOPPER CONSTRAINT SOLVER</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                      <p className="arch-body" style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-                        The form was mathematically solved using non-orientable topology. 
-                        By twisting a ruled surface 180° prior to joining endpoints, interior ceiling becomes exterior ramp, 
-                        eliminating traditional wall partitions and encouraging continuous pedestrian flow through historical Oslo plaza.
-                      </p>
-                      <div style={{ borderTop: '1px solid var(--color-border-subtle)', paddingTop: 'var(--space-sm)' }}>
-                        <span className="arch-tech-label">COORDINATES: 59°54'57"N 10°44'08"E</span>
-                        <span className="arch-tech-label" style={{ display: 'block' }}>COMPETITION SUBMISSION: 120 HOURS 2025</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </article>
-          )}
-        </MagneticCard>
-
-        {/* ================================================================== */}
-        {/* PROJECTS 02 & 03: ASYMMETRIC STAGGERED 2-COLUMN SPREAD             */}
-        {/* Cultural Oasis (Himalayan Sanctuary) + Ribbon of Life (IT Tower)  */}
-        {/* ================================================================== */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: 'clamp(2.5rem, 5vw, 5rem)',
-            marginBottom: 'var(--space-4xl)',
-            paddingBottom: 'var(--space-3xl)',
-            borderBottom: '1px solid var(--color-border)',
-          }}
-        >
-          {/* PROJECT 02: CULTURAL OASIS */}
-          <MagneticCard
-            data-anim="project-card"
-            className="arch-project-interactive"
-          >
-            {({ imgX, imgY, isHovered }) => (
-              <article aria-labelledby="oasis-heading">
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'baseline',
-                    paddingBottom: 'var(--space-xs)',
-                    marginBottom: 'var(--space-sm)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-                    <span className="arch-section-index project-num">// 02</span>
-                    <span className="arch-card-badge">
-                      <span className="arch-marker-dot" style={{ backgroundColor: 'var(--color-accent)' }} />
-                      URBAN INTERVENTION
-                    </span>
-                  </div>
-                  <span className="arch-tech-label">KATRA, JAMMU · 2024</span>
-                </div>
-
-                <div className="project-rule" style={{ marginBottom: 'var(--space-md)' }} />
-
-                <div
-                  className="project-img-wrapper"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '16 / 10',
-                    marginBottom: 'var(--space-md)',
-                  }}
-                >
-                  <img
-                    src={oasis.heroImage}
-                    alt={oasis.title}
-                    loading="lazy"
-                    className="project-img"
-                    style={{
-                      transform: `translate(${imgX}px, ${imgY}px) scale(${isHovered ? 1.05 : 1})`,
-                      transition: isHovered ? 'transform 0.15s ease-out' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                    }}
-                  />
-                </div>
-
-                <h4
-                  id="oasis-heading"
-                  className="arch-display-medium"
-                  style={{ marginBottom: 'var(--space-2xs)' }}
-                >
-                  {oasis.title}
-                </h4>
-
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem',
-                    color: 'var(--color-text-muted)',
-                    display: 'block',
-                    marginBottom: 'var(--space-sm)',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  {oasis.location.name} · {oasis.academicContext}
-                </span>
-
-                <p className="arch-body" style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-md)' }}>
-                  {oasis.thesis}
-                </p>
-
-                <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap', marginBottom: 'var(--space-md)' }}>
-                  <span className="arch-tech-label" style={{ border: '1px solid var(--color-border-subtle)', padding: '0.2rem 0.5rem' }}>
-                    STEPPED AMPHITHEATER
-                  </span>
-                  <span className="arch-tech-label" style={{ border: '1px solid var(--color-border-subtle)', padding: '0.2rem 0.5rem' }}>
-                    PILGRIMAGE TRANSIT NODE
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <ArrowLink href={oasis.route}>
-                    VIEW STRATIFIED BUILD REVEAL
-                  </ArrowLink>
-                  <button
-                    type="button"
-                    onClick={() => toggleExpand('oasis')}
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6875rem',
-                      letterSpacing: '0.08em',
-                      backgroundColor: 'transparent',
-                      border: '1px solid var(--color-border)',
-                      color: 'var(--color-text-primary)',
-                      padding: '0.35rem 0.65rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {expandedProjectId === 'oasis' ? '[-] HIDE' : '[+] DETAILS'}
-                  </button>
-                </div>
-
-                {expandedProjectId === 'oasis' && (
-                  <div style={{ marginTop: 'var(--space-md)', padding: 'var(--space-md)', backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-                    <img src={oasis.galleryImages[0]} alt="Contour study" style={{ width: '100%', height: 'auto', marginBottom: 'var(--space-xs)' }} />
-                    <span className="arch-tech-label">PHYSICAL STEPPED FOAM TERRAIN STUDY</span>
-                  </div>
-                )}
-              </article>
-            )}
-          </MagneticCard>
-
-          {/* PROJECT 03: RIBBON OF LIFE (TECHNOPARK) */}
-          <MagneticCard
-            data-anim="project-card"
-            className="arch-project-interactive"
-          >
-            {({ imgX, imgY, isHovered }) => (
-              <article aria-labelledby="ribbon-heading">
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'baseline',
-                    paddingBottom: 'var(--space-xs)',
-                    marginBottom: 'var(--space-sm)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-                    <span className="arch-section-index project-num">// 03</span>
-                    <span className="arch-card-badge">
-                      <span className="arch-marker-dot" style={{ backgroundColor: 'var(--color-accent)' }} />
-                      B.ARCH CAPSTONE THESIS
-                    </span>
-                  </div>
-                  <span className="arch-tech-label">KERALA · 2026</span>
-                </div>
-
-                <div className="project-rule" style={{ marginBottom: 'var(--space-md)' }} />
-
-                <div
-                  className="project-img-wrapper"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '16 / 10',
-                    marginBottom: 'var(--space-md)',
-                  }}
-                >
-                  <img
-                    src={ribbon.heroImage}
-                    alt={ribbon.title}
-                    loading="lazy"
-                    className="project-img"
-                    style={{
-                      transform: `translate(${imgX}px, ${imgY}px) scale(${isHovered ? 1.05 : 1})`,
-                      transition: isHovered ? 'transform 0.15s ease-out' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                    }}
-                  />
-                </div>
-
-                <h4
-                  id="ribbon-heading"
-                  className="arch-display-medium"
-                  style={{ marginBottom: 'var(--space-2xs)' }}
-                >
-                  {ribbon.title}
-                </h4>
-
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem',
-                    color: 'var(--color-text-muted)',
-                    display: 'block',
-                    marginBottom: 'var(--space-sm)',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  Techno-Park Phase IV · {ribbon.location.city}, Kerala · {ribbon.academicContext}
-                </span>
-
-                <p className="arch-body" style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-md)' }}>
-                  {ribbon.thesis}
-                </p>
-
-                <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap', marginBottom: 'var(--space-md)' }}>
-                  <span className="arch-tech-label" style={{ border: '1px solid var(--color-border-subtle)', padding: '0.2rem 0.5rem' }}>
-                    42-STOREY BIOMIMETIC TOWER
-                  </span>
-                  <span className="arch-tech-label" style={{ border: '1px solid var(--color-border-subtle)', padding: '0.2rem 0.5rem' }}>
-                    CONTINUOUS PEDESTRIAN LOOP
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <ArrowLink href={ribbon.route}>
-                    VIEW THESIS MASTERPLAN DOSSIER
-                  </ArrowLink>
-                  <button
-                    type="button"
-                    onClick={() => toggleExpand('ribbon')}
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6875rem',
-                      letterSpacing: '0.08em',
-                      backgroundColor: 'transparent',
-                      border: '1px solid var(--color-border)',
-                      color: 'var(--color-text-primary)',
-                      padding: '0.35rem 0.65rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {expandedProjectId === 'ribbon' ? '[-] HIDE' : '[+] DETAILS'}
-                  </button>
-                </div>
-
-                {expandedProjectId === 'ribbon' && (
-                  <div style={{ marginTop: 'var(--space-md)', padding: 'var(--space-md)', backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-                    <p className="arch-body-small" style={{ color: 'var(--color-text-secondary)', margin: 0 }}>
-                      Thesis Program: 42-storey office and incubator tower linked by an elevated skyway loop across 24 acres. 
-                      Integrates passive tropical ventilation screens and podium-level public civic spaces.
-                    </p>
-                  </div>
-                )}
-              </article>
-            )}
-          </MagneticCard>
+    <section id="projects" className="arch-projects-section">
+      <div className="arch-projects-container">
+        {/* Section Eyebrow */}
+        <div className="arch-projects-eyebrow">
+          <span className="arch-projects-eyebrow-dot" aria-hidden="true" />
+          <span>SEC. 03 // PRIMARY CORPUS &amp; 3D EARTH ATLAS</span>
         </div>
 
-        {/* ================================================================== */}
-        {/* PROJECTS 04 & 05: MATERIAL CRAFT & VECTOR DRAWING REVEAL          */}
-        {/* Eco Resort (Nature's Nest) + Flow Spire (Landmark Watchtower)      */}
-        {/* ================================================================== */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: 'clamp(2.5rem, 5vw, 5rem)',
-          }}
-        >
-          {/* PROJECT 04: ECO RESORT */}
-          <MagneticCard
-            data-anim="project-card"
-            className="arch-project-interactive"
-          >
-            {({ imgX, imgY, isHovered }) => (
-              <article aria-labelledby="ecoresort-heading">
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'baseline',
-                    paddingBottom: 'var(--space-xs)',
-                    marginBottom: 'var(--space-sm)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-                    <span className="arch-section-index project-num">// 04</span>
-                    <span className="arch-card-badge">
-                      <span className="arch-marker-dot" style={{ backgroundColor: 'var(--color-accent)' }} />
-                      GRIHA TROPHY ENTRY
-                    </span>
-                  </div>
-                  <span className="arch-tech-label">PUNE, MAHARASHTRA · 2025</span>
-                </div>
+        {/* Section Header */}
+        <div className="arch-projects-header">
+          <div className="arch-projects-title-wrap">
+            <h2 className="arch-projects-main-title">
+              Selected Architectural Works
+            </h2>
+            <p className="arch-projects-subtitle">
+              Topological investigations, high-rise frameworks, and climate-adaptive pavilions.
+              The interactive planetary globe is centered and surrounded by primary monograph schemes.
+              Click any card to fly directly into the dedicated 3D project page.
+            </p>
+          </div>
 
-                <div className="project-rule" style={{ marginBottom: 'var(--space-md)' }} />
-
-                <div
-                  className="project-img-wrapper"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '16 / 10',
-                    marginBottom: 'var(--space-md)',
-                  }}
-                >
-                  <img
-                    src={ecoResort.heroImage}
-                    alt={ecoResort.title}
-                    loading="lazy"
-                    className="project-img"
-                    style={{
-                      transform: `translate(${imgX}px, ${imgY}px) scale(${isHovered ? 1.05 : 1})`,
-                      transition: isHovered ? 'transform 0.15s ease-out' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                    }}
-                  />
-                </div>
-
-                <h4
-                  id="ecoresort-heading"
-                  className="arch-display-medium"
-                  style={{ marginBottom: 'var(--space-2xs)' }}
-                >
-                  {ecoResort.title}
-                </h4>
-
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem',
-                    color: 'var(--color-text-muted)',
-                    display: 'block',
-                    marginBottom: 'var(--space-sm)',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  Nature’s Nest · {ecoResort.location.name} · {ecoResort.academicContext}
-                </span>
-
-                <p className="arch-body" style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-md)' }}>
-                  {ecoResort.thesis}
-                </p>
-
-                <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap', marginBottom: 'var(--space-md)' }}>
-                  <span className="arch-tech-label" style={{ border: '1px solid var(--color-border-subtle)', padding: '0.2rem 0.5rem' }}>
-                    GRIHA GREEN RATING
-                  </span>
-                  <span className="arch-tech-label" style={{ border: '1px solid var(--color-border-subtle)', padding: '0.2rem 0.5rem' }}>
-                    RAMMED-EARTH TECTONICS
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <ArrowLink href={ecoResort.route}>
-                    VIEW SUSTAINABILITY STUDY
-                  </ArrowLink>
-                  <button
-                    type="button"
-                    onClick={() => toggleExpand('ecoresort')}
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6875rem',
-                      letterSpacing: '0.08em',
-                      backgroundColor: 'transparent',
-                      border: '1px solid var(--color-border)',
-                      color: 'var(--color-text-primary)',
-                      padding: '0.35rem 0.65rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {expandedProjectId === 'ecoresort' ? '[-] HIDE' : '[+] DETAILS'}
-                  </button>
-                </div>
-
-                {expandedProjectId === 'ecoresort' && (
-                  <div style={{ marginTop: 'var(--space-md)', padding: 'var(--space-md)', backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-                    <p className="arch-body-small" style={{ color: 'var(--color-text-secondary)', margin: 0 }}>
-                      GRIHA 5-Star passive architectural strategies: minimum site excavation through cantilevered stilt foundations, 
-                      natural rainwater catchment channels along natural contour depressions, and repurposed shipping containers.
-                    </p>
-                  </div>
-                )}
-              </article>
-            )}
-          </MagneticCard>
-
-          {/* PROJECT 05: FLOW SPIRE */}
-          <MagneticCard
-            data-anim="project-card"
-            className="arch-project-interactive"
-          >
-            {({ imgX, imgY, isHovered }) => (
-              <article aria-labelledby="flowspire-heading">
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'baseline',
-                    paddingBottom: 'var(--space-xs)',
-                    marginBottom: 'var(--space-sm)',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-                    <span className="arch-section-index project-num">// 05</span>
-                    <span className="arch-card-badge">
-                      <span className="arch-marker-dot" style={{ backgroundColor: 'var(--color-accent)' }} />
-                      DRAWING &amp; MODEL-LED
-                    </span>
-                  </div>
-                  <span className="arch-tech-label">THANE, MUMBAI · 2025</span>
-                </div>
-
-                <div className="project-rule" style={{ marginBottom: 'var(--space-md)' }} />
-
-                <div
-                  className="project-img-wrapper"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '16 / 10',
-                    marginBottom: 'var(--space-md)',
-                  }}
-                >
-                  <img
-                    src={flowSpire.heroImage}
-                    alt={flowSpire.title}
-                    loading="lazy"
-                    className="project-img"
-                    style={{
-                      transform: `translate(${imgX}px, ${imgY}px) scale(${isHovered ? 1.05 : 1})`,
-                      transition: isHovered ? 'transform 0.15s ease-out' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
-                    }}
-                  />
-                </div>
-
-                <h4
-                  id="flowspire-heading"
-                  className="arch-display-medium"
-                  style={{ marginBottom: 'var(--space-2xs)' }}
-                >
-                  {flowSpire.title}
-                </h4>
-
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem',
-                    color: 'var(--color-text-muted)',
-                    display: 'block',
-                    marginBottom: 'var(--space-sm)',
-                    letterSpacing: '0.04em',
-                  }}
-                >
-                  Skyline-Hub Landmark Watchtower · {flowSpire.location.name} · {flowSpire.academicContext}
-                </span>
-
-                <p className="arch-body" style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-md)' }}>
-                  {flowSpire.thesis}
-                </p>
-
-                <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap', marginBottom: 'var(--space-md)' }}>
-                  <span className="arch-tech-label" style={{ border: '1px solid var(--color-border-subtle)', padding: '0.2rem 0.5rem' }}>
-                    AERODYNAMIC TWISTED SPINE
-                  </span>
-                  <span className="arch-tech-label" style={{ border: '1px solid var(--color-border-subtle)', padding: '0.2rem 0.5rem' }}>
-                    DRAWING-LED TECTONICS
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <ArrowLink href={flowSpire.route}>
-                    EXPLORE VECTOR PLANS &amp; ELEVATION
-                  </ArrowLink>
-                  <button
-                    type="button"
-                    onClick={() => toggleExpand('flowspire')}
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6875rem',
-                      letterSpacing: '0.08em',
-                      backgroundColor: 'transparent',
-                      border: '1px solid var(--color-border)',
-                      color: 'var(--color-text-primary)',
-                      padding: '0.35rem 0.65rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {expandedProjectId === 'flowspire' ? '[-] HIDE' : '[+] DETAILS'}
-                  </button>
-                </div>
-
-                {expandedProjectId === 'flowspire' && (
-                  <div style={{ marginTop: 'var(--space-md)', padding: 'var(--space-md)', backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-                    <p className="arch-body-small" style={{ color: 'var(--color-text-secondary)', margin: 0 }}>
-                      Drawing-Led Methodology: Flow Spire's helical twist was resolved through 8 successive AutoCAD section cuts 
-                      and physical balsa study models rather than automatic procedural scripting, prioritizing tectonic constructability.
-                    </p>
-                  </div>
-                )}
-              </article>
-            )}
-          </MagneticCard>
+          <div className="arch-projects-header-badge">
+            <span className="arch-projects-badge-tag">FIVE PRIMARY SCHEMES</span>
+            <span className="arch-projects-badge-sub">INTERACTIVE 3D SITES &amp; BIM MODELS</span>
+          </div>
         </div>
-      </Container>
+
+        {/* ─────────────────────────────────────────────────────────────
+           CENTER GLOBE SURROUNDED BY 3D CARDS LAYOUT:
+           WEST FLANK (01, 02) | CENTER FRAMELESS GLOBE | EAST FLANK (03, 04, 05)
+           ───────────────────────────────────────────────────────────── */}
+        <div className="arch-projects-surround-stage">
+          {/* =========================================================
+             WEST FLANK: CARDS 01 & 02
+             ========================================================= */}
+          <div className="arch-projects-flank arch-projects-flank-west" role="region" aria-label="Western Schemes">
+            {westProjects.map((project, idx) => (
+              <ProjectCard3D
+                key={project.id}
+                project={project}
+                index={idx}
+                isSelected={activeProject?.id === project.id}
+                onClick={() => handleProjectDirectFlight(project)}
+                onMouseEnter={() => setHoveredProject(project)}
+                onMouseLeave={() => setHoveredProject(null)}
+              />
+            ))}
+          </div>
+
+          {/* =========================================================
+             CENTER STAGE: FRAMELESS 3D REAL EARTH GLOBE
+             (Not inside a card! Expansive, organic, boundaryless)
+             ========================================================= */}
+          <div className="arch-projects-globe-center-stage">
+            {/* Atmospheric cosmic radial aura */}
+            <div className="arch-globe-ambient-glow" aria-hidden="true" />
+            <div className="arch-globe-orbit-ring ring-1" aria-hidden="true" />
+            <div className="arch-globe-orbit-ring ring-2" aria-hidden="true" />
+
+            {/* Top Telemetry Overlay */}
+            <div className="arch-globe-telemetry-hud" aria-hidden="true">
+              <span className="arch-globe-hud-pill">
+                <span className="arch-globe-hud-pulse" />
+                <span>3D REAL EARTH ATLAS</span>
+              </span>
+              <span className="arch-globe-hud-coords">
+                {activeProject
+                  ? `${activeProject.location.coordinates} · ${activeProject.location.city.toUpperCase()}`
+                  : 'PLANETARY SURROUND VIEW · 5 GLOBAL SITES'}
+              </span>
+            </div>
+
+            {/* 3D WebGL Canvas Mount (Frameless, open-air) */}
+            <div className="arch-globe-canvas-mount">
+              <GlobeCanvas
+                projects={PRIMARY_PROJECTS}
+                selectedProject={selectedProject}
+                onSelectProject={handleProjectDirectFlight}
+              />
+            </div>
+
+            {/* Bottom Telemetry Prompt */}
+            <div className="arch-globe-telemetry-bottom" aria-hidden="true">
+              <span className="arch-globe-instruction-dot">●</span>
+              <span>DRAG GLOBE TO ROTATE · CLICK CARD OR PIN FOR 1-CLICK 3D FLIGHT</span>
+            </div>
+          </div>
+
+          {/* =========================================================
+             EAST FLANK: CARDS 03, 04, 05
+             ========================================================= */}
+          <div className="arch-projects-flank arch-projects-flank-east" role="region" aria-label="Eastern Schemes">
+            {eastProjects.map((project, idx) => (
+              <ProjectCard3D
+                key={project.id}
+                project={project}
+                index={idx + 2}
+                isSelected={activeProject?.id === project.id}
+                onClick={() => handleProjectDirectFlight(project)}
+                onMouseEnter={() => setHoveredProject(project)}
+                onMouseLeave={() => setHoveredProject(null)}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

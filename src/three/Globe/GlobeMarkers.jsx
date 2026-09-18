@@ -120,40 +120,18 @@ function SingleMarker({
         )}
       </group>
 
-      {/* Floating Monospaced Location Tag */}
-      {(hovered || isSelected) && isFacingCamera && (
+      {/* Sleek Floating Micro-Pill Tag on Hover Only */}
+      {hovered && isFacingCamera && (
         <Html
-          position={[0, 0.22, 0]}
+          position={[0, 0.18, 0]}
           center
-          distanceFactor={10}
           zIndexRange={[100, 0]}
           style={{ pointerEvents: 'none' }}
         >
-          <div
-            style={{
-              background: 'rgba(10, 9, 6, 0.92)',
-              border: '1px solid rgba(244, 240, 232, 0.3)',
-              padding: '0.4rem 0.75rem',
-              borderRadius: '2px',
-              color: '#F4F0E8',
-              fontFamily: "'DM Mono', monospace",
-              fontSize: '0.72rem',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              whiteSpace: 'nowrap',
-              boxShadow: '0 8px 16px rgba(0,0,0,0.5)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.2rem',
-            }}
-          >
-            <div style={{ color: '#E03E48', fontSize: '0.65rem' }}>
-              {project.projectNumber} · {project.location.city.toUpperCase()}
-            </div>
-            <div style={{ fontWeight: 500 }}>{project.title}</div>
-            <div style={{ fontSize: '0.6rem', opacity: 0.6, letterSpacing: '0.04em' }}>
-              REP. COORDS: {project.location.coordinates}
-            </div>
+          <div className="arch-pin-micro-tag">
+            <span className="arch-pin-tag-num">// {project.projectNumber}</span>
+            <span className="arch-pin-tag-title">{project.title}</span>
+            <span className="arch-pin-tag-city">{project.location.city.toUpperCase()}</span>
           </div>
         </Html>
       )}

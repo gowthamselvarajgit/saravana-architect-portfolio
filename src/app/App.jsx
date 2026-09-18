@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import HomePage from '../pages/HomePage';
 import DesignSystemPreview from '../pages/DesignSystemPreview';
 import PageTransition from '../components/PageTransition';
+import CloudMistTransition from '../components/transitions/CloudMistTransition';
 
 // Lazy-load AtlasPage to keep the primary monograph homepage lightweight
 const AtlasPage = lazy(() => import('../pages/AtlasPage'));
@@ -45,6 +46,10 @@ function parseCurrentRoute() {
 
 export default function App() {
   const [route, setRoute] = useState(parseCurrentRoute);
+  const [cloudTransition, setCloudTransition] = useState({
+    active: false,
+    targetUrl: null,
+  });
 
   // Listen to browser popstate (back/forward button)
   useEffect(() => {
@@ -56,7 +61,14 @@ export default function App() {
     return () => window.removeEventListener('popstate', handleLocationChange);
   }, []);
 
-  const navigate = (to) => {
+  const navigate = (to, options = {}) => {
+    // Check if cloud transition is requested or if routing into a 3D project detail page
+    const isProjectRoute = to.startsWith('/projects/') || options.withClouds;
+    if (isProjectRoute && !cloudTransition.active) {
+      setCloudTransition({ active: true, targetUrl: to });
+      return;
+    }
+
     // Handle in-page anchor navigation (e.g. /projects#archive, /contact)
     if (to.includes('#')) {
       const [basePath, hash] = to.split('#');
@@ -104,109 +116,132 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
-  // 1. Digital Atlas Page
-  if (route.path === '/atlas') {
+  const renderContent = () => {
+    // 1. Digital Atlas Page
+    if (route.path === '/atlas') {
+      return (
+        <PageTransition triggerKey={route.path}>
+          <Suspense
+            fallback={
+              <div
+                style={{
+                  width: '100vw',
+                  height: '100vh',
+                  background: '#0A0906',
+                  color: '#F4F0E8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                INITIALIZING DIGITAL ATLAS...
+              </div>
+            }
+          >
+            <AtlasPage onNavigate={navigate} />
+          </Suspense>
+        </PageTransition>
+      );
+    }
+
+    // 2. Design System Preview Page
+    if (route.path === '/preview') {
+      return (
+        <PageTransition triggerKey={route.path}>
+          <DesignSystemPreview onNavigate={navigate} />
+        </PageTransition>
+      );
+    }
+
+    // 3. Dedicated Mobius 3D Maquette & Monograph Page
+    if (route.projectSlug === 'mobius') {
+      return (
+        <PageTransition triggerKey={route.path}>
+          <Suspense
+            fallback={
+              <div
+                style={{
+                  width: '100vw',
+                  height: '100vh',
+                  background: '#F4F0E8',
+                  color: '#1A1815',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                LOADING MÖBIUS 3D ARCHITECTURAL MAQUETTE...
+              </div>
+            }
+          >
+            <MobiusProjectPage onNavigate={navigate} />
+          </Suspense>
+        </PageTransition>
+      );
+    }
+
+    // 4. Dedicated Monograph Pages for Cultural Oasis, Ribbon, Eco Resort, Flow Spire
+    if (route.projectSlug) {
+      return (
+        <PageTransition triggerKey={route.path}>
+          <Suspense
+            fallback={
+              <div
+                style={{
+                  width: '100vw',
+                  height: '100vh',
+                  background: '#F4F0E8',
+                  color: '#1A1815',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: "'DM Mono', monospace",
+                  fontSize: '0.8rem',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                LOADING ARCHITECTURAL MONOGRAPH...
+              </div>
+            }
+          >
+            <ProjectDossierPage slug={route.projectSlug} onNavigate={navigate} />
+          </Suspense>
+        </PageTransition>
+      );
+    }
+
+    // 5. Default Monograph Homepage
     return (
       <PageTransition triggerKey={route.path}>
-        <Suspense
-          fallback={
-            <div
-              style={{
-                width: '100vw',
-                height: '100vh',
-                background: '#0A0906',
-                color: '#F4F0E8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: "'DM Mono', monospace",
-                fontSize: '0.8rem',
-                letterSpacing: '0.1em',
-              }}
-            >
-              INITIALIZING DIGITAL ATLAS...
-            </div>
-          }
-        >
-          <AtlasPage onNavigate={navigate} />
-        </Suspense>
+        <HomePage onNavigate={navigate} currentPath={route.path} />
       </PageTransition>
     );
-  }
+  };
 
-  // 2. Design System Preview Page
-  if (route.path === '/preview') {
-    return (
-      <PageTransition triggerKey={route.path}>
-        <DesignSystemPreview onNavigate={navigate} />
-      </PageTransition>
-    );
-  }
-
-  // 3. Dedicated Mobius 3D Maquette & Monograph Page
-  if (route.projectSlug === 'mobius') {
-    return (
-      <PageTransition triggerKey={route.path}>
-        <Suspense
-          fallback={
-            <div
-              style={{
-                width: '100vw',
-                height: '100vh',
-                background: '#F4F0E8',
-                color: '#1A1815',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: "'DM Mono', monospace",
-                fontSize: '0.8rem',
-                letterSpacing: '0.1em',
-              }}
-            >
-              LOADING MÖBIUS 3D ARCHITECTURAL MAQUETTE...
-            </div>
-          }
-        >
-          <MobiusProjectPage onNavigate={navigate} />
-        </Suspense>
-      </PageTransition>
-    );
-  }
-
-  // 4. Dedicated Monograph Pages for Cultural Oasis, Ribbon, Eco Resort, Flow Spire
-  if (route.projectSlug) {
-    return (
-      <PageTransition triggerKey={route.path}>
-        <Suspense
-          fallback={
-            <div
-              style={{
-                width: '100vw',
-                height: '100vh',
-                background: '#F4F0E8',
-                color: '#1A1815',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: "'DM Mono', monospace",
-                fontSize: '0.8rem',
-                letterSpacing: '0.1em',
-              }}
-            >
-              LOADING ARCHITECTURAL MONOGRAPH...
-            </div>
-          }
-        >
-          <ProjectDossierPage slug={route.projectSlug} onNavigate={navigate} />
-        </Suspense>
-      </PageTransition>
-    );
-  }
-
-  // 5. Default Monograph Homepage
   return (
-    <PageTransition triggerKey={route.path}>
-      <HomePage onNavigate={navigate} currentPath={route.path} />
-    </PageTransition>
+    <>
+      {renderContent()}
+
+      {/* Cinematic Volumetric Cloud & Mist Transition Layer */}
+      <CloudMistTransition
+        isActive={cloudTransition.active}
+        onCovered={() => {
+          if (cloudTransition.targetUrl) {
+            window.history.pushState({}, '', cloudTransition.targetUrl);
+            setRoute(parseCurrentRoute());
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }
+        }}
+        onComplete={() => {
+          setCloudTransition({ active: false, targetUrl: null });
+        }}
+      />
+    </>
   );
 }
