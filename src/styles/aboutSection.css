@@ -468,68 +468,481 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SPECIFICATIONS SHEET / TITLE BLOCK GRID
+   ICONLY-STYLE 3D ARCHITECTURAL CARDS GRID (Reference: Image 3)
+   2x2 grid with rich 3D component visuals & pill action buttons
    ───────────────────────────────────────────────────────── */
 
-.arch-about-specs-grid {
+.arch-iconly-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1px;
-  background-color: #e5e2da;
-  border: 1px solid #e5e2da;
-  border-radius: 12px;
-  overflow: hidden;
+  gap: 1.15rem;
   margin-bottom: 2.5rem;
-  max-width: 720px;
+  max-width: 760px;
 }
 
-@media (max-width: 640px) {
-  .arch-about-specs-grid {
+@media (max-width: 680px) {
+  .arch-iconly-cards-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.arch-about-spec-cell {
-  background-color: #ffffff;
-  padding: 1.1rem 1.35rem;
+/* Base Card */
+.arch-iconly-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 20px;
+  min-height: 184px;
+  padding: 1.45rem 1.35rem;
+  box-sizing: border-box;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arch-iconly-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Card Themes */
+/* 01 Red / Coral (Pedagogy) */
+.arch-iconly-card--red {
+  background: linear-gradient(135deg, #FF4557 0%, #EA3245 100%);
+  box-shadow: 0 10px 30px -8px rgba(234, 50, 69, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.arch-iconly-card--red:hover {
+  box-shadow: 0 16px 36px -6px rgba(234, 50, 69, 0.45);
+}
+
+.arch-iconly-card--red .arch-iconly-card-category {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.arch-iconly-card--red .arch-iconly-card-title {
+  color: #ffffff;
+}
+
+.arch-iconly-card--red .arch-iconly-card-sub {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.arch-iconly-card--red .arch-iconly-btn-circle {
+  background: #ffffff;
+  color: #111111;
+}
+
+.arch-iconly-card--red .arch-iconly-btn-text {
+  color: #ffffff;
+}
+
+/* 02 & 03 Light / Minimalist Studio (Practice & BIM) */
+.arch-iconly-card--light {
+  background: #ffffff;
+  border: 1.5px solid #eae7df;
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.04);
+}
+
+.arch-iconly-card--light:hover {
+  border-color: #d8d4c7;
+  box-shadow: 0 14px 32px rgba(17, 17, 17, 0.08);
+}
+
+.arch-iconly-card--light .arch-iconly-card-category {
+  color: #0066FF;
+}
+
+.arch-iconly-card--light .arch-iconly-card-title {
+  color: #111111;
+}
+
+.arch-iconly-card--light .arch-iconly-card-sub {
+  color: #666666;
+}
+
+.arch-iconly-card--light .arch-iconly-btn-circle {
+  background: #111111;
+  color: #ffffff;
+}
+
+.arch-iconly-card--light .arch-iconly-btn-text {
+  color: #111111;
+}
+
+/* 04 Electric Royal Blue (Climate-Resilient) */
+.arch-iconly-card--blue {
+  background: linear-gradient(135deg, #1A56FF 0%, #083BC8 100%);
+  box-shadow: 0 10px 30px -8px rgba(26, 86, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.arch-iconly-card--blue:hover {
+  box-shadow: 0 16px 36px -6px rgba(26, 86, 255, 0.48);
+}
+
+.arch-iconly-card--blue .arch-iconly-card-category {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.arch-iconly-card--blue .arch-iconly-card-title {
+  color: #ffffff;
+}
+
+.arch-iconly-card--blue .arch-iconly-card-sub {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.arch-iconly-card--blue .arch-iconly-btn-circle {
+  background: #ffffff;
+  color: #1A56FF;
+}
+
+.arch-iconly-card--blue .arch-iconly-btn-text {
+  color: #ffffff;
+}
+
+/* Left Content Area */
+.arch-iconly-card-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: background-color 0.2s ease;
+  padding-right: 0.8rem;
+  z-index: 2;
 }
 
-.arch-about-spec-cell:hover {
-  background-color: #fbfbf9;
-}
-
-.arch-about-spec-label {
+.arch-iconly-card-category {
   font-family: var(--f-mono, 'Martian Mono', monospace);
-  font-size: 0.65rem;
-  font-weight: 600;
+  font-size: 0.62rem;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #0066FF;
   margin-bottom: 0.35rem;
+  display: inline-block;
+}
+
+.arch-iconly-card-title {
+  font-family: var(--f-display, 'Archivo', sans-serif);
+  font-size: clamp(1.05rem, 1.35vw, 1.25rem);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.35rem;
+}
+
+.arch-iconly-card-sub {
+  font-family: var(--f-body, sans-serif);
+  font-size: 0.72rem;
+  line-height: 1.38;
+  margin: 0 0 1.15rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Pill Action Button Matching Image 3 */
+.arch-iconly-card-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.arch-iconly-btn-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.arch-about-spec-value {
-  font-family: var(--f-display, 'Archivo', sans-serif);
-  font-size: 0.98rem;
+.arch-iconly-btn-circle svg {
+  transition: transform 0.25s ease;
+}
+
+.arch-iconly-card:hover .arch-iconly-btn-circle svg {
+  transform: translate(1.5px, -1.5px);
+}
+
+.arch-iconly-btn-text {
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+  font-size: 0.65rem;
   font-weight: 700;
-  color: #111111;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-  margin-bottom: 2px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.arch-about-spec-sub {
+/* Right 3D Visual Asset Area */
+.arch-iconly-card-visual {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.arch-iconly-card-3d-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arch-iconly-card:hover .arch-iconly-card-3d-img {
+  transform: scale(1.08) rotate(-2deg);
+}
+
+/* Card themes tailored image presentation */
+.arch-iconly-card--red .arch-iconly-card-3d-img {
+  box-shadow: 0 8px 22px rgba(120, 10, 20, 0.3);
+}
+
+.arch-iconly-card--blue .arch-iconly-card-3d-img {
+  box-shadow: 0 8px 22px rgba(8, 40, 160, 0.35);
+}
+
+/* ─────────────────────────────────────────────────────────
+   INTERACTIVE ARCHITECTURAL DOSSIER MODAL
+   ───────────────────────────────────────────────────────── */
+
+.arch-card-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(17, 17, 17, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow-y: auto;
+  animation: fadeInModal 0.25s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.arch-card-modal-window {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  animation: popUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+@keyframes popUpModal {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.arch-card-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 0.75rem;
+  border-bottom: 1px solid #f0eee9;
+}
+
+.arch-card-modal-badge {
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #0066FF;
+  background: rgba(0, 102, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 102, 255, 0.2);
+}
+
+.arch-card-modal-close {
+  background: #f4f3ef;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #444444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.arch-card-modal-close:hover {
+  background: #111111;
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.arch-card-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.arch-card-modal-top-row {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.arch-card-modal-info {
+  flex: 1;
+}
+
+.arch-card-modal-title {
+  font-family: var(--f-display, 'Archivo', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #111111;
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+}
+
+.arch-card-modal-meta {
   font-family: var(--f-body, sans-serif);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: #666666;
-  line-height: 1.4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.65rem;
+}
+
+.arch-card-modal-score-badge {
+  display: inline-block;
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #111111;
+  background: #f4f2eb;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid #ded9ce;
+}
+
+.arch-card-modal-hero-img-wrap {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.arch-card-modal-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arch-card-modal-desc {
+  font-family: var(--f-body, sans-serif);
+  font-size: 0.88rem;
+  line-height: 1.62;
+  color: #444444;
+  margin: 0;
+}
+
+.arch-card-modal-highlights {
+  background: #fcfbf8;
+  border: 1px solid #eeebe3;
+  border-radius: 12px;
+  padding: 1.15rem;
+}
+
+.arch-card-modal-section-title {
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #0066FF;
+  margin-bottom: 0.75rem;
+}
+
+.arch-card-modal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.arch-card-modal-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-family: var(--f-body, sans-serif);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #333333;
+}
+
+.arch-card-modal-bullet {
+  color: #0066FF;
+  font-size: 0.72rem;
+  margin-top: 1px;
+}
+
+.arch-card-modal-footer {
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid #f0eee9;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.arch-card-modal-action-btn {
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-family: var(--f-mono, 'Martian Mono', monospace);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.arch-card-modal-action-btn:hover {
+  background: #0066FF;
+  transform: translateY(-1px);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -760,52 +1173,6 @@
 
 @keyframes spinChar {
   to { transform: rotate(360deg); }
-}
-
-/* 3D Character Avatar Mode Switch */
-.arch-char-mode-selector {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  right: 14px;
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  z-index: 20;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 102, 255, 0.15);
-  border-radius: 30px;
-  padding: 4px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-}
-
-.arch-char-mode-btn {
-  background: transparent;
-  border: none;
-  border-radius: 20px;
-  padding: 5px 12px;
-  font-family: var(--f-mono, monospace);
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: #555555;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.arch-char-mode-btn:hover {
-  color: #0066FF;
-}
-
-.arch-char-mode-btn.active {
-  background: #0066FF;
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.3);
 }
 
 /* 3D Character Interactive Floating Gesture Action Bar */

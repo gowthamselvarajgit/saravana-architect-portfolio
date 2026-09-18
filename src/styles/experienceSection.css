@@ -998,3 +998,195 @@
   border-color: #0066FF;
   box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);
 }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   3D ARCHITECTURAL TOWER HOLOGRAM (digital-persona Style WebGL Viewport)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.arch-firm-hologram-container {
+  position: relative;
+  background: #0a0e17;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 102, 255, 0.25);
+  box-shadow: 
+    0 12px 28px rgba(0, 102, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 1.8rem;
+}
+
+.arch-firm-hologram-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  background: rgba(10, 14, 23, 0.85);
+  border-bottom: 1px solid rgba(0, 102, 255, 0.2);
+  font-family: var(--f-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #00e5ff;
+}
+
+.arch-firm-holo-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00e5ff;
+  box-shadow: 0 0 8px #00e5ff;
+  animation: pulseHoloDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseHoloDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.arch-tower-hologram-wrap {
+  position: relative;
+  width: 100%;
+  height: 230px;
+  background: radial-gradient(circle at 50% 40%, #111d33 0%, #080c14 80%);
+  cursor: grab;
+}
+
+.arch-tower-hologram-wrap:active {
+  cursor: grabbing;
+}
+
+.arch-tower-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.arch-tower-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.arch-tower-hud-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  pointer-events: none;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.arch-tower-hud-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.arch-tower-hud-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #60a5fa;
+}
+
+.arch-tower-hud-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #60a5fa;
+}
+
+.arch-tower-hud-metric {
+  color: #00e5ff;
+  font-weight: 600;
+}
+
+.arch-tower-hud-bottom {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.58rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.4rem;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   3D TILT SPECULAR GLARE (digital-persona Card Mechanic)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.arch-pinned-card,
+.arch-firm-pinned-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.arch-card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.08) 35%,
+    transparent 65%
+  );
+  opacity: var(--glare-opacity, 0);
+  transition: opacity 0.25s ease;
+  z-index: 4;
+}
+
+/* Micro CAD Specs Pill Row in Pinned Cards */
+.arch-pinned-metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+}
+
+.arch-pinned-metric-pill {
+  font-family: var(--f-mono, monospace);
+  font-size: 0.62rem;
+  background: rgba(0, 0, 0, 0.035);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  color: #444444;
+}
+
+.arch-pinned-metric-pill strong {
+  color: #111111;
+  font-weight: 700;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   INTERACTIVE BLUEPRINT CAD SHEET TABS IN MODAL
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.arch-modal-pulse-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00E5FF;
+  box-shadow: 0 0 8px #00E5FF;
+  animation: pulseHoloDot 2s infinite ease-in-out;
+}
+
+.arch-modal-status-badge {
+  font-family: var(--f-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  margin-left: auto;
+}

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import ArchitectCharacterScene from '../components/character/ArchitectCharacterScene';
 import '../styles/aboutSection.css';
 import gsap from 'gsap';
@@ -6,17 +7,112 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// 4 Architectural Cards Data matching Image 3 (Iconly Style)
+const ABOUT_CARDS = [
+  {
+    id: 'pedagogy',
+    category: '01 // PEDAGOGY & DEGREE',
+    title: 'Bachelor of Architecture',
+    subtitle: 'Lovely School of Architecture & Design · 2021–2026 · CGPA 7.49',
+    theme: 'red',
+    image: '/assets/images/about/card_pedagogy_3d.jpg',
+    imageAlt: '3D Classical Column Capital & Drafting Calipers',
+    modalDetails: {
+      headline: 'Bachelor of Architecture (B.Arch) — Academic Excellence',
+      institution: 'Lovely School of Architecture & Design, LPU · Punjab, India',
+      duration: '2021 – 2026 (5-Year Professional Degree)',
+      score: 'Cumulative GPA: 7.49 / 10.0',
+      description:
+        'Comprehensive 5-year Council of Architecture (CoA) accredited curriculum focused on architectural design theory, climatology, building construction technology, structural systems, and urban sociology. Developed high-precision technical drawing packages and computational models for live competition and thesis programs.',
+      highlights: [
+        'Advanced Architectural Design Studios I–X (High-Rise, Urban, Healthcare, Cultural)',
+        'Building Construction & Materials: Tectonic joints, steel-concrete composite systems',
+        'Climatology & Environmental Studies: Solar geometry, daylight factor, passive heating/cooling',
+        'Theory of Structures & Seismic Design: RCC framing, lateral load distribution, soil mechanics',
+        'Professional Practice & Specifications: Municipal bye-laws, NBC 2016, quantity estimating',
+      ],
+    },
+  },
+  {
+    id: 'practice',
+    category: '02 // PRACTICE & EXPERIENCE',
+    title: 'Architect Hafeez Contractor',
+    subtitle: 'Mumbai · Jun–Nov 2025 · 14+ Live High-Rise Schemes',
+    theme: 'light',
+    image: '/assets/images/about/card_practice_3d.jpg',
+    imageAlt: '3D High-Rise Skyscraper Cantilever Model',
+    modalDetails: {
+      headline: 'Architect Hafeez Contractor (AHC) — High-Rise & Master Planning Practice',
+      institution: 'AHC Architects · Mumbai Headquarters',
+      duration: 'June 2025 – November 2025 (Full-Time Architectural Practice)',
+      score: '14+ Commercial & Residential High-Rise Schemes Handled',
+      description:
+        'Directly embedded in high-intensity architectural production for major developers across Mumbai, NCR, and Bengaluru. Drafted core and egress coordination packages, verified MCGM/DCR bye-law compliance, modeled podium landscaping interfaces, and prepared executive design review presentations for Hafeez Contractor.',
+      highlights: [
+        'High-rise core layouts: Fire lifts, pressurized egress staircases, mechanical risers',
+        'Municipal submission sets: Floor Space Index (FSI) optimization and fire officer clearances',
+        'Facade coordination: Structural glazing, unitized curtain walls, and cantilevered viewing decks',
+        'Township circulation: Vehicular segregations, emergency access routes, podium recreation grids',
+        'Site review & multi-disciplinary coordination: Structural, MEP, and PHE engineering alignments',
+      ],
+    },
+  },
+  {
+    id: 'bim',
+    category: '03 // BIM & PARAMETRIC SUITE',
+    title: 'BIM & Parametric Suite',
+    subtitle: 'Revit BIM · Rhino 3D · Grasshopper · Enscape Suite',
+    theme: 'light',
+    image: '/assets/images/about/card_bim_3d.jpg',
+    imageAlt: '3D Parametric Mobius Diagrid Structure',
+    modalDetails: {
+      headline: 'Computational Design & Building Information Modeling (BIM)',
+      institution: 'Advanced Digital Production Pipeline',
+      duration: 'Professional Competency Level: LOD 350',
+      score: 'Revit · Rhino 3D · Grasshopper · V-Ray · Enscape · AutoCAD',
+      description:
+        'Bridging computational algorithmic logic with buildable construction documentation. Utilizing Rhino and Grasshopper for complex double-curved geometries, generative panelization, and daylight optimization, paired with Autodesk Revit for federated BIM coordination and schedule generation.',
+      highlights: [
+        'Revit Architecture: Parametric family creation, LOD 350 construction schedules, phase mapping',
+        'Rhino 3D & Grasshopper: Visual programming, surface subdivision, solar radiation scripting',
+        'High-End Visualization: Chaos V-Ray, Enscape RT, and Lumion for photoreal client renders',
+        'AutoCAD: Precise municipal clearance drafting, layered construction detail sets',
+        'Adobe Creative Suite: Photoshop, Illustrator, and InDesign for architectural monograph portfolios',
+      ],
+    },
+  },
+  {
+    id: 'climate',
+    category: '04 // DISCIPLINE & FOCUS',
+    title: 'Climate-Resilient Design',
+    subtitle: 'GRIHA Trophy & 120-Hours Oslo Competition Contributor',
+    theme: 'blue',
+    image: '/assets/images/about/card_climate_3d.jpg',
+    imageAlt: '3D Bioclimatic Aerodynamic Canopy Shell',
+    modalDetails: {
+      headline: 'Climate-Responsive Architecture & Sustainable Systems',
+      institution: 'Research, Competitions & Design Practice',
+      duration: 'National & International Competition Submissions',
+      score: 'GRIHA Trophy Contributor · 120-Hours Oslo Participant',
+      description:
+        'Architectural design synthesized with local microclimate, sun paths, wind vectors, and bioclimatic efficiency. Prioritizing passive solar gain management, natural stack effect ventilation, vernacular earth-masonry thermal mass, and rainwater harvesting cycles to achieve net-positive architectural interventions.',
+      highlights: [
+        'GRIHA Green Building Trophy: Net-zero energy strategies, low embodied carbon envelope design',
+        '120-Hours Oslo International Competition: Fast-paced conceptual response to urgent social resilience',
+        'Passive Cooling: Courtyard air convection, porous terra-cotta screens, evaporative misting pools',
+        'Sun & Shading Geometry: Computational heliodon simulation and kinetic louvers for glare elimination',
+        'Contextual Tectonics: Integrating vernacular stone and timber with contemporary steel diagrids',
+      ],
+    },
+  },
+];
+
 /**
- * AboutSection — Interactive 3D Cartoon Architect Workstation & Client Dossier
- * 
- * Features:
- * - 3D Cartoon Architect Model customized to Saravanakumar K (skin tone, hair, navy blazer, espresso eyes)
- * - Real-time cursor/touch head tracking & live typing animations
- * - Seamless toggle between 3D Interactive Workstation & Practice Pass ID Card
- * - Architectural title block specs grid and CV dispatch
+ * AboutSection — Interactive 3D Photoreal Architect Workstation & Client Dossier
  */
 export default function AboutSection() {
   const [viewMode, setViewMode] = useState('3d'); // '3d' | 'id'
+  const [activeModalCard, setActiveModalCard] = useState(null);
   const sectionRef = useRef(null);
   const leftColRef = useRef(null);
   const rightColRef = useRef(null);
@@ -64,6 +160,18 @@ export default function AboutSection() {
     return () => ctx.revert();
   }, []);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (activeModalCard) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [activeModalCard]);
+
   return (
     <section id="about" ref={sectionRef} className="arch-about-section">
       <div className="arch-about-container">
@@ -77,7 +185,7 @@ export default function AboutSection() {
         <div className="arch-about-grid">
           
           {/* ─────────────────────────────────────────────────────────
-             LEFT SIDE: 3D ANIMATED CARTOON WORKSTATION / ID PASS
+             LEFT SIDE: 3D PHOTOREAL ARCHITECT WORKSTATION / ID PASS
              ───────────────────────────────────────────────────────── */}
           <div ref={leftColRef} className="arch-id-card-wrap">
             
@@ -103,7 +211,7 @@ export default function AboutSection() {
               </button>
             </div>
 
-            {/* Mode 1: 3D Animated Cartoon Architect Workstation */}
+            {/* Mode 1: 3D Animated Photoreal Architect Workstation */}
             {viewMode === '3d' && (
               <div style={{ position: 'relative', width: '100%', maxWidth: '440px' }}>
                 <ArchitectCharacterScene />
@@ -222,7 +330,7 @@ export default function AboutSection() {
           </div>
 
           {/* ─────────────────────────────────────────────────────────
-             RIGHT SIDE: CLIENT DETAILS & ARCHITECTURAL SPECS
+             RIGHT SIDE: CLIENT DETAILS & ICONLY-STYLE 3D CARDS (Image 3)
              ───────────────────────────────────────────────────────── */}
           <div ref={rightColRef} className="arch-about-details">
             <h2 className="arch-about-title">
@@ -246,51 +354,55 @@ export default function AboutSection() {
               “Architecture is not an autonomous form dropped onto neutral terrain; it is an enduring conversation with topography, cultural memory, and ecological reality.”
             </blockquote>
 
-            {/* Architectural Specifications Grid (Title Block Style) */}
-            <div className="arch-about-specs-grid">
-              {/* Spec 01 */}
-              <div className="arch-about-spec-cell">
-                <span className="arch-about-spec-label">
-                  <span>01 // PEDAGOGY &amp; DEGREE</span>
-                </span>
-                <div className="arch-about-spec-value">Bachelor of Architecture (B.Arch)</div>
-                <div className="arch-about-spec-sub">
-                  Lovely School of Architecture &amp; Design · 2021–2026 · CGPA 7.49
-                </div>
-              </div>
+            {/* ─────────────────────────────────────────────────────────
+               ICONLY-STYLE 3D ARCHITECTURAL CARDS GRID (Image 3 Ref)
+               2x2 layout with rich 3D component images & pill action buttons
+               ───────────────────────────────────────────────────────── */}
+            <div className="arch-iconly-cards-grid" role="region" aria-label="Architectural Credentials and Capabilities">
+              {ABOUT_CARDS.map((card) => (
+                <div
+                  key={card.id}
+                  className={`arch-iconly-card arch-iconly-card--${card.theme}`}
+                  onClick={() => setActiveModalCard(card)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setActiveModalCard(card);
+                    }
+                  }}
+                  aria-label={`View detailed credentials for ${card.title}`}
+                >
+                  {/* Left Content Area */}
+                  <div className="arch-iconly-card-content">
+                    <span className="arch-iconly-card-category">{card.category}</span>
+                    <h3 className="arch-iconly-card-title">{card.title}</h3>
+                    <p className="arch-iconly-card-sub">{card.subtitle}</p>
 
-              {/* Spec 02 */}
-              <div className="arch-about-spec-cell">
-                <span className="arch-about-spec-label">
-                  <span>02 // PRACTICE &amp; EXPERIENCE</span>
-                </span>
-                <div className="arch-about-spec-value">Architect Hafeez Contractor (AHC)</div>
-                <div className="arch-about-spec-sub">
-                  Mumbai · Jun–Nov 2025 · 14+ Live High-Rise &amp; Master Plan Schemes
-                </div>
-              </div>
+                    {/* Pill Action Button */}
+                    <div className="arch-iconly-card-btn">
+                      <span className="arch-iconly-btn-circle" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="7" y1="17" x2="17" y2="7" />
+                          <polyline points="7 7 17 7 17 17" />
+                        </svg>
+                      </span>
+                      <span className="arch-iconly-btn-text">LEARN MORE</span>
+                    </div>
+                  </div>
 
-              {/* Spec 03 */}
-              <div className="arch-about-spec-cell">
-                <span className="arch-about-spec-label">
-                  <span>03 // BIM &amp; PARAMETRIC SUITE</span>
-                </span>
-                <div className="arch-about-spec-value">Revit BIM · Rhino 3D · Grasshopper</div>
-                <div className="arch-about-spec-sub">
-                  AutoCAD · SketchUp · Lumion · V-Ray · Enscape · Adobe Suite
+                  {/* Right 3D Visual Asset Area */}
+                  <div className="arch-iconly-card-visual" aria-hidden="true">
+                    <img
+                      src={card.image}
+                      alt={card.imageAlt}
+                      className="arch-iconly-card-3d-img"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
-              </div>
-
-              {/* Spec 04 */}
-              <div className="arch-about-spec-cell">
-                <span className="arch-about-spec-label">
-                  <span>04 // DISCIPLINE &amp; FOCUS</span>
-                </span>
-                <div className="arch-about-spec-value">Parametric &amp; Climate-Resilient</div>
-                <div className="arch-about-spec-sub">
-                  GRIHA Trophy &amp; 120-Hours Oslo Competition Contributor
-                </div>
-              </div>
+              ))}
             </div>
 
             {/* Architectural Actions */}
@@ -347,6 +459,96 @@ export default function AboutSection() {
         </div>
 
       </div>
+
+      {/* ─────────────────────────────────────────────────────────
+         INTERACTIVE ARCHITECTURAL DOSSIER MODAL
+         Mounted to document.body via createPortal to break free from section transforms
+         ───────────────────────────────────────────────────────── */}
+      {activeModalCard &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className="arch-card-modal-backdrop"
+            onClick={() => setActiveModalCard(null)}
+            role="dialog"
+            aria-modal="true"
+            aria-label={activeModalCard.modalDetails.headline}
+          >
+            <div
+              className={`arch-card-modal-window arch-card-modal--${activeModalCard.theme}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="arch-card-modal-header">
+                <div className="arch-card-modal-badge">{activeModalCard.category}</div>
+                <button
+                  type="button"
+                  className="arch-card-modal-close"
+                  onClick={() => setActiveModalCard(null)}
+                  aria-label="Close credentials popup"
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="arch-card-modal-body">
+                <div className="arch-card-modal-top-row">
+                  <div className="arch-card-modal-info">
+                    <h3 className="arch-card-modal-title">{activeModalCard.modalDetails.headline}</h3>
+                    <div className="arch-card-modal-meta">
+                      <span>{activeModalCard.modalDetails.institution}</span>
+                      <span>·</span>
+                      <span>{activeModalCard.modalDetails.duration}</span>
+                    </div>
+                    <div className="arch-card-modal-score-badge">
+                      {activeModalCard.modalDetails.score}
+                    </div>
+                  </div>
+
+                  <div className="arch-card-modal-hero-img-wrap">
+                    <img
+                      src={activeModalCard.image}
+                      alt={activeModalCard.imageAlt}
+                      className="arch-card-modal-hero-img"
+                    />
+                  </div>
+                </div>
+
+                <p className="arch-card-modal-desc">
+                  {activeModalCard.modalDetails.description}
+                </p>
+
+                <div className="arch-card-modal-highlights">
+                  <div className="arch-card-modal-section-title">CORE HIGHLIGHTS &amp; COMPETENCIES</div>
+                  <ul className="arch-card-modal-list">
+                    {activeModalCard.modalDetails.highlights.map((item, idx) => (
+                      <li key={idx} className="arch-card-modal-list-item">
+                        <span className="arch-card-modal-bullet">✦</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              {/* Modal Footer Action */}
+              <div className="arch-card-modal-footer">
+                <button
+                  type="button"
+                  className="arch-card-modal-action-btn"
+                  onClick={() => setActiveModalCard(null)}
+                >
+                  <span>Back to Overview</span>
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
     </section>
   );
 }

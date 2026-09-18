@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROFESSIONAL_ARCHIVE } from '../data/projectsData';
+import ArchitectTowerHologram from '../components/3d/ArchitectTowerHologram';
+import { useTiltEffect } from '../hooks/useTiltEffect';
 import '../styles/experienceSection.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -144,6 +146,7 @@ const PINNED_CARDS_DATA = [
     title: 'The Crest at BKC',
     location: 'BKC, Mumbai',
     desc: 'Commercial floor plate drafting, longitudinal sections, and structural slab-drop engineering coordination in Mumbai central financial hub.',
+    metrics: { gfa: '420,000 sq.ft', height: '148.5m', floors: '38 Floors' },
   },
   {
     id: 'ahc-clubhouse-upper-thane',
@@ -156,6 +159,7 @@ const PINNED_CARDS_DATA = [
     title: 'Club House — Upper Thane',
     location: 'Upper Thane, Mumbai',
     desc: 'Schematic cross-sections, ground floor recreation spatial flow, and detail working drawings for a 74-acre integrated township masterplan.',
+    metrics: { gfa: '85,000 sq.ft', site: '74 Acres', amenities: '12 Zones' },
   },
   {
     id: 'ahc-vertical-nexus-kharadi',
@@ -168,6 +172,7 @@ const PINNED_CARDS_DATA = [
     title: 'Vertical Nexus',
     location: 'Kharadi, Pune',
     desc: 'High-rise residential circulation, podium fire-tender access compliance, and structural tower coordinates across a 2.03M sq ft site.',
+    metrics: { gfa: '2.03M sq.ft', towers: '4 Towers', units: '840 Apts' },
   },
   {
     id: 'ahc-portico-prive-goa',
@@ -180,6 +185,7 @@ const PINNED_CARDS_DATA = [
     title: 'The Portico Privé Villa',
     location: 'Goa, India',
     desc: 'Mediterranean plotted villa layout, classical colonnade arch options (OP3–OP6), and landscape coordination across 120 acres.',
+    metrics: { site: '120 Acres', villas: '64 Units', typology: 'Bespoke' },
   },
   {
     id: 'ahc-zenith-institution-campus',
@@ -192,6 +198,7 @@ const PINNED_CARDS_DATA = [
     title: 'The Zenith Campus',
     location: 'Amaravati / Hyd.',
     desc: 'Massing axonometrics, radial master planning layout, and residential cluster coordination for 7,524 student units and 10 Lac sq ft academic zones.',
+    metrics: { gfa: '1.0M sq.ft', capacity: '7,524 Beds', masterplan: 'Radial' },
   },
   {
     id: 'ahc-ridgeview-institute',
@@ -204,6 +211,7 @@ const PINNED_CARDS_DATA = [
     title: 'Ridgeview Institute',
     location: 'Navi Mumbai',
     desc: 'Stepped contour sections, solar sun-path analysis, buildable slope mapping, and 4-phase master plan on natural mountain slopes.',
+    metrics: { terrain: 'Stepped 32°', phases: '4 Phases', greenCover: '62%' },
   },
 ];
 
@@ -215,15 +223,83 @@ const CATEGORIES = [
   { id: 'campus', label: '04 MEGA-CAMPUS', count: 2 },
 ];
 
+/**
+ * Tiltable Pinned Card with cursor-tracking specular glare
+ */
+function InteractiveTiltCard({ card, onClick }) {
+  const cardRef = useRef(null);
+  useTiltEffect(cardRef, { maxTilt: 7, scale: 1.025, speed: 350 });
+
+  return (
+    <div
+      ref={cardRef}
+      className={`arch-pinned-card ${card.theme}`}
+      onClick={() => onClick(card.id)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick(card.id);
+        }
+      }}
+      aria-label={`Inspect architectural blueprint for ${card.title}`}
+    >
+      {/* Specular glare layer (digital-persona style) */}
+      <div className="arch-card-glare" aria-hidden="true" />
+
+      {/* Top 3D Pushpin Sphere */}
+      <div className={`arch-pushpin ${card.pinColor}`} title={`Pin: ${card.title}`} />
+
+      {/* Card Top Row: Number & Icon Badge */}
+      <div className="arch-pinned-top-row">
+        <div className="arch-pinned-num">{card.index}</div>
+        <div className="arch-pinned-icon-badge" aria-hidden="true">
+          {card.icon}
+        </div>
+      </div>
+
+      {/* Card Body */}
+      <div className="arch-pinned-body">
+        <span className="arch-pinned-category">{card.categoryLabel}</span>
+        <h4 className="arch-pinned-title">{card.title}</h4>
+        <p className="arch-pinned-desc">{card.desc}</p>
+
+        {/* Micro CAD Specs Pill Row */}
+        <div className="arch-pinned-metrics-row">
+          {Object.entries(card.metrics).map(([k, v]) => (
+            <span key={k} className="arch-pinned-metric-pill">
+              <strong>{k.toUpperCase()}:</strong> {v}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Card Footer Action */}
+      <div className="arch-pinned-footer">
+        <span className="arch-pinned-location">{card.location}</span>
+        <span className="arch-pinned-cta">
+          BLUEPRINT <span>↗</span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function ExperienceSection() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeModalProject, setActiveModalProject] = useState(null);
   const containerRef = useRef(null);
+  const leftFirmCardRef = useRef(null);
+
+  // Apply tilt to left firm card
+  useTiltEffect(leftFirmCardRef, { maxTilt: 4, scale: 1.01, speed: 450 });
 
   // Filter cards by category
-  const filteredCards = activeCategory === 'all'
-    ? PINNED_CARDS_DATA
-    : PINNED_CARDS_DATA.filter((card) => card.categoryKey === activeCategory);
+  const filteredCards =
+    activeCategory === 'all'
+      ? PINNED_CARDS_DATA
+      : PINNED_CARDS_DATA.filter((card) => card.categoryKey === activeCategory);
 
   // Close modal on Escape key
   useEffect(() => {
@@ -235,6 +311,18 @@ export default function ExperienceSection() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (activeModalProject) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [activeModalProject]);
 
   const handleCardClick = (projectId) => {
     const found = PROFESSIONAL_ARCHIVE.find((p) => p.id === projectId);
@@ -269,14 +357,17 @@ export default function ExperienceSection() {
         </div>
 
         {/* ─────────────────────────────────────────────────────────────
-           SPLIT LAYOUT: LEFT (FIRM DOSSIER) | RIGHT (PINNED CARDS DEMO)
+           SPLIT LAYOUT: LEFT (FIRM DOSSIER + 3D HOLOGRAM) | RIGHT (PINNED CARDS)
            ───────────────────────────────────────────────────────────── */}
         <div className="arch-split-layout">
           {/* =========================================================
-             LEFT SECTION: UNIFIED PRACTICE CARD (Matching Pinned Style)
+             LEFT SECTION: UNIFIED PRACTICE CARD WITH 3D TOWER HOLOGRAM
              ========================================================= */}
           <div className="arch-left-section">
-            <div className="arch-firm-pinned-card">
+            <div ref={leftFirmCardRef} className="arch-firm-pinned-card">
+              {/* Specular Glare */}
+              <div className="arch-card-glare" aria-hidden="true" />
+
               {/* Top 3D Pushpin */}
               <div className="arch-pushpin blue" title="AHC Practice Dossier" />
 
@@ -309,6 +400,18 @@ export default function ExperienceSection() {
                 structural coordination for landmark projects spanning high-density mixed-use towers, 74-acre township 
                 masterplans, and institutional campuses across India.
               </p>
+
+              {/* ───────────────────────────────────────────────────────
+                 LIVE 3D CAD ARCHITECTURAL TOWER HOLOGRAM (digital-persona style)
+                 Interactive WebGL Three.js wireframe model with laser scanner
+                 ─────────────────────────────────────────────────────── */}
+              <div className="arch-firm-hologram-container">
+                <div className="arch-firm-hologram-header">
+                  <span className="arch-firm-holo-dot" />
+                  <span>INTERACTIVE 3D CAD SCHEME VIEWPORT</span>
+                </div>
+                <ArchitectTowerHologram />
+              </div>
 
               {/* Animated Live CAD Metrics */}
               <div className="arch-firm-metrics-grid">
@@ -345,8 +448,7 @@ export default function ExperienceSection() {
           </div>
 
           {/* =========================================================
-             RIGHT SECTION: 4 CATEGORIES & PINNED CARDS GRID
-             Exact match to demo image.png with colored pushpins & icons
+             RIGHT SECTION: 4 CATEGORIES & 3D TILT PINNED CARDS GRID
              ========================================================= */}
           <div className="arch-right-section">
             {/* 4 Category Filter Tabs */}
@@ -370,48 +472,14 @@ export default function ExperienceSection() {
               ))}
             </div>
 
-            {/* Pinned Cards Grid */}
+            {/* Pinned Cards Grid with 3D Tilt & Specular Glare */}
             <div className="arch-pinned-grid">
               {filteredCards.map((card) => (
-                <div
+                <InteractiveTiltCard
                   key={card.id}
-                  className={`arch-pinned-card ${card.theme}`}
-                  onClick={() => handleCardClick(card.id)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleCardClick(card.id);
-                    }
-                  }}
-                >
-                  {/* Top 3D Pushpin Sphere */}
-                  <div className={`arch-pushpin ${card.pinColor}`} title={`Pin: ${card.title}`} />
-
-                  {/* Card Top Row: Number & Icon Badge */}
-                  <div className="arch-pinned-top-row">
-                    <div className="arch-pinned-num">{card.index}</div>
-                    <div className="arch-pinned-icon-badge" aria-hidden="true">
-                      {card.icon}
-                    </div>
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="arch-pinned-body">
-                    <span className="arch-pinned-category">{card.categoryLabel}</span>
-                    <h4 className="arch-pinned-title">{card.title}</h4>
-                    <p className="arch-pinned-desc">{card.desc}</p>
-                  </div>
-
-                  {/* Card Footer Action */}
-                  <div className="arch-pinned-footer">
-                    <span className="arch-pinned-location">{card.location}</span>
-                    <span className="arch-pinned-cta">
-                      BLUEPRINT <span>↗</span>
-                    </span>
-                  </div>
-                </div>
+                  card={card}
+                  onClick={handleCardClick}
+                />
               ))}
             </div>
           </div>
@@ -419,10 +487,11 @@ export default function ExperienceSection() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────────
-         ARCHITECTURAL BLUEPRINT DOSSIER MODAL POPUP
+         ARCHITECTURAL BLUEPRINT DOSSIER MODAL TERMINAL
          Mounted to document.body via createPortal
          ───────────────────────────────────────────────────────────── */}
       {activeModalProject &&
+        typeof document !== 'undefined' &&
         createPortal(
           <div
             className="arch-dossier-modal-overlay"
@@ -437,16 +506,7 @@ export default function ExperienceSection() {
               {/* Technical Drawing Header Bar */}
               <div className="arch-modal-titlebar">
                 <div className="arch-modal-titlebar-left">
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      background: '#00E5FF',
-                      boxShadow: '0 0 8px #00E5FF',
-                    }}
-                  />
+                  <span className="arch-modal-pulse-dot" />
                   <span>AHC PRACTICE ARCHIVE // DRAWING SHEET {activeModalProject.projectNumber}</span>
                 </div>
                 <button
@@ -466,6 +526,7 @@ export default function ExperienceSection() {
                   {activeModalProject.coordinates && (
                     <span className="arch-modal-coords">COORDS: {activeModalProject.coordinates}</span>
                   )}
+                  <span className="arch-modal-status-badge">APPROVED FOR CONSTRUCTION</span>
                 </div>
 
                 <h3 id="arch-modal-title" className="arch-modal-title">
@@ -474,6 +535,8 @@ export default function ExperienceSection() {
                 <div className="arch-modal-location">
                   {activeModalProject.location} · {activeModalProject.firm}
                 </div>
+
+
 
                 <div className="arch-modal-section-title">PRACTICE CONTRIBUTION &amp; ROLE</div>
                 <p className="arch-modal-desc">{activeModalProject.contribution}</p>
