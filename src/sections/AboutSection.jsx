@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import ArchitectCharacterScene from '../components/character/ArchitectCharacterScene';
+import WebGLErrorBoundary from '../components/WebGLErrorBoundary';
 import '../styles/aboutSection.css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -111,11 +112,28 @@ const ABOUT_CARDS = [
  * AboutSection — Interactive 3D Photoreal Architect Workstation & Client Dossier
  */
 export default function AboutSection() {
-  const [viewMode, setViewMode] = useState('3d'); // '3d' | 'id'
   const [activeModalCard, setActiveModalCard] = useState(null);
+  const [isSectionInView, setIsSectionInView] = useState(false);
   const sectionRef = useRef(null);
   const leftColRef = useRef(null);
   const rightColRef = useRef(null);
+
+  // Lazy-mount 3D Character Scene when section enters viewport to conserve WebGL context slots
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || !('IntersectionObserver' in window)) {
+      setIsSectionInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSectionInView(entry.isIntersecting);
+      },
+      { rootMargin: '100px 0px 100px 0px', threshold: 0.02 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Smooth GSAP ScrollTrigger entrance animation
   useEffect(() => {
@@ -188,145 +206,34 @@ export default function AboutSection() {
              LEFT SIDE: 3D PHOTOREAL ARCHITECT WORKSTATION / ID PASS
              ───────────────────────────────────────────────────────── */}
           <div ref={leftColRef} className="arch-id-card-wrap">
-            
-            {/* Architectural View Mode Switcher */}
-            <div className="arch-view-mode-bar" role="tablist" aria-label="Workstation View Modes">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={viewMode === '3d'}
-                className={`arch-view-mode-btn ${viewMode === '3d' ? 'active' : ''}`}
-                onClick={() => setViewMode('3d')}
-              >
-                <span>3D Workstation</span>
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={viewMode === 'id'}
-                className={`arch-view-mode-btn ${viewMode === 'id' ? 'active' : ''}`}
-                onClick={() => setViewMode('id')}
-              >
-                <span>Practice Pass ID</span>
-              </button>
+            <div style={{ position: 'relative', width: '100%', maxWidth: '440px', minHeight: '520px' }}>
+              <WebGLErrorBoundary>
+                {isSectionInView ? (
+                  <ArchitectCharacterScene />
+                ) : (
+                  <div className="arch-char-scene-root is-frameless" style={{ minHeight: '520px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="arch-char-skeleton">
+                      <div className="arch-char-spin" />
+                      <span>INITIALIZING 3D PHOTOREAL ARCHITECT...</span>
+                    </div>
+                  </div>
+                )}
+              </WebGLErrorBoundary>
+
+              {/* Workstation HUD Overlay Badge */}
+              <div className="arch-char-badge-overlay" aria-hidden="true">
+                <div className="arch-char-badge-left">
+                  <span className="arch-char-badge-dot" />
+                  <div>
+                    <div className="arch-char-badge-title">Saravanakumar K · Digital Twin</div>
+                    <div className="arch-char-badge-sub">Real-Time Cursor &amp; Eye Tracking Active</div>
+                  </div>
+                </div>
+                <span style={{ fontFamily: 'var(--f-mono)', fontSize: '0.62rem', color: '#666', letterSpacing: '0.05em' }}>
+                  60 FPS
+                </span>
+              </div>
             </div>
-
-            {/* Mode 1: 3D Animated Photoreal Architect Workstation */}
-            {viewMode === '3d' && (
-              <div style={{ position: 'relative', width: '100%', maxWidth: '440px' }}>
-                <ArchitectCharacterScene />
-
-                {/* Workstation HUD Overlay Badge */}
-                <div className="arch-char-badge-overlay" aria-hidden="true">
-                  <div className="arch-char-badge-left">
-                    <span className="arch-char-badge-dot" />
-                    <div>
-                      <div className="arch-char-badge-title">Saravanakumar K · Digital Twin</div>
-                      <div className="arch-char-badge-sub">Real-Time Cursor &amp; Eye Tracking Active</div>
-                    </div>
-                  </div>
-                  <span style={{ fontFamily: 'var(--f-mono)', fontSize: '0.62rem', color: '#666', letterSpacing: '0.05em' }}>
-                    60 FPS
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Mode 2: Authentic Physical Practice Pass ID Card */}
-            {viewMode === 'id' && (
-              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                {/* Lanyard Clip Mockup */}
-                <div className="arch-id-lanyard-hanger" aria-hidden="true">
-                  <div className="arch-id-lanyard-strap" />
-                  <div className="arch-id-lanyard-clip" />
-                </div>
-
-                <div className="arch-id-card">
-                  {/* Punch Hole Slot */}
-                  <div className="arch-id-slot-hole" aria-hidden="true" />
-
-                  {/* Header Strip */}
-                  <div className="arch-id-header">
-                    <span className="arch-id-brand-mark">
-                      <span>PRACTICE PASS</span>
-                    </span>
-                    <span className="arch-id-badge-code">ID // SK-2026-ARCH</span>
-                  </div>
-
-                  {/* Architect Portrait */}
-                  <div className="arch-id-photo-wrapper">
-                    <img
-                      src="/assets/images/saravanakumar-3d-avatar.png"
-                      alt="Saravanakumar K - Graduate Architect"
-                      className="arch-id-photo-img"
-                    />
-                    <div className="arch-id-crosshair arch-id-crosshair-tl" aria-hidden="true" />
-                    <div className="arch-id-crosshair arch-id-crosshair-tr" aria-hidden="true" />
-                    <div className="arch-id-crosshair arch-id-crosshair-bl" aria-hidden="true" />
-                    <div className="arch-id-crosshair arch-id-crosshair-br" aria-hidden="true" />
-                    <div className="arch-id-live-pill">
-                      <span className="arch-id-live-dot" />
-                      <span>ACTIVE · 2026</span>
-                    </div>
-                  </div>
-
-                  {/* Identity */}
-                  <div className="arch-id-identity">
-                    <h3 className="arch-id-name">Saravanakumar K</h3>
-                    <div className="arch-id-role">Graduate Architect &amp; BIM</div>
-                    <p className="arch-id-org">
-                      Architect Hafeez Contractor (AHC) Mumbai · Lovely School of Architecture (B.Arch)
-                    </p>
-                  </div>
-
-                  {/* Holographic Security Strip */}
-                  <div className="arch-id-holo-strip" aria-hidden="true">
-                    <span className="arch-id-holo-text">
-                      TOPOGRAPHY · PARAMETRIC FORM · TECTONIC RIGOR
-                    </span>
-                  </div>
-
-                  {/* Barcode */}
-                  <div className="arch-id-footer">
-                    <div className="arch-id-barcode-box">
-                      <svg className="arch-id-barcode-svg" viewBox="0 0 140 24" fill="currentColor" aria-hidden="true">
-                        <rect x="0" y="0" width="3" height="24" />
-                        <rect x="5" y="0" width="1.5" height="24" />
-                        <rect x="9" y="0" width="4" height="24" />
-                        <rect x="15" y="0" width="2" height="24" />
-                        <rect x="19" y="0" width="1.5" height="24" />
-                        <rect x="23" y="0" width="5" height="24" />
-                        <rect x="30" y="0" width="2" height="24" />
-                        <rect x="34" y="0" width="3.5" height="24" />
-                        <rect x="40" y="0" width="1.5" height="24" />
-                        <rect x="44" y="0" width="4" height="24" />
-                        <rect x="50" y="0" width="2" height="24" />
-                        <rect x="54" y="0" width="5" height="24" />
-                        <rect x="61" y="0" width="1.5" height="24" />
-                        <rect x="65" y="0" width="3" height="24" />
-                        <rect x="70" y="0" width="4" height="24" />
-                        <rect x="76" y="0" width="2" height="24" />
-                        <rect x="80" y="0" width="5" height="24" />
-                        <rect x="87" y="0" width="1.5" height="24" />
-                        <rect x="91" y="0" width="3.5" height="24" />
-                        <rect x="97" y="0" width="2" height="24" />
-                        <rect x="101" y="0" width="4" height="24" />
-                        <rect x="107" y="0" width="1.5" height="24" />
-                        <rect x="111" y="0" width="5" height="24" />
-                        <rect x="118" y="0" width="2" height="24" />
-                        <rect x="122" y="0" width="3" height="24" />
-                        <rect x="127" y="0" width="4" height="24" />
-                        <rect x="133" y="0" width="2" height="24" />
-                        <rect x="137" y="0" width="3" height="24" />
-                      </svg>
-                      <span className="arch-id-barcode-num">SK-2026-0814-ARCH</span>
-                    </div>
-                    <div className="arch-id-stamp-badge">VERIFIED</div>
-                  </div>
-                </div>
-              </div>
-            )}
-
           </div>
 
           {/* ─────────────────────────────────────────────────────────

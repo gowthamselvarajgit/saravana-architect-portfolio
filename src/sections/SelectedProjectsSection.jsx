@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { PRIMARY_PROJECTS } from '../data/projectsData';
 import GlobeCanvas from '../three/Globe/GlobeCanvas';
+import WebGLErrorBoundary from '../components/WebGLErrorBoundary';
 import '../styles/selectedProjectsSection.css';
 
 /**
@@ -101,11 +102,30 @@ function ProjectCard3D({ project, index, isSelected, onClick, onMouseEnter, onMo
 export default function SelectedProjectsSection({ onNavigate = () => {} }) {
   const [selectedProject, setSelectedProject] = useState(null);
   const [hoveredProject, setHoveredProject] = useState(null);
+  const [isSectionInView, setIsSectionInView] = useState(false);
 
   const activeProject = hoveredProject || selectedProject;
 
+  const sectionRef = useRef(null);
   const flightTimerRef = useRef(null);
   const isNavigatingRef = useRef(false);
+
+  // Lazy mount the 3D Earth Globe only when Section 03 is scrolled near the viewport
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || !('IntersectionObserver' in window)) {
+      setIsSectionInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSectionInView(entry.isIntersecting);
+      },
+      { rootMargin: '100px 0px 100px 0px', threshold: 0.02 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Cinematic Project Flight Sequence:
   // 1. Instantly triggers smooth camera flight toward geographic site on the 3D globe.
@@ -154,7 +174,7 @@ export default function SelectedProjectsSection({ onNavigate = () => {} }) {
   }, []);
 
   return (
-    <section id="projects" className="arch-projects-section">
+    <section id="projects" ref={sectionRef} className="arch-projects-section">
       <div className="arch-projects-container">
         {/* Section Eyebrow */}
         <div className="arch-projects-eyebrow">
@@ -205,11 +225,22 @@ export default function SelectedProjectsSection({ onNavigate = () => {} }) {
 
           {/* 3D WebGL Canvas Mount */}
           <div className="arch-globe-canvas-mount">
-            <GlobeCanvas
-              projects={PRIMARY_PROJECTS}
-              selectedProject={selectedProject}
-              onSelectProject={handleProjectDirectFlight}
-            />
+            <WebGLErrorBoundary>
+              {isSectionInView ? (
+                <GlobeCanvas
+                  projects={PRIMARY_PROJECTS}
+                  selectedProject={selectedProject}
+                  onSelectProject={handleProjectDirectFlight}
+                />
+              ) : (
+                <div className="atlas-loader" style={{ minHeight: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="atlas-loader-spinner" />
+                  <div className="atlas-loader-text">
+                    STANDBY // 3D REAL EARTH ATLAS LOADS ON VIEW
+                  </div>
+                </div>
+              )}
+            </WebGLErrorBoundary>
           </div>
 
           {/* Bottom Telemetry Prompt */}

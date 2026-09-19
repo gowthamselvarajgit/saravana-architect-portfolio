@@ -248,7 +248,7 @@ export default function CloudMistTransition({
         src="/assets/video/cloud.mp4"
         muted
         playsInline
-        preload="auto"
+        preload="none"
         className="arch-cloud-hidden-video"
       />
 

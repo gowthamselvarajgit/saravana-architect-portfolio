@@ -356,19 +356,46 @@ export class Globe {
 
     this.dive = 0;
     this.introP = 0;
+    this.hasFailed = false;
 
     this._initRenderer();
-    this._initScene();
-    this._bind();
+    if (!this.hasFailed) {
+      this._initScene();
+      this._bind();
+    }
   }
 
   _initRenderer() {
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.canvas,
-      antialias: true,
-      alpha: false,
-      powerPreference: 'high-performance',
-    });
+    let supported = false;
+    try {
+      const probe = document.createElement('canvas');
+      supported = !!(window.WebGLRenderingContext && (probe.getContext('webgl2') || probe.getContext('webgl') || probe.getContext('experimental-webgl')));
+    } catch (e) {
+      supported = false;
+    }
+
+    if (!supported) {
+      console.warn('[Globe] WebGL hardware acceleration is currently unavailable in this browser session.');
+      this.hasFailed = true;
+      return;
+    }
+
+    let renderer = null;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas: this.canvas,
+        antialias: true,
+        alpha: false,
+        powerPreference: 'default',
+        failIfMajorPerformanceCaveat: false,
+      });
+    } catch (e) {
+      console.warn('WebGLRenderer initialization failed:', e);
+      this.hasFailed = true;
+      return;
+    }
+
+    this.renderer = renderer;
     this.renderer.setClearColor(0x000000, 1);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.96;
@@ -379,17 +406,42 @@ export class Globe {
 
     this.scene = new THREE.Scene();
 
-    const rt = new THREE.WebGLRenderTarget(1, 1, {
-      type: THREE.HalfFloatType,
-      samples: 4,
-      colorSpace: THREE.LinearSRGBColorSpace,
-    });
-    this.composer = new EffectComposer(this.renderer, rt);
-    this.composer.addPass(new RenderPass(this.scene, this.camera));
+    // Safely attempt postprocessing bloom, falling back to direct render if unsupported
+    try {
+      const rt = new THREE.WebGLRenderTarget(1, 1, {
+        type: THREE.HalfFloatType,
+        samples: 2,
+        colorSpace: THREE.LinearSRGBColorSpace,
+      });
+      this.composer = new EffectComposer(this.renderer, rt);
+      this.composer.addPass(new RenderPass(this.scene, this.camera));
 
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.26, 0.45, 0.82);
-    this.composer.addPass(this.bloom);
-    this.composer.addPass(new OutputPass());
+      this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.26, 0.45, 0.82);
+      this.composer.addPass(this.bloom);
+      this.composer.addPass(new OutputPass());
+    } catch (compErr) {
+      console.warn('EffectComposer/Bloom init failed in Globe, falling back to direct render:', compErr);
+      this.composer = null;
+      this.bloom = null;
+    }
+
+    // Context loss / restoration listeners
+    const handleContextLost = (e) => {
+      e.preventDefault();
+      console.warn('Globe WebGL context lost.');
+      this.hasFailed = true;
+    };
+    const handleContextRestored = () => {
+      console.info('Globe WebGL context restored.');
+      this.hasFailed = false;
+      this.resize();
+    };
+    this.canvas.addEventListener('webglcontextlost', handleContextLost, false);
+    this.canvas.addEventListener('webglcontextrestored', handleContextRestored, false);
+    this._contextCleanup = () => {
+      this.canvas.removeEventListener('webglcontextlost', handleContextLost);
+      this.canvas.removeEventListener('webglcontextrestored', handleContextRestored);
+    };
 
     this.resize();
   }
@@ -810,6 +862,8 @@ export class Globe {
   }
 
   resize() {
+    if (this.hasFailed || !this.renderer) return;
+
     const w = window.innerWidth;
     const h = window.innerHeight;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -818,8 +872,10 @@ export class Globe {
 
     this.renderer.setPixelRatio(dpr);
     this.renderer.setSize(w, h, false);
-    this.composer.setPixelRatio(dpr);
-    this.composer.setSize(w, h);
+    if (this.composer) {
+      this.composer.setPixelRatio(dpr);
+      this.composer.setSize(w, h);
+    }
     this.bloom?.setSize(w, h);
 
     this.camera.aspect = w / h;
@@ -854,23 +910,27 @@ export class Globe {
   }
 
   setIntro(p) {
+    if (this.hasFailed) return;
     this.introP = THREE.MathUtils.clamp(p, 0, 1);
     const e = this.introP;
     if (this.dotMat) this.dotMat.uniforms.uReveal.value = e;
-    this.stars.material.uniforms.uOpacity.value = Math.min(1, e * 1.4);
-    this.atmoMat.uniforms.uStrength.value = e;
-    this.rimMat.uniforms.uStrength.value = e;
-    this.markerMat.uniforms.uOpacity.value = THREE.MathUtils.clamp((e - 0.35) / 0.5, 0, 1);
+    if (this.stars) this.stars.material.uniforms.uOpacity.value = Math.min(1, e * 1.4);
+    if (this.atmoMat) this.atmoMat.uniforms.uStrength.value = e;
+    if (this.rimMat) this.rimMat.uniforms.uStrength.value = e;
+    if (this.markerMat) this.markerMat.uniforms.uOpacity.value = THREE.MathUtils.clamp((e - 0.35) / 0.5, 0, 1);
     if (this.cityMat) this.cityMat.uniforms.uOpacity.value = THREE.MathUtils.clamp((e - 0.3) / 0.6, 0, 1);
-    this.arcs.setReveal(THREE.MathUtils.clamp((e - 0.25) / 0.75, 0, 1));
-    this.labels.setReveal(THREE.MathUtils.clamp((e - 0.45) / 0.55, 0, 1));
+    if (this.arcs) this.arcs.setReveal(THREE.MathUtils.clamp((e - 0.25) / 0.75, 0, 1));
+    if (this.labels) this.labels.setReveal(THREE.MathUtils.clamp((e - 0.45) / 0.55, 0, 1));
   }
 
   setDive(p) {
+    if (this.hasFailed) return;
     this.dive = THREE.MathUtils.clamp(p, 0, 1);
   }
 
   update() {
+    if (this.hasFailed || !this.renderer) return;
+
     const now = performance.now() / 1000;
     const dt = Math.min(now - this.tPrev, 0.05);
     this.tPrev = now;
@@ -925,7 +985,9 @@ export class Globe {
     }
     this.labels.setMaster(detail);
 
-    this.bloom.strength = 0.26 + diveEase * 0.18;
+    if (this.bloom) {
+      this.bloom.strength = 0.26 + diveEase * 0.18;
+    }
 
     this.stars.rotation.y = this.rotY * 0.18 + t * 0.0035;
     this.stars.rotation.x = this.rotX * 0.12;
@@ -942,13 +1004,31 @@ export class Globe {
     this.globe.updateMatrixWorld();
     this.labels.update(this.camera, this.globe.matrixWorld, this.size);
 
-    this.composer.render();
+    if (this.composer) {
+      this.composer.render();
+    } else if (this.renderer) {
+      this.renderer.render(this.scene, this.camera);
+    }
   }
 
   dispose() {
+    this._contextCleanup?.();
     this._cleanupListeners?.();
-    this.arcs.dispose();
-    this.labels.dispose();
-    this.renderer.dispose();
+    this.arcs?.dispose();
+    this.labels?.dispose();
+    if (this.composer) {
+      try {
+        this.composer.dispose?.();
+      } catch (e) {
+        // ignore
+      }
+    }
+    if (this.renderer) {
+      try {
+        this.renderer.dispose();
+      } catch (e) {
+        // ignore
+      }
+    }
   }
 }

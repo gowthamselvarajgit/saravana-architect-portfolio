@@ -38,40 +38,44 @@ export function usePageAnimations(containerRef) {
           const { reduceMotion } = context.conditions;
 
           if (reduceMotion) {
-            // Reduced motion: immediately make everything visible, no movement
-            gsap.set(
-              [
-                '[data-anim="nav"]',
-                '[data-anim="opening-eyebrow"]',
-                '[data-anim="opening-title"]',
-                '[data-anim="opening-body"]',
-                '[data-anim="opening-panel"]',
-                '[data-anim="hero-bar"]',
-                '[data-anim="hero-frame"]',
-                '[data-anim="hero-sub"]',
-                '[data-anim="section-header"]',
-                '[data-anim="project-card"]',
-                '[data-anim="archive-content"]',
-                '[data-anim="process-card"]',
-                '[data-anim="about-content"]',
-                '[data-anim="contact-content"]',
-              ],
-              { opacity: 1, y: 0, clearProps: 'all' }
-            );
+            const selectors = [
+              '[data-anim="nav"]',
+              '[data-anim="opening-eyebrow"]',
+              '[data-anim="opening-title"]',
+              '[data-anim="opening-body"]',
+              '[data-anim="opening-panel"]',
+              '[data-anim="hero-bar"]',
+              '[data-anim="hero-frame"]',
+              '[data-anim="hero-sub"]',
+              '[data-anim="section-header"]',
+              '[data-anim="project-card"]',
+              '[data-anim="archive-content"]',
+              '[data-anim="process-card"]',
+              '[data-anim="about-content"]',
+              '[data-anim="contact-content"]',
+            ];
+            selectors.forEach((sel) => {
+              const els = container.querySelectorAll(sel);
+              if (els.length > 0) {
+                gsap.set(els, { opacity: 1, y: 0, clearProps: 'all' });
+              }
+            });
             return;
           }
 
           // =================================================================
-          // 1. NAVIGATION — subtle initial appearance
+          // 1. NAVIGATION — subtle initial appearance (if present)
           // =================================================================
-          gsap.from('[data-anim="nav"]', {
-            autoAlpha: 0,
-            y: -16,
-            duration: 0.7,
-            ease: EASE_GSAP,
-            delay: 0.1,
-            clearProps: 'transform',
-          });
+          if (container.querySelector('[data-anim="nav"]')) {
+            gsap.from('[data-anim="nav"]', {
+              autoAlpha: 0,
+              y: -16,
+              duration: 0.7,
+              ease: EASE_GSAP,
+              delay: 0.1,
+              clearProps: 'transform',
+            });
+          }
 
           // =================================================================
           // 2. OPENING STATEMENT — controlled typographic reveal (if present)

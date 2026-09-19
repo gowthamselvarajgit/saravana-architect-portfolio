@@ -48,7 +48,8 @@ export default function GlobeCanvas({
           gl={{
             antialias: true,
             alpha: true,
-            powerPreference: 'high-performance',
+            powerPreference: 'default',
+            failIfMajorPerformanceCaveat: false,
           }}
           style={{ width: '100%', height: '100%' }}
         >

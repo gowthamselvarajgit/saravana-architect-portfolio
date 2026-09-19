@@ -10,13 +10,15 @@ import Lenis from 'lenis';
 
 import { Globe } from './globe/Globe.js';
 import ArchitectLoader from './ArchitectLoader.jsx';
+import ArchitectCharacterScene from '../character/ArchitectCharacterScene';
+import WebGLErrorBoundary from '../WebGLErrorBoundary';
 import { ARCHITECTURAL_HEADLINES, ARCHITECTURAL_TELEMETRY } from './globe/architecturalData.js';
 import '../../styles/architect-hero.css';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ArchitectHero({ onNavigate }) {
-  const canvasRef = useRef(null);
+  const canvasMountRef = useRef(null);
   const labelsRef = useRef(null);
   const tickerLineRef = useRef(null);
   const readoutLaneRef = useRef(null);
@@ -26,6 +28,37 @@ export default function ArchitectHero({ onNavigate }) {
   const dragHintRef = useRef(null);
 
   const globeRef = useRef(null);
+  const landingPadRef = useRef(null);
+  const avatarStageRef = useRef(null);
+  const hasTriggeredGreetRef = useRef(false);
+  const lastTriggerTimeRef = useRef(0);
+  const [characterGesture, setCharacterGesture] = useState(null);
+  const [isGreetingActive, setIsGreetingActive] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isModelReady, setIsModelReady] = useState(false);
+  const [isLandingPadInView, setIsLandingPadInView] = useState(false);
+
+  const handleModelLoaded = useCallback(() => {
+    setIsModelReady(true);
+  }, []);
+
+  // Lazy-mount 3D Character Avatar ONLY when user scrolls near the landing-pad
+  // This guarantees that on initial page load, ONLY the Hero Globe occupies a WebGL context!
+  useEffect(() => {
+    const pad = landingPadRef.current;
+    if (!pad || !('IntersectionObserver' in window)) {
+      setIsLandingPadInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsLandingPadInView(entry.isIntersecting);
+      },
+      { rootMargin: '120px 0px 120px 0px', threshold: 0.02 }
+    );
+    observer.observe(pad);
+    return () => observer.disconnect();
+  }, []);
 
   // 1. Procedural Film Grain
   const makeGrain = () => {
@@ -259,9 +292,19 @@ export default function ArchitectHero({ onNavigate }) {
   useEffect(() => {
     makeGrain();
 
-    const canvas = canvasRef.current;
+    const mount = canvasMountRef.current;
     const labels = labelsRef.current;
-    if (!canvas || !labels) return;
+    if (!mount || !labels) return;
+
+    // Remove any stale canvas in mount to ensure a clean WebGL context on every mount
+    while (mount.firstChild) {
+      mount.removeChild(mount.firstChild);
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'hero__canvas';
+    canvas.id = 'globeCanvas';
+    mount.appendChild(canvas);
 
     const globe = new Globe(canvas, labels);
     globeRef.current = globe;
@@ -327,6 +370,9 @@ export default function ArchitectHero({ onNavigate }) {
       scrollClean?.destroy();
       globe.dispose();
       globeRef.current = null;
+      if (mount && mount.contains(canvas)) {
+        mount.removeChild(canvas);
+      }
       document.body.classList.remove('is-locked');
     };
   }, []);
@@ -350,10 +396,145 @@ export default function ArchitectHero({ onNavigate }) {
     }
   }, []);
 
+  // Calculate precise scrolling length (in pixels from page top) to frame the 3D Architect
+  const getAvatarScrollMetrics = useCallback(() => {
+    const el = avatarStageRef.current;
+    if (!el) return null;
+    const rect = el.getBoundingClientRect();
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+    const absoluteTop = rect.top + currentScroll;
+
+    // Ideal vertical focal point: 3D character's upper torso / face at ~46% of viewport height
+    const viewportTargetY = window.innerHeight * 0.46;
+    const modelFocalOffsetY = el.offsetHeight * 0.35;
+    const targetScrollLength = Math.max(0, Math.round(absoluteTop + modelFocalOffsetY - viewportTargetY));
+
+    return {
+      currentScroll: Math.round(currentScroll),
+      targetScrollLength,
+      absoluteTop: Math.round(absoluteTop),
+      viewportHeight: window.innerHeight,
+      stageHeight: el.offsetHeight,
+      // Effective activation zone around the calculated target scroll length
+      triggerStart: Math.max(0, targetScrollLength - 90),
+      triggerEnd: targetScrollLength + 320,
+    };
+  }, []);
+
+  // Trigger avatar waving hand gesture and display greeting callout
+  const executeGreeting = useCallback((source = 'scroll') => {
+    const now = Date.now();
+    // Debounce to prevent jitter (minimum 3 seconds between triggers)
+    if (now - lastTriggerTimeRef.current < 3000) return;
+    lastTriggerTimeRef.current = now;
+    hasTriggeredGreetRef.current = true;
+
+    // 1. Dispatch waving hand animation to 3D architect humanoid model
+    setCharacterGesture({ action: 'wave', id: now });
+
+    // 2. Open architectural greeting callout
+    setIsGreetingActive(true);
+  }, []);
+
+  // Manual wave handler from greeting bubble button
+  const handleManualWave = useCallback(() => {
+    const now = Date.now();
+    lastTriggerTimeRef.current = now;
+    setCharacterGesture({ action: 'wave', id: now });
+    setIsGreetingActive(true);
+  }, []);
+
+  // Audio voice greeting via Web Speech API
+  const handleSpeakGreeting = useCallback(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const text = "Hello and welcome! I am Saravanakumar, Graduate Architect and BIM Specialist. Step into my architectural monograph below.";
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Premium')) && v.lang.startsWith('en')) || voices.find(v => v.lang.startsWith('en'));
+    if (preferredVoice) utterance.voice = preferredVoice;
+
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+
+    window.speechSynthesis.speak(utterance);
+  }, [isSpeaking]);
+
+  useEffect(() => {
+    const stage = avatarStageRef.current;
+    if (!stage) return;
+
+    let updateRaf = null;
+
+    // Real-time calculation on scroll to measure scroll length vs target
+    const handleScroll = () => {
+      if (updateRaf) cancelAnimationFrame(updateRaf);
+      updateRaf = requestAnimationFrame(() => {
+        const metrics = getAvatarScrollMetrics();
+        if (!metrics) return;
+
+        const isAligned = metrics.currentScroll >= metrics.triggerStart && metrics.currentScroll <= metrics.triggerEnd;
+
+        // If user scrolls within the calculated target length corridor, trigger waving hand and greeting!
+        if (isAligned && !hasTriggeredGreetRef.current) {
+          executeGreeting('scroll_length_calculated');
+        }
+
+        // Reset trigger flag when user scrolls far away (> 450px above or below) so they can re-trigger on return
+        if (Math.abs(metrics.currentScroll - metrics.targetScrollLength) > 450) {
+          hasTriggeredGreetRef.current = false;
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    // Initial metrics calculation
+    handleScroll();
+
+    // GSAP ScrollTrigger bound directly to the avatar stage for hardware-accelerated precision
+    const st = ScrollTrigger.create({
+      trigger: stage,
+      start: 'top 60%',
+      end: 'bottom 20%',
+      onEnter: () => {
+        executeGreeting('scroll_trigger_down');
+      },
+      onEnterBack: () => {
+        executeGreeting('scroll_trigger_up');
+      },
+      onLeaveBack: () => {
+        // Dismiss greeting when scrolling back up into hero
+        setIsGreetingActive(false);
+      },
+    });
+
+    return () => {
+      if (updateRaf) cancelAnimationFrame(updateRaf);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      st.kill();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [executeGreeting, getAvatarScrollMetrics]);
+
   // Handle navigation
   const handleNavClick = (e, path, targetId) => {
     e.preventDefault();
-    setMobileMenuOpen(false);
 
     if (targetId) {
       const el = document.getElementById(targetId);
@@ -377,8 +558,8 @@ export default function ArchitectHero({ onNavigate }) {
       <section className="hero" id="hero">
         <div className="hero__sticky" id="heroSticky">
 
-          {/* WebGL Canvas + Stars */}
-          <canvas className="hero__canvas" id="globeCanvas" ref={canvasRef}></canvas>
+          {/* WebGL Canvas Mount + Stars */}
+          <div className="hero__canvas-mount" id="globeCanvasMount" ref={canvasMountRef}></div>
 
           {/* Atmospheric DOM Bloom Layers */}
           <div className="hero__bloom hero__bloom--warm" id="bloomWarm" aria-hidden="true"></div>
@@ -484,13 +665,118 @@ export default function ArchitectHero({ onNavigate }) {
       </section>
 
       {/* ────────────────── Landing Pad Transition ────────────────── */}
-      <section className="landing-pad">
+      <section className="landing-pad" ref={landingPadRef}>
         <div className="landing-pad__inner">
-          <p className="landing-pad__kicker">From conceptual rigor, spatial clarity emerges</p>
-          <h2 className="landing-pad__title">
-            <span>We shape architecture.</span>
-            <em>We honor the place.</em>
-          </h2>
+          {/* 3D Architect Digital Twin Stage with Precision Calculated Greeting */}
+          <div className="landing-pad__stage" ref={avatarStageRef}>
+
+            <div className="landing-pad__stage-grid">
+              {/* 3D Architect Digital Twin Center Stage */}
+              <div className="landing-pad__model-center">
+                <WebGLErrorBoundary>
+                  {isLandingPadInView ? (
+                    <ArchitectCharacterScene
+                      showCard={false}
+                      showActions={true}
+                      triggerGesture={characterGesture}
+                      onLoaded={handleModelLoaded}
+                    />
+                  ) : (
+                    <div className="arch-char-scene-root is-frameless" style={{ minHeight: '580px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div className="arch-char-skeleton">
+                        <div className="arch-char-spin" />
+                        <span>INITIALIZING 3D PHOTOREAL ARCHITECT...</span>
+                      </div>
+                    </div>
+                  )}
+                </WebGLErrorBoundary>
+              </div>
+
+              {/* Synchronous Architectural Greeting Callout Card */}
+              <aside
+                className={`arch-greeting-bubble ${isGreetingActive ? 'is-active' : ''}`}
+                role="region"
+                aria-label="Saravanakumar Architectural Greeting"
+              >
+                <div className="arch-greeting-inner">
+                  {/* Header Strip */}
+                  <div className="arch-greeting-header">
+                    <div className="arch-greeting-pulse-tag">
+                      <span className="arch-greeting-beacon" />
+                      <span>SARAVANAKUMAR K · DIGITAL TWIN</span>
+                    </div>
+                    <div className="arch-greeting-header-tools">
+                      <button
+                        type="button"
+                        className={`arch-greeting-audio-btn ${isSpeaking ? 'is-speaking' : ''}`}
+                        onClick={handleSpeakGreeting}
+                        title={isSpeaking ? "Stop voice greeting" : "Listen to voice greeting"}
+                        aria-label="Voice greeting toggle"
+                      >
+                        {isSpeaking ? (
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 19h4l5 5V0L10 5H6v14zm13.5-7c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                          </svg>
+                        ) : (
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                          </svg>
+                        )}
+                        <span>{isSpeaking ? 'Speaking...' : 'Voice'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="arch-greeting-close-btn"
+                        onClick={() => setIsGreetingActive(false)}
+                        aria-label="Close greeting"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Message Content */}
+                  <div className="arch-greeting-content">
+                    <div className="arch-greeting-salutation">
+                      <span className="arch-greeting-wave-icon">👋</span>
+                      <h3>Hello &amp; Welcome!</h3>
+                    </div>
+                    <p className="arch-greeting-lead">
+                      I am <strong>Saravanakumar</strong> — Graduate Architect &amp; Computational Designer.
+                    </p>
+                    <p className="arch-greeting-sub">
+                      Bridging contextual topography, parametric form-finding, and ecological reality. Scroll down to explore live high-rises and thesis works.
+                    </p>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="arch-greeting-actions">
+                    <button
+                      type="button"
+                      className="arch-greeting-chip-btn arch-greeting-chip--wave"
+                      onClick={handleManualWave}
+                    >
+                      <span>👋 Wave Again</span>
+                    </button>
+                    <a
+                      href="#projects"
+                      className="arch-greeting-chip-btn arch-greeting-chip--explore"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const el = document.getElementById('projects');
+                        if (el) el.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      <span>Selected Works ↓</span>
+                    </a>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+
           <div className="landing-pad__stats">
             <div>
               <b>05</b>

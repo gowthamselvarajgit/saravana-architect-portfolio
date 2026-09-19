@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 /**
@@ -10,6 +10,7 @@ import * as THREE from 'three';
  */
 export default function ArchitectTowerHologram({ className = '' }) {
   const mountRef = useRef(null);
+  const [webglFailed, setWebglFailed] = useState(false);
 
   useEffect(() => {
     const container = mountRef.current;
@@ -30,17 +31,41 @@ export default function ArchitectTowerHologram({ className = '' }) {
     camera.position.set(0, 1.2, 5.2);
     camera.lookAt(0, 0, 0);
 
-    // 2. WebGL Renderer
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance',
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
-    container.appendChild(renderer.domElement);
+    // 2. WebGL Renderer with safe context pre-validation
+    let supported = false;
+    try {
+      const probe = document.createElement('canvas');
+      supported = !!(window.WebGLRenderingContext && (probe.getContext('webgl2') || probe.getContext('webgl') || probe.getContext('experimental-webgl')));
+    } catch (e) {
+      supported = false;
+    }
+
+    if (!supported) {
+      console.warn('[ArchitectTowerHologram] WebGL context unavailable in this session.');
+      setWebglFailed(true);
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    let renderer = null;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'default',
+        failIfMajorPerformanceCaveat: false,
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.2;
+      container.appendChild(canvas);
+    } catch (err) {
+      console.warn('[ArchitectTowerHologram] WebGLRenderer init failed:', err);
+      setWebglFailed(true);
+      return;
+    }
 
     // 3. Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
@@ -175,9 +200,19 @@ export default function ArchitectTowerHologram({ className = '' }) {
 
     // 7. Animation Loop
     const clock = new THREE.Clock();
+    let isIntersecting = true;
+    let observer = null;
+    if ('IntersectionObserver' in window && container) {
+      observer = new IntersectionObserver(([entry]) => {
+        isIntersecting = entry.isIntersecting;
+      }, { threshold: 0.05 });
+      observer.observe(container);
+    }
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
+      if (!isIntersecting) return;
+
       const elapsed = clock.getElapsedTime();
 
       // Continuous ambient rotation + mouse response
@@ -200,21 +235,38 @@ export default function ArchitectTowerHologram({ className = '' }) {
     return () => {
       isMounted = false;
       cancelAnimationFrame(animId);
+      if (observer) observer.disconnect();
       container.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('resize', handleResize);
 
       scene.clear();
-      renderer.dispose();
-      if (renderer.domElement && container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+      if (renderer) {
+        try {
+          renderer.dispose();
+        } catch (e) {
+          // ignore
+        }
+        if (renderer.domElement && container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
+        }
       }
     };
   }, []);
 
   return (
     <div className={`arch-tower-hologram-wrap ${className}`}>
-      {/* 3D WebGL Canvas Mount */}
-      <div ref={mountRef} className="arch-tower-canvas" />
+      {/* 3D WebGL Canvas Mount or CAD Wireframe Fallback */}
+      {webglFailed ? (
+        <div className="arch-tower-fallback">
+          <img
+            src="/assets/ribbon_of_life/ribbon_tower_shaded_cropped_transparent.png"
+            alt="Skyscraper Hologram Model"
+            className="arch-tower-fallback-img"
+          />
+        </div>
+      ) : (
+        <div ref={mountRef} className="arch-tower-canvas" />
+      )}
 
       {/* Holographic CAD HUD Overlay */}
       <div className="arch-tower-hud-overlay" aria-hidden="true">

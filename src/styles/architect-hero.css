@@ -264,6 +264,15 @@ a:focus-visible .roll i {
   isolation: isolate;
 }
 
+.hero__canvas-mount {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+}
+
 .hero__canvas {
   position: absolute;
   inset: 0;
@@ -960,7 +969,7 @@ a:focus-visible .roll i {
   z-index: 3;
   background: #ffffff;
   color: #111111;
-  padding: 10rem var(--gutter) 14rem;
+  padding: 0.5rem var(--gutter) 4rem;
 }
 
 .landing-pad__inner {
@@ -968,35 +977,313 @@ a:focus-visible .roll i {
   margin: 0 auto;
 }
 
-.landing-pad__kicker {
-  font-family: var(--f-mono);
-  font-size: 0.95rem;
-  text-transform: uppercase;
+/* ───────────────────────── Precision Scroll Stage & Telemetry ───────────────────── */
+
+.landing-pad__stage {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+
+/* Stage Grid: Model Center & Synchronous Greeting Callout */
+.landing-pad__stage-grid {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 580px;
+  width: 100%;
+}
+
+.landing-pad__model-center {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 620px;
+  height: 580px;
+  margin: 0 auto;
+}
+
+.landing-pad__model-center .arch-char-scene-root {
+  width: 100% !important;
+  max-width: 620px !important;
+  height: 580px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+.landing-pad__model-center .arch-char-skeleton {
+  background: transparent !important;
+  height: 580px !important;
+}
+
+/* ───────────────────────── Architectural Greeting Callout ───────────────────── */
+
+.arch-greeting-bubble {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 280px);
+  width: 340px;
+  max-width: 90vw;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(0, 102, 255, 0.24);
+  border-radius: 18px;
+  box-shadow: 
+    0 24px 60px -12px rgba(0, 102, 255, 0.14),
+    0 4px 20px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  padding: 1.4rem;
+  z-index: 30;
+  opacity: 0;
+  transform: translateY(-50%) translateX(-16px) scale(0.95);
+  pointer-events: none;
+  transition: 
+    opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arch-greeting-bubble.is-active {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Connector pointer needle pointing directly to avatar */
+.arch-greeting-bubble::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  width: 15px;
+  height: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(0, 102, 255, 0.24);
+  border-bottom: 1px solid rgba(0, 102, 255, 0.24);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.arch-greeting-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.arch-greeting-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 102, 255, 0.12);
+}
+
+.arch-greeting-pulse-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.65rem;
   letter-spacing: 0.08em;
-  color: rgba(17, 17, 17, 0.6);
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(17, 17, 17, 0.15);
-  margin-bottom: 4rem;
-}
-
-.landing-pad__title {
-  font-family: var(--f-display);
-  font-weight: 700;
-  font-size: clamp(2.6rem, 5.2vw, 5.5rem);
-  line-height: 1.04;
-  letter-spacing: -0.015em;
+  color: #0066FF;
   text-transform: uppercase;
-  margin-bottom: 5rem;
+  font-weight: 700;
 }
 
-.landing-pad__title span {
-  color: rgba(17, 17, 17, 0.35);
-  display: block;
+.arch-greeting-beacon {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00875a;
+  box-shadow: 0 0 8px #00875a;
 }
 
-.landing-pad__title em {
-  font-style: normal;
-  display: block;
+.arch-greeting-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.arch-greeting-audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(0, 102, 255, 0.06);
+  border: 1px solid rgba(0, 102, 255, 0.18);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.65rem;
+  color: #0066FF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.arch-greeting-audio-btn:hover {
+  background: rgba(0, 102, 255, 0.14);
+}
+
+.arch-greeting-audio-btn.is-speaking {
+  background: #0066FF;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 102, 255, 0.4);
+}
+
+.arch-greeting-close-btn {
+  background: transparent;
+  border: none;
+  color: rgba(17, 17, 17, 0.4);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.arch-greeting-close-btn:hover {
+  color: #111111;
+  background: rgba(17, 17, 17, 0.06);
+}
+
+.arch-greeting-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.arch-greeting-salutation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arch-greeting-wave-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  animation: waveHandJiggle 1.8s ease-in-out infinite;
+  transform-origin: 70% 70%;
+  display: inline-block;
+}
+
+@keyframes waveHandJiggle {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-8deg); }
+  45% { transform: rotate(14deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.arch-greeting-salutation h3 {
+  font-family: var(--f-display, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #111111;
+  margin: 0;
+}
+
+.arch-greeting-lead {
+  font-family: var(--f-body, sans-serif);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: rgba(17, 17, 17, 0.88);
+  margin: 0;
+}
+
+.arch-greeting-lead strong {
+  color: #0066FF;
+  font-weight: 700;
+}
+
+.arch-greeting-sub {
+  font-family: var(--f-body, sans-serif);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: rgba(17, 17, 17, 0.6);
+  margin: 0;
+}
+
+.arch-greeting-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.arch-greeting-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-family: var(--f-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.arch-greeting-chip--wave {
+  background: #0066FF;
+  color: #ffffff;
+  border: 1px solid #0066FF;
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+}
+
+.arch-greeting-chip--wave:hover {
+  background: #0052cc;
+  border-color: #0052cc;
+  transform: translateY(-1px);
+}
+
+.arch-greeting-chip--explore {
+  background: rgba(0, 102, 255, 0.05);
+  color: #111111;
+  border: 1px solid rgba(17, 17, 17, 0.15);
+}
+
+.arch-greeting-chip--explore:hover {
+  background: rgba(0, 102, 255, 0.1);
+  border-color: #0066FF;
+  color: #0066FF;
+  transform: translateY(-1px);
+}
+
+/* Responsive adjustment for Greeting Callout */
+@media (max-width: 1080px) {
+  .landing-pad__stage-grid {
+    flex-direction: column;
+  }
+
+  .arch-greeting-bubble {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto 1.5rem;
+    transform: translateY(12px) scale(0.96);
+  }
+
+  .arch-greeting-bubble.is-active {
+    transform: translateY(0) scale(1);
+  }
+
+  .arch-greeting-bubble::before {
+    display: none;
+  }
 }
 
 .landing-pad__stats {

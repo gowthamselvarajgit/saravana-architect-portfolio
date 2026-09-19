@@ -107,11 +107,11 @@ export default function Navigation({ theme = 'light', onToggleTheme, onNavigate,
                     </p>
                   </div>
 
-                  {/* Architect portrait image covered inside card */}
+                  {/* 3D Architectural Visualization Graphic */}
                   <div className="mega-card-illustration mega-card-portrait-container" aria-hidden="true">
                     <img
-                      src="/assets/images/saravanakumar-portrait.png"
-                      alt="Saravanakumar K - Graduate Architect"
+                      src="/assets/images/about/card_bim_3d.jpg"
+                      alt="3D Parametric Architectural BIM Model"
                       className="mega-card-img mega-portrait-img"
                     />
                   </div>

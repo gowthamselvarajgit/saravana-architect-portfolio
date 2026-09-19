@@ -10,13 +10,35 @@ import { GazeEngine } from '../../utils/gazeEngine';
  * - Exclusively renders the Photoreal Ready Player Me Architect humanoid model
  * - Calibrated camera framing: slightly brought down and zoomed in with ample clearance for greeting wave
  */
-export default function ArchitectCharacterScene({ className = '', onLoaded }) {
+export default function ArchitectCharacterScene({
+  className = '',
+  onLoaded,
+  showCard = false,
+  showActions = false,
+  triggerGesture = null,
+}) {
   const containerRef = useRef(null);
   const canvasMountRef = useRef(null);
   const [activeAction, setActiveAction] = useState('idle');
   const [isLoading, setIsLoading] = useState(true);
 
+  const onLoadedRef = useRef(onLoaded);
+  useEffect(() => {
+    onLoadedRef.current = onLoaded;
+  }, [onLoaded]);
+
   const playGestureRef = useRef(null);
+  const pendingGestureRef = useRef(null);
+
+  useEffect(() => {
+    if (!triggerGesture) return;
+    const actionKey = typeof triggerGesture === 'object' && triggerGesture !== null ? triggerGesture.action : triggerGesture;
+    if (playGestureRef.current) {
+      playGestureRef.current(actionKey);
+    } else {
+      pendingGestureRef.current = actionKey;
+    }
+  }, [triggerGesture]);
 
   useEffect(() => {
     let isMounted = true;
@@ -29,29 +51,56 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
     const scene = new THREE.Scene();
 
     const rect = container.getBoundingClientRect();
-    const width = rect.width || 440;
-    const height = rect.height || 520;
+    const width = rect.width || 620;
+    const height = rect.height || 580;
     const aspect = width / height;
 
     // 2. Camera Setup
-    // FOV 33, slightly zoomed in, looking at chest/collar height (y=1.28)
-    // Model lowered to y=-0.16 so wave gesture hand stays safely inside the container
-    const camera = new THREE.PerspectiveCamera(33, aspect, 0.1, 100);
-    camera.position.set(0, 1.36, 1.46);
-    camera.lookAt(0, 1.28, 0);
+    // FOV 38, perfectly calibrated framing: generous headroom and side margins so waving hand and head never clip
+    const camera = new THREE.PerspectiveCamera(38, aspect, 0.1, 100);
+    camera.position.set(0, 1.20, 2.05);
+    camera.lookAt(0, 1.10, 0);
 
-    // 3. WebGL Renderer with ACES Tone Mapping
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance',
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    container.appendChild(renderer.domElement);
+    // 3. WebGL Renderer with safe context pre-validation
+    let supported = false;
+    try {
+      const probe = document.createElement('canvas');
+      supported = !!(window.WebGLRenderingContext && (probe.getContext('webgl2') || probe.getContext('webgl') || probe.getContext('experimental-webgl')));
+    } catch (e) {
+      supported = false;
+    }
+
+    if (!supported) {
+      console.warn('[ArchitectCharacterScene] WebGL context unavailable in this session.');
+      setIsLoading(false);
+      if (onLoaded) onLoaded();
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    let renderer = null;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'default',
+        failIfMajorPerformanceCaveat: false,
+        stencil: false,
+        depth: true,
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.15;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      container.appendChild(canvas);
+    } catch (renderErr) {
+      console.warn('[ArchitectCharacterScene] WebGLRenderer creation error:', renderErr);
+      setIsLoading(false);
+      if (onLoaded) onLoaded();
+      return;
+    }
 
     // 4. Studio Lighting Rig
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.25);
@@ -93,11 +142,16 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
     let currentActionName = 'idle';
 
     const switchAction = (newActionName, duration = 0.25) => {
-      if (!mixer || currentActionName === newActionName) return;
+      if (!mixer) return;
       const prevAction = actions[currentActionName];
       const nextAction = actions[newActionName];
 
       if (nextAction) {
+        if (currentActionName === newActionName) {
+          nextAction.reset();
+          nextAction.play();
+          return;
+        }
         nextAction.reset();
         nextAction.enabled = true;
         if (prevAction) {
@@ -142,8 +196,8 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
         leftEyeBone = characterModel.getObjectByName('LeftEye');
         rightEyeBone = characterModel.getObjectByName('RightEye');
 
-        // Lower the model slightly (y = -0.16) to ensure the waving hand gesture fits inside viewport
-        characterModel.position.set(0, -0.16, 0);
+        // Calibrated model offset (y = -0.30) to position model high up with ample waving headroom
+        characterModel.position.set(0, -0.30, 0);
         scene.add(characterModel);
 
         mixer = new THREE.AnimationMixer(characterModel);
@@ -175,12 +229,20 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
             if (loadedCount === animList.length) {
               currentActionName = 'idle';
               setActiveAction('idle');
+              setIsLoading(false);
+              const targetGesture = pendingGestureRef.current || (typeof triggerGesture === 'object' && triggerGesture ? triggerGesture.action : triggerGesture);
+              if (targetGesture) {
+                setTimeout(() => {
+                  if (playGestureRef.current) {
+                    playGestureRef.current(targetGesture);
+                    pendingGestureRef.current = null;
+                  }
+                }, 350);
+              }
+              if (onLoadedRef.current) onLoadedRef.current();
             }
           });
         });
-
-        setIsLoading(false);
-        if (onLoaded) onLoaded();
       },
       undefined,
       (err) => {
@@ -202,8 +264,8 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
     const handleResize = () => {
       if (!canvasMountRef.current) return;
       const r = canvasMountRef.current.getBoundingClientRect();
-      const w = r.width || 440;
-      const h = r.height || 520;
+      const w = r.width || 620;
+      const h = r.height || 580;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -215,8 +277,21 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
     let animId;
     const clock = new THREE.Clock();
 
+    let isIntersecting = true;
+    let observer = null;
+    if ('IntersectionObserver' in window && container) {
+      observer = new IntersectionObserver(([entry]) => {
+        isIntersecting = entry.isIntersecting;
+      }, { threshold: 0.05 });
+      observer.observe(container);
+    }
+
     const animate = () => {
+      if (!isMounted) return;
       animId = requestAnimationFrame(animate);
+
+      if (!isIntersecting) return;
+
       const delta = clock.getDelta();
 
       if (mixer) {
@@ -244,7 +319,9 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
         rightEyeBone.rotation.x = gaze.eyeRotX;
       }
 
-      renderer.render(scene, camera);
+      if (renderer) {
+        renderer.render(scene, camera);
+      }
     };
 
     animate();
@@ -253,18 +330,26 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
     return () => {
       isMounted = false;
       cancelAnimationFrame(animId);
+      if (observer) observer.disconnect();
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('resize', handleResize);
 
       dracoLoader.dispose();
       scene.clear();
-      renderer.dispose();
+      if (renderer) {
+        try {
+          renderer.dispose();
+        } catch (e) {
+          // ignore cleanup errors
+        }
+      }
+      playGestureRef.current = null;
 
-      if (container && renderer.domElement && container.contains(renderer.domElement)) {
+      if (container && renderer?.domElement && container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, [onLoaded]);
+  }, []);
 
   const handleGestureClick = useCallback((actionKey) => {
     if (playGestureRef.current) {
@@ -273,59 +358,61 @@ export default function ArchitectCharacterScene({ className = '', onLoaded }) {
   }, []);
 
   return (
-    <div ref={containerRef} className={`arch-char-scene-root ${className}`}>
-      {/* 3D Canvas Mount Point */}
+    <div ref={containerRef} className={`arch-char-scene-root ${!showCard ? 'is-frameless' : ''} ${className}`}>
+      {/* 3D Canvas Mount Point - ONLY 3D MODEL, NEVER ANY 2D CLIENT IMAGE */}
       <div className="arch-char-canvas-mount" ref={canvasMountRef} />
 
       {/* Loading Skeleton */}
       {isLoading && (
         <div className="arch-char-skeleton">
           <div className="arch-char-spin" />
-          <span>INITIALIZING PHOTOREAL ARCHITECT...</span>
+          <span>INITIALIZING 3D PHOTOREAL ARCHITECT...</span>
         </div>
       )}
 
       {/* Ambient Blueprint Rim Light Glow */}
-      <div className="arch-char-rim-glow" aria-hidden="true" />
+      {showCard && <div className="arch-char-rim-glow" aria-hidden="true" />}
 
       {/* Interactive Floating Gesture Action Bar */}
-      <div className="arch-char-actions-bar" role="toolbar" aria-label="Avatar presentation gestures">
-        <button
-          type="button"
-          className={`arch-char-action-chip ${activeAction === 'wave' ? 'active' : ''}`}
-          onClick={() => handleGestureClick('wave')}
-          title="Greet visitors with a friendly wave"
-        >
-          <span>👋 Greet</span>
-        </button>
+      {showActions && (
+        <div className="arch-char-actions-bar" role="toolbar" aria-label="Avatar presentation gestures">
+          <button
+            type="button"
+            className={`arch-char-action-chip ${activeAction === 'wave' ? 'active' : ''}`}
+            onClick={() => handleGestureClick('wave')}
+            title="Greet visitors with a friendly wave"
+          >
+            <span>👋 Greet</span>
+          </button>
 
-        <button
-          type="button"
-          className={`arch-char-action-chip ${activeAction === 'present' ? 'active' : ''}`}
-          onClick={() => handleGestureClick('present')}
-          title="Architectural scheme presentation gesture"
-        >
-          <span>📐 Present</span>
-        </button>
+          <button
+            type="button"
+            className={`arch-char-action-chip ${activeAction === 'present' ? 'active' : ''}`}
+            onClick={() => handleGestureClick('present')}
+            title="Architectural scheme presentation gesture"
+          >
+            <span>📐 Present</span>
+          </button>
 
-        <button
-          type="button"
-          className={`arch-char-action-chip ${activeAction === 'think' ? 'active' : ''}`}
-          onClick={() => handleGestureClick('think')}
-          title="Design review & contemplation pose"
-        >
-          <span>💡 Ponder</span>
-        </button>
+          <button
+            type="button"
+            className={`arch-char-action-chip ${activeAction === 'think' ? 'active' : ''}`}
+            onClick={() => handleGestureClick('think')}
+            title="Design review & contemplation pose"
+          >
+            <span>💡 Ponder</span>
+          </button>
 
-        <button
-          type="button"
-          className={`arch-char-action-chip ${activeAction === 'idle' ? 'active' : ''}`}
-          onClick={() => handleGestureClick('idle')}
-          title="Live cursor tracking with saccadic gaze"
-        >
-          <span>👁️ Track</span>
-        </button>
-      </div>
+          <button
+            type="button"
+            className={`arch-char-action-chip ${activeAction === 'idle' ? 'active' : ''}`}
+            onClick={() => handleGestureClick('idle')}
+            title="Live cursor tracking with saccadic gaze"
+          >
+            <span>👁️ Track</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

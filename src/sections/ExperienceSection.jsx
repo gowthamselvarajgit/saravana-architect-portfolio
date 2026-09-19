@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PROFESSIONAL_ARCHIVE } from '../data/projectsData';
 import ArchitectTowerHologram from '../components/3d/ArchitectTowerHologram';
+import WebGLErrorBoundary from '../components/WebGLErrorBoundary';
 import { useTiltEffect } from '../hooks/useTiltEffect';
 import '../styles/experienceSection.css';
 
@@ -289,8 +290,26 @@ function InteractiveTiltCard({ card, onClick }) {
 export default function ExperienceSection() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeModalProject, setActiveModalProject] = useState(null);
+  const [isSectionInView, setIsSectionInView] = useState(false);
   const containerRef = useRef(null);
   const leftFirmCardRef = useRef(null);
+
+  // Lazy-mount the 3D CAD Tower Hologram only when Section 04 is in view
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !('IntersectionObserver' in window)) {
+      setIsSectionInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSectionInView(entry.isIntersecting);
+      },
+      { rootMargin: '100px 0px 100px 0px', threshold: 0.02 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   // Apply tilt to left firm card
   useTiltEffect(leftFirmCardRef, { maxTilt: 4, scale: 1.01, speed: 450 });
@@ -410,7 +429,17 @@ export default function ExperienceSection() {
                   <span className="arch-firm-holo-dot" />
                   <span>INTERACTIVE 3D CAD SCHEME VIEWPORT</span>
                 </div>
-                <ArchitectTowerHologram />
+                <WebGLErrorBoundary>
+                  {isSectionInView ? (
+                    <ArchitectTowerHologram />
+                  ) : (
+                    <div className="arch-tower-fallback" style={{ minHeight: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ fontFamily: 'var(--f-mono)', fontSize: '0.7rem', color: '#666' }}>
+                        CAD WIREFRAME // STANDBY FOR VIEW
+                      </span>
+                    </div>
+                  )}
+                </WebGLErrorBoundary>
               </div>
 
               {/* Animated Live CAD Metrics */}
