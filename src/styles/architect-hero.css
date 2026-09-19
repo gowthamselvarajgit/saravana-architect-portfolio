@@ -294,9 +294,9 @@ a:focus-visible .roll i {
   height: 105vh;
   background: radial-gradient(
     45% 42% at 62% 46%,
-    rgba(255, 122, 26, 0.28) 0%,
-    rgba(255, 72, 0, 0.12) 34%,
-    rgba(120, 32, 0, 0.04) 58%,
+    rgba(255, 122, 26, 0.13) 0%,
+    rgba(255, 72, 0, 0.05) 34%,
+    rgba(120, 32, 0, 0.015) 58%,
     transparent 74%
   );
   filter: blur(28px);
@@ -309,9 +309,9 @@ a:focus-visible .roll i {
   height: 115vh;
   background: radial-gradient(
     46% 44% at 56% 44%,
-    rgba(46, 106, 255, 0.32) 0%,
-    rgba(20, 52, 220, 0.15) 36%,
-    rgba(8, 18, 96, 0.05) 62%,
+    rgba(46, 106, 255, 0.15) 0%,
+    rgba(20, 52, 220, 0.06) 36%,
+    rgba(8, 18, 96, 0.02) 62%,
     transparent 78%
   );
   filter: blur(34px);
@@ -626,7 +626,7 @@ a:focus-visible .roll i {
   position: absolute;
   z-index: 12;
   left: var(--gutter);
-  top: 51%;
+  top: max(56%, calc(var(--rail-h) + 140px));
   transform: translateY(-50%);
   width: min(740px, 52vw);
   max-width: calc(100vw - var(--gutter) * 2);

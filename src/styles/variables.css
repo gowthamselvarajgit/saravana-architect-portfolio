@@ -57,8 +57,8 @@
   --color-border-strong: var(--color-light-border-strong);
 
   /* --- 6. TYPOGRAPHY FAMILIES --- */
-  /* Display: Cormorant Garamond | Body: Inter | Technical: DM Mono */
-  --font-display: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+  /* Display: Archivo | Body: Inter | Technical: DM Mono */
+  --font-display: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'DM Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 

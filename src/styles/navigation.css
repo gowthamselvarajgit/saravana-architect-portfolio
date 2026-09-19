@@ -12,7 +12,18 @@
   justify-content: center;
   z-index: 1000;
   pointer-events: none;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+  transition: top 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s ease, opacity 0.4s ease;
+}
+
+/* Gracefully positioned on the Hero to clear top sustainability ticker without pushing into hero text */
+.arch-navbar-wrapper.on-hero {
+  top: 48px;
+}
+
+@media (max-width: 768px) {
+  .arch-navbar-wrapper.on-hero {
+    top: 46px;
+  }
 }
 
 .arch-navbar-pill {

@@ -1,12 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { PRIMARY_PROJECTS } from '../data/projectsData';
 import GlobeCanvas from '../three/Globe/GlobeCanvas';
 import '../styles/selectedProjectsSection.css';
 
 /**
  * 3D Project Scheme Card Component
- * Highly detailed architectural card featuring 3D elevation, authentic render
- * thumbnail, editorial typography, and 1-click automatic flight launch.
+ * Architectural card featuring authentic render thumbnail,
+ * refined editorial typography, and direct 1-click flight trigger.
+ * 
+ * Uses an editorial ledger so the Earth remains the section's visual centre.
  */
 function ProjectCard3D({ project, index, isSelected, onClick, onMouseEnter, onMouseLeave }) {
   const formattedNum = String(index + 1).padStart(2, '0');
@@ -91,31 +93,65 @@ function ProjectCard3D({ project, index, isSelected, onClick, onMouseEnter, onMo
  * Section 03 // Primary Architectural Corpus
  * 
  * Layout:
- * - Centerpiece: Frameless 3D Real Earth Globe with atmospheric glow and orbit controls
- * - Surrounded by: High-end 3D Scheme Cards (West Flank: Schemes 01 & 02; East Flank: Schemes 03, 04, 05)
- * - Interaction: 1-click on any card or globe pin automatically triggers the cloud animation
- *   and flies directly to the specific project monograph page.
+ * - Centerpiece: Frameless 3D Real Earth Globe with architectural exhibition aura
+ * - West Flank: 2 Featured Monograph Cards (Möbius Towers & Cultural Oasis)
+ * - East Flank: 3 Compact Ledger Cards (Ribbon of Life, Eco-Resort, Flow Spire)
+ * - Optical Equilibrium: Both flanks match in vertical height to prevent right-hand heaviness.
  */
 export default function SelectedProjectsSection({ onNavigate = () => {} }) {
   const [selectedProject, setSelectedProject] = useState(null);
   const [hoveredProject, setHoveredProject] = useState(null);
 
-  // West Flank: First 2 projects (Möbius & Cultural Oasis)
-  const westProjects = PRIMARY_PROJECTS.slice(0, 2);
-  // East Flank: Remaining 3 projects (Ribbon of Life, Eco-Resort, Flow Spire)
-  const eastProjects = PRIMARY_PROJECTS.slice(2, 5);
-
   const activeProject = hoveredProject || selectedProject;
 
-  // Single-action 1-click navigation:
-  // Immediately rotates globe to site and launches cloud transition into project monograph
+  const flightTimerRef = useRef(null);
+  const isNavigatingRef = useRef(false);
+
+  // Cinematic Project Flight Sequence:
+  // 1. Instantly triggers smooth camera flight toward geographic site on the 3D globe.
+  // 2. As the camera approaches site elevation (~800ms into flight), clouds billow in.
+  // 3. Peak cloud cover navigates to the destination monograph and clears mist.
   const handleProjectDirectFlight = useCallback(
     (project) => {
+      if (!project || isNavigatingRef.current) return;
+      isNavigatingRef.current = true;
+
+      // Immediately fly camera to target geographic location on globe
       setSelectedProject(project);
-      onNavigate(`/projects/${project.slug || project.id}`, { withClouds: true });
+
+      const prefersReducedMotion =
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        onNavigate(`/projects/${project.slug || project.id}`, { withClouds: false });
+        isNavigatingRef.current = false;
+        return;
+      }
+
+      if (flightTimerRef.current) {
+        clearTimeout(flightTimerRef.current);
+      }
+
+      // Camera flies toward location. As it dives into the atmosphere (550ms into flight),
+      // volumetric clouds billow into the viewport creating the atmospheric cloud penetration effect.
+      flightTimerRef.current = setTimeout(() => {
+        onNavigate(`/projects/${project.slug || project.id}`, { withClouds: true });
+        setTimeout(() => {
+          isNavigatingRef.current = false;
+        }, 3200);
+      }, 550);
     },
     [onNavigate]
   );
+
+  useEffect(() => {
+    return () => {
+      if (flightTimerRef.current) {
+        clearTimeout(flightTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <section id="projects" className="arch-projects-section">
@@ -134,8 +170,8 @@ export default function SelectedProjectsSection({ onNavigate = () => {} }) {
             </h2>
             <p className="arch-projects-subtitle">
               Topological investigations, high-rise frameworks, and climate-adaptive pavilions.
-              The interactive planetary globe is centered and surrounded by primary monograph schemes.
-              Click any card to fly directly into the dedicated 3D project page.
+              The interactive planetary globe occupies the dominant central stage, flanked by satellite monograph schemes.
+              Select a location from the globe or the indexed schemes below to enter its dedicated architectural monograph.
             </p>
           </div>
 
@@ -145,18 +181,53 @@ export default function SelectedProjectsSection({ onNavigate = () => {} }) {
           </div>
         </div>
 
-        {/* ─────────────────────────────────────────────────────────────
-           CENTER GLOBE SURROUNDED BY 3D CARDS LAYOUT:
-           WEST FLANK (01, 02) | CENTER FRAMELESS GLOBE | EAST FLANK (03, 04, 05)
-           ───────────────────────────────────────────────────────────── */}
-        <div className="arch-projects-surround-stage">
-          {/* =========================================================
-             WEST FLANK: CARDS 01 & 02
-             ========================================================= */}
-          <div className="arch-projects-flank arch-projects-flank-west" role="region" aria-label="Western Schemes">
-            {westProjects.map((project, idx) => (
+        {/* =========================================================
+           PART 1: DOMINANT CENTRAL 3D REAL EARTH GLOBE (AT TOP)
+           ========================================================= */}
+        <div className="arch-projects-globe-hero-stage">
+          {/* Atmospheric diffusion aura */}
+          <div className="arch-globe-ambient-glow" aria-hidden="true" />
+          <div className="arch-globe-orbit-ring ring-1" aria-hidden="true" />
+          <div className="arch-globe-orbit-ring ring-2" aria-hidden="true" />
+
+          {/* Top Telemetry Museum Plaque */}
+          <div className="arch-globe-telemetry-hud" aria-hidden="true">
+            <span className="arch-globe-hud-pill">
+              <span className="arch-globe-hud-pulse" />
+              <span>3D EARTH ATLAS</span>
+            </span>
+            <span className="arch-globe-hud-coords">
+              {activeProject
+                ? `${activeProject.location.coordinates} · ${activeProject.location.city.toUpperCase()}`
+                : 'PLANETARY ATLAS · 5 GLOBAL SITES'}
+            </span>
+          </div>
+
+          {/* 3D WebGL Canvas Mount */}
+          <div className="arch-globe-canvas-mount">
+            <GlobeCanvas
+              projects={PRIMARY_PROJECTS}
+              selectedProject={selectedProject}
+              onSelectProject={handleProjectDirectFlight}
+            />
+          </div>
+
+          {/* Bottom Telemetry Prompt */}
+          <div className="arch-globe-telemetry-bottom" aria-hidden="true">
+            <span className="arch-globe-instruction-dot">●</span>
+            <span>DRAG GLOBE TO ROTATE · CLICK SCHEME OR PIN TO ENTER MONOGRAPH</span>
+          </div>
+        </div>
+
+        {/* =========================================================
+           PART 1: ALL 5 PROJECT CARDS BELOW THE GLOBE
+           Row 1: [CARD 01] [CARD 02] [CARD 03]
+           Row 2: [CARD 04] [CARD 05]
+           ========================================================= */}
+        <div className="arch-projects-cards-grid" role="region" aria-label="Curated Project Schemes">
+          {PRIMARY_PROJECTS.map((project, idx) => (
+            <div key={project.id} className={`arch-project-card-cell card-cell-${idx + 1}`}>
               <ProjectCard3D
-                key={project.id}
                 project={project}
                 index={idx}
                 isSelected={activeProject?.id === project.id}
@@ -164,64 +235,8 @@ export default function SelectedProjectsSection({ onNavigate = () => {} }) {
                 onMouseEnter={() => setHoveredProject(project)}
                 onMouseLeave={() => setHoveredProject(null)}
               />
-            ))}
-          </div>
-
-          {/* =========================================================
-             CENTER STAGE: FRAMELESS 3D REAL EARTH GLOBE
-             (Not inside a card! Expansive, organic, boundaryless)
-             ========================================================= */}
-          <div className="arch-projects-globe-center-stage">
-            {/* Atmospheric cosmic radial aura */}
-            <div className="arch-globe-ambient-glow" aria-hidden="true" />
-            <div className="arch-globe-orbit-ring ring-1" aria-hidden="true" />
-            <div className="arch-globe-orbit-ring ring-2" aria-hidden="true" />
-
-            {/* Top Telemetry Overlay */}
-            <div className="arch-globe-telemetry-hud" aria-hidden="true">
-              <span className="arch-globe-hud-pill">
-                <span className="arch-globe-hud-pulse" />
-                <span>3D REAL EARTH ATLAS</span>
-              </span>
-              <span className="arch-globe-hud-coords">
-                {activeProject
-                  ? `${activeProject.location.coordinates} · ${activeProject.location.city.toUpperCase()}`
-                  : 'PLANETARY SURROUND VIEW · 5 GLOBAL SITES'}
-              </span>
             </div>
-
-            {/* 3D WebGL Canvas Mount (Frameless, open-air) */}
-            <div className="arch-globe-canvas-mount">
-              <GlobeCanvas
-                projects={PRIMARY_PROJECTS}
-                selectedProject={selectedProject}
-                onSelectProject={handleProjectDirectFlight}
-              />
-            </div>
-
-            {/* Bottom Telemetry Prompt */}
-            <div className="arch-globe-telemetry-bottom" aria-hidden="true">
-              <span className="arch-globe-instruction-dot">●</span>
-              <span>DRAG GLOBE TO ROTATE · CLICK CARD OR PIN FOR 1-CLICK 3D FLIGHT</span>
-            </div>
-          </div>
-
-          {/* =========================================================
-             EAST FLANK: CARDS 03, 04, 05
-             ========================================================= */}
-          <div className="arch-projects-flank arch-projects-flank-east" role="region" aria-label="Eastern Schemes">
-            {eastProjects.map((project, idx) => (
-              <ProjectCard3D
-                key={project.id}
-                project={project}
-                index={idx + 2}
-                isSelected={activeProject?.id === project.id}
-                onClick={() => handleProjectDirectFlight(project)}
-                onMouseEnter={() => setHoveredProject(project)}
-                onMouseLeave={() => setHoveredProject(null)}
-              />
-            ))}
-          </div>
+          ))}
         </div>
       </div>
     </section>

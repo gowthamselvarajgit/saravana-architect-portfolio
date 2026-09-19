@@ -39,7 +39,7 @@ export default function GlobeCanvas({
       <Suspense fallback={<GlobeFallback />}>
         <Canvas
           camera={{
-            position: [0, 1.8, 6.8],
+            position: [0, 0.0, 7.8],
             fov: 45,
             near: 0.1,
             far: 100,

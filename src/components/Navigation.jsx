@@ -50,7 +50,7 @@ export default function Navigation({ theme = 'light', onToggleTheme, onNavigate,
   const isHeroMode = isHomepage && !isScrolled;
 
   return (
-    <div className="arch-navbar-wrapper">
+    <div className={`arch-navbar-wrapper ${isHeroMode ? 'on-hero' : 'scrolled'}`}>
       <header
         role="banner"
         className={`arch-navbar-pill ${isHeroMode ? 'on-hero' : ''}`}

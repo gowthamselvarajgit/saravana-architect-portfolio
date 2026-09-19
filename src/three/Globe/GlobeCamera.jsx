@@ -35,50 +35,49 @@ export default function GlobeCamera({
       const earthRotationY = earthRef?.current ? earthRef.current.rotation.y : 0;
       const markerWorldPos = markerLocalPos.clone().applyAxisAngle(new THREE.Vector3(0, 1, 0), earthRotationY);
 
-      // 3. Define target camera position: 45° elevation angle above the regional site
-      const targetCamDistance = 4.85;
-      const targetCamPos = markerWorldPos
-        .clone()
-        .normalize()
-        .multiplyScalar(targetCamDistance)
-        .add(new THREE.Vector3(0, 0.4, 0));
-
-      const targetLookAt = markerWorldPos.clone().multiplyScalar(0.65);
+      // 3. Define target direction vector and approach distance
+      const targetDir = markerWorldPos.clone().normalize();
+      const targetCamDistance = 3.25;
+      const targetCamPos = targetDir.clone().multiplyScalar(targetCamDistance);
 
       if (prefersReducedMotion) {
         camera.position.copy(targetCamPos);
-        controlsRef.current.target.copy(targetLookAt);
+        controlsRef.current.target.set(0, 0, 0);
         controlsRef.current.update();
       } else {
-        // Smooth cinematic GSAP flight
-        gsap.killTweensOf(camera.position);
-        gsap.killTweensOf(controlsRef.current.target);
+        // Spherical arc flight: camera orbits smoothly around the sphere
+        // while continuously pointing at (0, 0, 0).
+        // This ensures the Earth is 100% symmetrically centered in the canvas
+        // with ZERO accidental edge clipping at any stage of flight.
+        const startPos = camera.position.clone();
+        const startDir = startPos.clone().normalize();
+        const startDist = startPos.length();
+        const animState = { progress: 0 };
 
-        gsap.to(camera.position, {
-          x: targetCamPos.x,
-          y: targetCamPos.y,
-          z: targetCamPos.z,
+        gsap.killTweensOf(animState);
+
+        gsap.to(animState, {
+          progress: 1,
           duration: 1.6,
           ease: 'power2.inOut',
           onUpdate: () => {
-            if (controlsRef.current) controlsRef.current.update();
-          },
-        });
-
-        gsap.to(controlsRef.current.target, {
-          x: targetLookAt.x,
-          y: targetLookAt.y,
-          z: targetLookAt.z,
-          duration: 1.6,
-          ease: 'power2.inOut',
-          onUpdate: () => {
-            if (controlsRef.current) controlsRef.current.update();
+            const p = animState.progress;
+            // Smooth spherical slerp between start direction and target marker direction
+            const curDir = new THREE.Vector3().copy(startDir).lerp(targetDir, p).normalize();
+            // Smooth distance interpolation from initial orbit to approach altitude
+            const curDist = THREE.MathUtils.lerp(startDist, targetCamDistance, p);
+            camera.position.copy(curDir.multiplyScalar(curDist));
+            // Keep center of Earth dead-centered in view frustum: prevents all edge clipping!
+            if (controlsRef.current) {
+              controlsRef.current.target.set(0, 0, 0);
+              controlsRef.current.update();
+            }
           },
         });
       }
     } else {
       // RESET TO WORLD: pull backward smoothly to planetary orbit
-      const defaultCamPos = new THREE.Vector3(0, 1.8, 6.8);
+      const defaultCamPos = new THREE.Vector3(0, 0.0, 7.8);
       const defaultLookAt = new THREE.Vector3(0, 0, 0);
 
       if (prefersReducedMotion) {
@@ -87,31 +86,31 @@ export default function GlobeCamera({
         controlsRef.current.update();
         if (onResetComplete) onResetComplete();
       } else {
-        gsap.killTweensOf(camera.position);
-        gsap.killTweensOf(controlsRef.current.target);
+        const startPos = camera.position.clone();
+        const targetDir = new THREE.Vector3(0, 0.0, 1.0);
+        const targetDist = 7.8;
+        const animState = { progress: 0 };
 
-        gsap.to(camera.position, {
-          x: defaultCamPos.x,
-          y: defaultCamPos.y,
-          z: defaultCamPos.z,
+        gsap.killTweensOf(animState);
+
+        gsap.to(animState, {
+          progress: 1,
           duration: 1.4,
           ease: 'power2.inOut',
           onUpdate: () => {
-            if (controlsRef.current) controlsRef.current.update();
+            const p = animState.progress;
+            const startDir = startPos.clone().normalize();
+            const startDist = startPos.length();
+            const curDir = new THREE.Vector3().copy(startDir).lerp(targetDir, p).normalize();
+            const curDist = THREE.MathUtils.lerp(startDist, targetDist, p);
+            camera.position.copy(curDir.multiplyScalar(curDist));
+            if (controlsRef.current) {
+              controlsRef.current.target.set(0, 0, 0);
+              controlsRef.current.update();
+            }
           },
           onComplete: () => {
             if (onResetComplete) onResetComplete();
-          },
-        });
-
-        gsap.to(controlsRef.current.target, {
-          x: defaultLookAt.x,
-          y: defaultLookAt.y,
-          z: defaultLookAt.z,
-          duration: 1.4,
-          ease: 'power2.inOut',
-          onUpdate: () => {
-            if (controlsRef.current) controlsRef.current.update();
           },
         });
       }
@@ -125,7 +124,7 @@ export default function GlobeCamera({
       enableDamping={true}
       dampingFactor={0.05}
       minDistance={4.2}
-      maxDistance={9.5}
+      maxDistance={12.0}
       minPolarAngle={0.2}
       maxPolarAngle={Math.PI - 0.2}
       onStart={() => setIsInteracting(true)}

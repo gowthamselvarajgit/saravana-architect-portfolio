@@ -148,7 +148,7 @@ const RIM_FRAG = /* glsl */ `
     float sun = max(dot(n, normalize(uSun)), 0.0);
     float mask = pow(sun, 1.55);
 
-    vec3 col = uWarm * (line * 2.5 + bleed) * mask * uStrength * (1.0 + uDive * 0.4);
+    vec3 col = uWarm * (line * 1.5 + bleed * 0.7) * mask * uStrength * (0.85 + uDive * 0.3);
     float a = clamp(max(max(col.r, col.g), col.b), 0.0, 1.0);
     if (a <= 0.002) discard;
     gl_FragColor = vec4(col, a);
@@ -254,17 +254,18 @@ const DOT_FRAG = /* glsl */ `
     float d = dot(uv, uv);
     if (d > 0.25) discard;
 
-    float sprite = smoothstep(0.25, 0.04, d);
+    float sprite = smoothstep(0.25, 0.05, d);
     float edge = smoothstep(0.0, 0.08, vFacing);
 
-    float lum = 0.88 + vLambert * 0.55 + vRim * 0.22;
-    lum *= 0.90 + 0.38 * vCoast;
+    // Controlled, comfortable luminosity defining continents without eye-straining glare
+    float lum = 0.70 + vLambert * 0.32 + vRim * 0.18;
+    lum *= 0.88 + 0.28 * vCoast;
 
-    float warmMix = clamp(pow(vLambert, 1.1) * 1.45, 0.0, 1.0);
-    vec3 col = mix(uBase, uWarm, warmMix) * (1.08 + vLambert * 0.45);
+    float warmMix = clamp(pow(vLambert, 1.2) * 1.15, 0.0, 1.0);
+    vec3 col = mix(uBase, uWarm, warmMix) * (0.80 + vLambert * 0.24);
 
     float a = sprite * lum * uOpacity * vGate * edge
-            * vFade * (0.88 + 0.12 * vRand);
+            * vFade * (0.90 + 0.10 * vRand);
     if (a <= 0.003) discard;
 
     col += (dither(gl_FragCoord.xy) - 0.5) / 255.0;
@@ -370,7 +371,7 @@ export class Globe {
     });
     this.renderer.setClearColor(0x000000, 1);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.12;
+    this.renderer.toneMappingExposure = 0.96;
 
     this.camera = new THREE.PerspectiveCamera(FOV, 1, 0.05, 200);
     this.baseDist = R / Math.sin(THREE.MathUtils.degToRad(FOV) / 2);
@@ -386,7 +387,7 @@ export class Globe {
     this.composer = new EffectComposer(this.renderer, rt);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
 
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.62, 0.58, 0.68);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.26, 0.45, 0.82);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
 
@@ -665,9 +666,9 @@ export class Globe {
       fragmentShader: DOT_FRAG,
       uniforms: {
         uSun:        { value: SUN_DIR.clone() },
-        uWarm:       { value: new THREE.Color('#ff9933') },
-        uBase:       { value: new THREE.Color('#f0f5ff') },
-        uSize:       { value: 5.4 },
+        uWarm:       { value: new THREE.Color('#e88c3a') },
+        uBase:       { value: new THREE.Color('#bed2e8') },
+        uSize:       { value: 4.4 },
         uPixelRatio: { value: this.size.dpr },
         uReveal:     { value: this.introP !== undefined ? this.introP : 1 },
         uOpacity:    { value: 1 },
@@ -924,7 +925,7 @@ export class Globe {
     }
     this.labels.setMaster(detail);
 
-    this.bloom.strength = 0.62 + diveEase * 0.42;
+    this.bloom.strength = 0.26 + diveEase * 0.18;
 
     this.stars.rotation.y = this.rotY * 0.18 + t * 0.0035;
     this.stars.rotation.x = this.rotX * 0.12;
